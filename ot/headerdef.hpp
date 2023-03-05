@@ -63,6 +63,9 @@
 // Top header declaration.
 #include <ot/config.hpp>
 
+// modification
+#include <ot/mod.cpp>
+
 namespace std {
   namespace filesystem = experimental::filesystem;
 };

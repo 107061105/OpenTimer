@@ -142,7 +142,7 @@ void Arc::_fprop_at() {
   }
 
   FOR_EACH_EL_RF_RF_IF(el, frf, trf, _from._at[el][frf] && _delay[el][frf][trf]) {
-    _to._relax_at(this, el, frf, el, trf, *_delay[el][frf][trf] + *_from._at[el][frf]);
+    _to._relax_at(this, el, frf, el, trf, (*_from._at[el][frf]).numeric + *_delay[el][frf][trf]);
   }
 }
 
@@ -157,7 +157,7 @@ void Arc::_bprop_rat() {
     // Case 1: Net arc
     [this] (Net* net) {
       FOR_EACH_EL_RF_IF(el, rf, _to._rat[el][rf] && _delay[el][rf][rf]) {
-        _from._relax_rat(this, el, rf, el, rf, *_to._rat[el][rf] - *_delay[el][rf][rf]);
+        _from._relax_rat(this, el, rf, el, rf, (*_to._rat[el][rf]).numeric - *_delay[el][rf][rf]);
       }
     },
     // Case 2: Cell arc
@@ -170,7 +170,7 @@ void Arc::_bprop_rat() {
           if(!_to._rat[el][trf] || !_delay[el][frf][trf]) {
             continue;
           }
-          _from._relax_rat(this, el, frf, el, trf, *_to._rat[el][trf] - *_delay[el][frf][trf]);
+          _from._relax_rat(this, el, frf, el, trf, (*_to._rat[el][trf]).numeric - *_delay[el][frf][trf]);
         }
         // constraint arc
         else {
@@ -183,14 +183,14 @@ void Arc::_bprop_rat() {
             auto at = _from._at[MAX][frf];
             auto slack = _to.slack(MIN, trf);
             if(at && slack) {
-              _from._relax_rat(this, MAX, frf, MIN, trf, *at + *slack);
+              _from._relax_rat(this, MAX, frf, MIN, trf, (*at).numeric + *slack);
             }
           }
           else {
             auto at = _from._at[MIN][frf];
             auto slack = _to.slack(MAX, trf);
             if(at && slack) {
-              _from._relax_rat(this, MIN, frf, MAX, trf, *at - *slack);
+              _from._relax_rat(this, MIN, frf, MAX, trf, (*at).numeric - *slack);
             }
           }
         }

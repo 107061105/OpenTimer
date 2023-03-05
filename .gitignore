@@ -25,3 +25,10 @@
 *.exe
 *.out
 *.app
+
+# My ignore
+.vscode/
+bin/
+build/
+example/
+unittest/

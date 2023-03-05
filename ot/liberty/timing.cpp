@@ -408,7 +408,7 @@ void Timing::scale_capacitance(float s) {
 // Query the delay which is referenced by the output transition status, input slew, and driving 
 // load. The output transition status indicates the type of lut that should be used during the
 // linear interpolation or linear extrapolation.
-std::optional<float> Timing::delay(Tran irf, Tran orf, float slew, float load) const {
+std::optional<float_mod> Timing::delay(Tran irf, Tran orf, float slew, float load) const {
 
   if(!is_transition_defined(irf, orf)) {
     return std::nullopt;
@@ -437,7 +437,9 @@ std::optional<float> Timing::delay(Tran irf, Tran orf, float slew, float load) c
   // Case 1: scalar.
   if(lut->lut_template == nullptr) {     
     if(lut->is_scalar()) {
-      return lut->table[0];
+      std::vector<double> temp(1, 1);
+      return float_mod(temp, lut->table[0]);
+      // return lut->table[0];
     }
     else {
       OT_LOGF("lut without template must contain a single scalar");
@@ -474,7 +476,9 @@ std::optional<float> Timing::delay(Tran irf, Tran orf, float slew, float load) c
   };
   
   // - perform the linear inter/extro-polation on indices1 and indices2
-  return (*lut)(val1, val2); 
+  std::vector<double> temp(1, 1);
+  return float_mod(temp, (*lut)(val1, val2));
+  // return (*lut)(val1, val2);
 }
 
 // Function: slew

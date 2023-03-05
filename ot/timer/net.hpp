@@ -4,6 +4,7 @@
 #include <ot/spef/spef.hpp>
 #include <ot/timer/pin.hpp>
 #include <ot/traits.hpp>
+#include <ot/mod.cpp>
 
 namespace ot {
 
@@ -29,7 +30,7 @@ class RctNode {
     float load (Split, Tran) const;
     float cap  (Split, Tran) const;
     float slew (Split, Tran, float) const;
-    float delay(Split, Tran) const;
+    float_mod delay(Split, Tran) const;
 
   private:
 
@@ -39,8 +40,8 @@ class RctNode {
     TimingData<float, MAX_TRAN, MAX_SPLIT> _ncap   ;
     TimingData<float, MAX_TRAN, MAX_SPLIT> _load   ; 
     TimingData<float, MAX_TRAN, MAX_SPLIT> _beta   ;
-    TimingData<float, MAX_TRAN, MAX_SPLIT> _delay  ;
-    TimingData<float, MAX_TRAN, MAX_SPLIT> _ldelay ;
+    TimingData<float_mod, MAX_TRAN, MAX_SPLIT> _delay;
+    TimingData<float_mod, MAX_TRAN, MAX_SPLIT> _ldelay;
     TimingData<float, MAX_TRAN, MAX_SPLIT> _impulse;
 
     std::list<RctEdge*> _fanin;
@@ -104,7 +105,7 @@ class Rct {
     
     float total_ncap() const;
     float slew(const std::string&, Split, Tran, float) const;
-    float delay(const std::string&, Split, Tran) const;
+    float_mod delay(const std::string&, Split, Tran) const;
 
     inline size_t num_nodes() const;
     inline size_t num_edges() const;
@@ -178,7 +179,7 @@ class Net {
     float _load(Split, Tran) const;
 
     std::optional<float> _slew(Split, Tran, float, Pin&) const;
-    std::optional<float> _delay(Split, Tran, Pin&) const;
+    std::optional<float_mod> _delay(Split, Tran, Pin&) const;
     
     void _update_rc_timing();
     void _attach(spef::Net&&);

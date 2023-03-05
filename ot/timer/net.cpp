@@ -29,7 +29,7 @@ float RctNode::slew(Split m, Tran t, float si) const {
 }
 
 // Function: delay
-float RctNode::delay(Split m, Tran t) const {
+float_mod RctNode::delay(Split m, Tran t) const {
   return _delay[m][t];
 }
 
@@ -161,13 +161,13 @@ void Rct::_update_ldelay(RctNode* parent, RctNode* from) {
     if(auto& to = e->_to; &to != parent) {
       _update_ldelay(from, &to);
       FOR_EACH_EL_RF(el, rf) {
-        from->_ldelay[el][rf] += to._ldelay[el][rf];
+        from->_ldelay[el][rf] = from->_ldelay[el][rf] + to._ldelay[el][rf];
       }
     }
   }
 
   FOR_EACH_EL_RF(el, rf) {
-    from->_ldelay[el][rf] += from->cap(el, rf) * from->_delay[el][rf];
+    from->_ldelay[el][rf] = from->_ldelay[el][rf] + from->cap(el, rf) * from->_delay[el][rf]; // TODO XD
   }
 }
 
@@ -178,14 +178,14 @@ void Rct::_update_response(RctNode* parent, RctNode* from) {
   for(auto e : from->_fanout) {
     if(auto& to = e->_to; &to != parent) {
       FOR_EACH_EL_RF(el, rf) {
-        to._beta[el][rf] = from->_beta[el][rf] + e->_res * to._ldelay[el][rf];
+        to._beta[el][rf] = from->_beta[el][rf] + e->_res * to._ldelay[el][rf]; // TODO XD
       }
       _update_response(from, &to);
     }
   }
 
   FOR_EACH_EL_RF(el, rf) {
-    from->_impulse[el][rf] = 2.0f * from->_beta[el][rf] - std::pow(from->_delay[el][rf], 2);
+    from->_impulse[el][rf] = 2.0f * from->_beta[el][rf] - std::pow(from->_delay[el][rf], 2); // TODO XD
   }
 }
 
@@ -213,7 +213,7 @@ float Rct::slew(const std::string& name, Split m, Tran t, float si) const {
 }
 
 // Function: delay
-float Rct::delay(const std::string& name, Split m, Tran t) const {
+float_mod Rct::delay(const std::string& name, Split m, Tran t) const {
   auto itr = _nodes.find(name);
   if(itr == _nodes.end()) {
     OT_THROW(Error::RCT, "failed to get delay (rct-node ", name, " not found)");
@@ -426,15 +426,15 @@ std::optional<float> Net::_slew(Split m, Tran t, float si, Pin& to) const {
 
 // Function: _delay
 // Query the slew at the given pin through this net.
-std::optional<float> Net::_delay(Split m, Tran t, Pin& to) const {
+std::optional<float_mod> Net::_delay(Split m, Tran t, Pin& to) const {
   
   assert(_rc_timing_updated && to._net == this);
 
   return std::visit(Functors{
-    [&] (const EmptyRct&) -> std::optional<float> {
-      return 0.0f;
+    [&] (const EmptyRct&) -> std::optional<float_mod> { // TODO XD?
+      return float_mod(0.0);
     },
-    [&] (const Rct& rct) -> std::optional<float> {
+    [&] (const Rct& rct) -> std::optional<float_mod> {
       if(auto node = rct.node(to._name); node) {
         return node->delay(m, t);
       }

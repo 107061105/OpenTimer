@@ -2,6 +2,7 @@
 #define OT_LIBERTY_TIMING_HPP_
 
 #include <ot/liberty/lut.hpp>
+#include <ot/mod.cpp>
 
 namespace ot {
 
@@ -120,7 +121,7 @@ struct Timing {
   void scale_time(float);
   void scale_capacitance(float);
 
-  std::optional<float> delay(Tran, Tran, float, float) const;
+  std::optional<float_mod> delay(Tran, Tran, float, float) const;
   std::optional<float> slew(Tran, Tran, float, float) const;
   std::optional<float> constraint(Tran, Tran, float, float) const;
 };
