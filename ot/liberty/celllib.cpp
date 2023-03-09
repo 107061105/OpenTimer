@@ -362,6 +362,24 @@ Timing Celllib::_extract_timing(token_iterator& itr, const token_iterator end) {
     else if (*itr == "cell_rise") {                  // Rise delay.
       timing.cell_rise = _extract_lut(itr, end);
     } 
+    else if (*itr == "rise_stdev") {                 // Rise stdev.
+      timing.rise_stdev = _extract_lut(itr, end);
+    }
+    else if (*itr == "fall_stdev") {                 // Fall stdev.
+      timing.fall_stdev = _extract_lut(itr, end);
+    }
+    else if (*itr == "rise_skew") {                  // Rise skewness.
+      timing.rise_skew = _extract_lut(itr, end);
+    }
+    else if (*itr == "fall_skew") {                  // Fall skewness.
+      timing.fall_skew = _extract_lut(itr, end);
+    }
+    else if (*itr == "rise_meanshift") {             // Rise meanshift.
+      timing.rise_meanshift = _extract_lut(itr, end);
+    }
+    else if (*itr == "fall_meanshift") {             // Fall meanshift.
+      timing.fall_meanshift = _extract_lut(itr, end);
+    }
     else if (*itr == "fall_transition") {            // Fall slew.
       timing.fall_transition = _extract_lut(itr, end);
     } 

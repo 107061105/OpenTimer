@@ -477,6 +477,225 @@ std::optional<float> Timing::delay(Tran irf, Tran orf, float slew, float load) c
   return (*lut)(val1, val2); 
 }
 
+// Function: stdev
+// Query standard deviation of the delay which is referenced by the output transition status, 
+// input slew, and driving load. The output transition status indicates the type of lut that 
+// should be used during the linear interpolation or linear extrapolation.
+std::optional<float> Timing::stdev(Tran irf, Tran orf, float slew, float load) const {
+
+  if(!is_transition_defined(irf, orf)) {
+    return std::nullopt;
+  }
+  
+  const Lut* lut {nullptr};
+
+  switch(orf) {
+    case RISE:
+      lut = rise_stdev ? &(rise_stdev.value()) : nullptr;
+    break;
+
+    case FALL:
+      lut = fall_stdev ? &(fall_stdev.value()) : nullptr;
+    break;
+
+    default:
+      assert(false);
+    break;
+  };
+  
+  if(lut == nullptr) {
+    return std::nullopt;
+  }
+  
+  // Case 1: scalar.
+  if(lut->lut_template == nullptr) {     
+    if(lut->is_scalar()) {
+      return lut->table[0];
+    }
+    else {
+      OT_LOGF("lut without template must contain a single scalar");
+    }
+  }
+
+  // Case 2: non-scalar table.
+  float val1 {0.0f}, val2 {0.0f};
+  
+  // - obtain the input numerics
+  assert(lut->lut_template->variable1);
+
+  switch(*(lut->lut_template->variable1)) {
+
+    case LutVar::TOTAL_OUTPUT_NET_CAPACITANCE:
+      if(lut->lut_template->variable2) {
+        assert(lut->lut_template->variable2 == LutVar::INPUT_NET_TRANSITION);
+      }
+      val1 = load;
+      val2 = slew;
+    break;
+
+    case LutVar::INPUT_NET_TRANSITION:
+      if(lut->lut_template->variable2) {
+        assert(lut->lut_template->variable2 == LutVar::TOTAL_OUTPUT_NET_CAPACITANCE);
+      }
+      val1 = slew;
+      val2 = load;
+    break;
+
+    default:
+      OT_LOGF("invalid stdev lut template variable");
+    break;
+  };
+  
+  // - perform the linear inter/extro-polation on indices1 and indices2
+  return (*lut)(val1, val2); 
+}
+
+// Function: skew
+// Query skew of the delay which is referenced by the output transition status, input slew,   
+// and driving load. The output transition status indicates the type of lut that should be used 
+// during the linear interpolation or linear extrapolation.
+std::optional<float> Timing::skew(Tran irf, Tran orf, float slew, float load) const {
+
+  if(!is_transition_defined(irf, orf)) {
+    return std::nullopt;
+  }
+  
+  const Lut* lut {nullptr};
+
+  switch(orf) {
+    case RISE:
+      lut = rise_skew ? &(rise_skew.value()) : nullptr;
+    break;
+
+    case FALL:
+      lut = fall_skew ? &(fall_skew.value()) : nullptr;
+    break;
+
+    default:
+      assert(false);
+    break;
+  };
+  
+  if(lut == nullptr) {
+    return std::nullopt;
+  }
+  
+  // Case 1: scalar.
+  if(lut->lut_template == nullptr) {     
+    if(lut->is_scalar()) {
+      return lut->table[0];
+    }
+    else {
+      OT_LOGF("lut without template must contain a single scalar");
+    }
+  }
+
+  // Case 2: non-scalar table.
+  float val1 {0.0f}, val2 {0.0f};
+  
+  // - obtain the input numerics
+  assert(lut->lut_template->variable1);
+
+  switch(*(lut->lut_template->variable1)) {
+
+    case LutVar::TOTAL_OUTPUT_NET_CAPACITANCE:
+      if(lut->lut_template->variable2) {
+        assert(lut->lut_template->variable2 == LutVar::INPUT_NET_TRANSITION);
+      }
+      val1 = load;
+      val2 = slew;
+    break;
+
+    case LutVar::INPUT_NET_TRANSITION:
+      if(lut->lut_template->variable2) {
+        assert(lut->lut_template->variable2 == LutVar::TOTAL_OUTPUT_NET_CAPACITANCE);
+      }
+      val1 = slew;
+      val2 = load;
+    break;
+
+    default:
+      OT_LOGF("invalid delay lut template variable");
+    break;
+  };
+  
+  // - perform the linear inter/extro-polation on indices1 and indices2
+  return (*lut)(val1, val2); 
+}
+
+// Function: meanshift
+// Query meanshift of the delay which is referenced by the output transition status, input slew,   
+// and driving load. The output transition status indicates the type of lut that should be used 
+// during the linear interpolation or linear extrapolation.
+std::optional<float> Timing::meanshift(Tran irf, Tran orf, float slew, float load) const {
+
+  if(!is_transition_defined(irf, orf)) {
+    return std::nullopt;
+  }
+  
+  const Lut* lut {nullptr};
+
+  switch(orf) {
+    case RISE:
+      lut = rise_meanshift ? &(rise_meanshift.value()) : nullptr;
+    break;
+
+    case FALL:
+      lut = fall_meanshift ? &(fall_meanshift.value()) : nullptr;
+    break;
+
+    default:
+      assert(false);
+    break;
+  };
+  
+  if(lut == nullptr) {
+    return std::nullopt;
+  }
+  
+  // Case 1: scalar.
+  if(lut->lut_template == nullptr) {     
+    if(lut->is_scalar()) {
+      return lut->table[0];
+    }
+    else {
+      OT_LOGF("lut without template must contain a single scalar");
+    }
+  }
+
+  // Case 2: non-scalar table.
+  float val1 {0.0f}, val2 {0.0f};
+  
+  // - obtain the input numerics
+  assert(lut->lut_template->variable1);
+
+  switch(*(lut->lut_template->variable1)) {
+
+    case LutVar::TOTAL_OUTPUT_NET_CAPACITANCE:
+      if(lut->lut_template->variable2) {
+        assert(lut->lut_template->variable2 == LutVar::INPUT_NET_TRANSITION);
+      }
+      val1 = load;
+      val2 = slew;
+    break;
+
+    case LutVar::INPUT_NET_TRANSITION:
+      if(lut->lut_template->variable2) {
+        assert(lut->lut_template->variable2 == LutVar::TOTAL_OUTPUT_NET_CAPACITANCE);
+      }
+      val1 = slew;
+      val2 = load;
+    break;
+
+    default:
+      OT_LOGF("invalid delay lut template variable");
+    break;
+  };
+  
+  // - perform the linear inter/extro-polation on indices1 and indices2
+  return (*lut)(val1, val2); 
+}
+
 // Function: slew
 // Query the slew which is referenced by the output transition status, input slew, and driving 
 // load. The output transition status indicates the type of lut that should be used during the
