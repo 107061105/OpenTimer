@@ -2,7 +2,6 @@
 #define FLOAT_MOD
 
 #include <vector>
-#include <valarray>
 #include <complex>
 #include <algorithm>
 #include <math.h>
@@ -10,11 +9,10 @@
 
 #define CONVOLVE_MODE 0
 #define TIME_STEP 0.01
+#define SHRINK_THRESHOLD 1e-6;
 // careful with TIME_STEP, double arithmetic can cause imprecision
 
 
-// using namespace std;
-// const double PI = 3.141592653589793238460;
 typedef std::complex<double> Complex;
 
 
@@ -83,12 +81,11 @@ private:
     double get_et() {return st + TIME_STEP * (dist.size() - 1);}
 
     friend float_mod float_mod_mm(float_mod&, float_mod&, bool);
-    // friend class ot::Pin;
 public:
-	float_mod(const std::vector<double>& Dist = std::vector<double>(1, 1), double St = 0.0);
+	float_mod(const std::vector<double>& Dist, double St = 0.0);
 	float_mod(const float_mod& x) {dist = x.dist; st = x.st;}
-	float_mod(double St = 0.0);
-	float_mod() = default;
+	float_mod(double);
+	float_mod();
 	float_mod& operator=(const double&);
 	float_mod& operator=(const float_mod&);
     float_mod operator+(float_mod&);
@@ -100,6 +97,9 @@ public:
 	void shrink();
 	void negate();
     void print_info();
+    float mean();
+    float variance();
+    float accum(float);
 };
 
 float_mod::float_mod(const std::vector<double>& Dist, double St) {
@@ -185,7 +185,7 @@ void float_mod::negate() {
 
 void float_mod::shrink() {
 	// get new start time and end time, skipping zeros (or low values)
-    double threshold = 0;
+    double threshold = SHRINK_THRESHOLD;
     int new_st_index = 0;
     while (dist[new_st_index] <= threshold) {
         new_st_index++;
@@ -195,6 +195,7 @@ void float_mod::shrink() {
     while (dist.back() <= threshold) {
         dist.pop_back();
     }
+    dist_norm();
 }
 
 void float_mod::print_info() {
@@ -204,6 +205,47 @@ void float_mod::print_info() {
 		std::cout << dist[i] << " ";
 	}
 	std::cout << std::endl;
+}
+
+float float_mod::mean() {
+    // sum = E[X] w/o st
+    double sum = 0;
+    double p_sum = 0;
+    for (int i = 0; i < dist.size(); i++) {
+        sum += dist[i] * TIME_STEP * i;
+        p_sum += dist[i];
+    }
+    sum /= p_sum;
+    return sum + st;
+}
+
+float float_mod::variance() {
+    // sum = E[X^2] with st
+    double sum = 0;
+    double p_sum = 0;
+    for (int i = 0; i < dist.size(); i++) {
+        sum += dist[i] * pow(TIME_STEP * i + st, 2);
+        p_sum += dist[i];
+    }
+    sum /= p_sum;
+    return sum - pow(mean(), 2);
+}
+
+float float_mod::accum(float p = 0.5) {
+    if (p <= 0 || p >= 1) {
+        std::cout << "error, in float_mod::accum(p), p < 0 || p > 1" << std::endl;
+        return 0;
+    }
+    dist_norm();
+    double p_sum = 0;
+    for (int i = 0; i < dist.size(); i++) {
+        p_sum += dist[i];
+        if (p_sum >= p) {
+            return TIME_STEP * i + st;
+        }
+    }
+    std::cout << "error, in float_mod::accum(p), overflow" << std::endl;
+    return 0;
 }
 
 float_mod float_mod_mm(float_mod& x, float_mod&y, bool mode) {
@@ -258,5 +300,11 @@ float_mod float_mod_mm(float_mod& x, float_mod&y, bool mode) {
 //     z.print_info();
 //     z = float_mod_mm(x, y, Max);
 //     z.print_info();
+//     std::cout << x.mean() << std::endl;
+//     std::cout << x.variance() << std::endl;
+//     std::cout << x.accum(0.03) << std::endl;
+//     std::cout << x.accum(0.5) << std::endl;
+//     std::cout << x.accum(0.997) << std::endl;
+//     std::cout << x.accum(1.5) << std::endl;
 //     return 0;
 // }

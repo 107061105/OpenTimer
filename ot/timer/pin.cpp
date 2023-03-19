@@ -347,13 +347,17 @@ void Pin::_relax_at(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, float_mo
   
   switch (tel) {
     case MIN:
-      if(!_at[tel][trf] || val < *_at[tel][trf]) {
+      if(!_at[tel][trf]) {
         _at[tel][trf].emplace(arc, fel, frf, val);
+      } else {
+        _at[tel][trf].emplace(arc, fel, frf, float_mod_mm(val, (*_at[tel][trf]).numeric, MIN));
       }
     break;
     case MAX:
-      if(!_at[tel][trf] || val > *_at[tel][trf]) {
+      if(!_at[tel][trf]) {
         _at[tel][trf].emplace(arc, fel, frf, val);
+      } else {
+        _at[tel][trf].emplace(arc, fel, frf, float_mod_mm(val, (*_at[tel][trf]).numeric, MAX));
       }
     break;
   }
@@ -366,14 +370,18 @@ void Pin::_relax_rat(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, float_m
   switch(fel) {
 
     case MIN:
-      if(!_rat[fel][frf] || val > *_rat[fel][frf]) {
+      if(!_rat[fel][frf]) {
         _rat[fel][frf].emplace(arc, tel, trf, val);
+      } else {
+        _rat[fel][frf].emplace(arc, tel, trf, float_mod_mm(val, (*_rat[fel][frf]).numeric, MAX));
       }
     break;
 
     case MAX:
-      if(!_rat[fel][frf] || val < *_rat[fel][frf]) {
+      if(!_rat[fel][frf]) {
         _rat[fel][frf].emplace(arc, tel, trf, val);
+      } else {
+        _rat[fel][frf].emplace(arc, tel, trf, float_mod_mm(val, (*_rat[fel][frf]).numeric, MIN));
       }
     break;
   };

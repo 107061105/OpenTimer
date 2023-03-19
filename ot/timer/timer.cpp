@@ -1338,7 +1338,7 @@ std::optional<float> Timer::report_at(const std::string& name, Split m, Tran t) 
 std::optional<float> Timer::_report_at(const std::string& name, Split m, Tran t) {
   _update_timing();
   if(auto itr = _pins.find(name); itr != _pins.end() && itr->second._at[m][t]) {
-    return itr->second._at[m][t]->numeric;
+    return itr->second._at[m][t]->numeric.mean();
   }
   else return std::nullopt;
 }
@@ -1354,7 +1354,7 @@ std::optional<float> Timer::report_rat(const std::string& name, Split m, Tran t)
 std::optional<float> Timer::_report_rat(const std::string& name, Split m, Tran t) {
   _update_timing();
   if(auto itr = _pins.find(name); itr != _pins.end() && itr->second._at[m][t]) {
-    return itr->second._rat[m][t];
+    return itr->second._rat[m][t].value().numeric.mean();
   }
   else return std::nullopt;
 }
@@ -1385,7 +1385,7 @@ std::optional<float> Timer::report_slack(const std::string& pin, Split m, Tran t
 std::optional<float> Timer::_report_slack(const std::string& pin, Split m, Tran t) {
   _update_timing();
   if(auto itr = _pins.find(pin); itr != _pins.end()) {
-    return itr->second.slack(m, t);
+    return itr->second.slack(m, t).value().mean();
   }
   else return std::nullopt;
 }
