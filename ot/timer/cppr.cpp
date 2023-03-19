@@ -74,7 +74,7 @@ CpprCache Timer::_cppr_cache(const Test& test, Split el, Tran rf) const {
 }
 
 // Function: _cppr_credit
-std::optional<float> Timer::_cppr_credit(const Test& test, Split el, Tran rf) const {
+std::optional<float_mod> Timer::_cppr_credit(const Test& test, Split el, Tran rf) const {
 
   assert(_cppr_analysis);
 
@@ -84,7 +84,7 @@ std::optional<float> Timer::_cppr_credit(const Test& test, Split el, Tran rf) co
   // compute the cppr credit
   if(sfxt.slack()) {
     auto tat = *test._arc._to._at[el][rf];
-    auto rat = (el == MIN) ? tat - *sfxt.slack() : *sfxt.slack() + tat;
+    auto rat = (el == MIN) ? tat.numeric - *sfxt.slack() : *sfxt.slack() + tat.numeric;
     return rat - *test._rat[el][rf];
   }
   else {
@@ -93,7 +93,7 @@ std::optional<float> Timer::_cppr_credit(const Test& test, Split el, Tran rf) co
 }
 
 // Procedure: _cppr_credit
-std::optional<float> Timer::_cppr_credit(const CpprCache& cppr, Pin& pin, Split el, Tran rf) const {
+std::optional<float_mod> Timer::_cppr_credit(const CpprCache& cppr, Pin& pin, Split el, Tran rf) const {
 
   assert(_cppr_analysis);
 
@@ -148,7 +148,7 @@ std::optional<float> Timer::_cppr_credit(const CpprCache& cppr, Pin& pin, Split 
 }
 
 // Function: _cppr_offset
-std::optional<float> Timer::_cppr_offset(const CpprCache& cppr, Pin& pin, Split el, Tran rf) const {
+std::optional<float_mod> Timer::_cppr_offset(const CpprCache& cppr, Pin& pin, Split el, Tran rf) const {
 
   assert(_cppr_analysis);
 
@@ -157,10 +157,10 @@ std::optional<float> Timer::_cppr_offset(const CpprCache& cppr, Pin& pin, Split 
   }
   else {
     if(auto credit = _cppr_credit(cppr, pin, el, rf); credit) {
-      return (el == MIN) ? *at + *credit : -(*at) + *credit; 
+      return (el == MIN) ? (*at).numeric + *credit : *credit - (*at).numeric; 
     }
     else {
-      return (el == MIN) ? *at : -(*at);
+      return (el == MIN) ? (*at).numeric : float_mod() - (*at).numeric;
     }
   }
 }

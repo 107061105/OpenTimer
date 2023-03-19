@@ -293,10 +293,10 @@ class Timer {
     std::optional<float> _report_slew(const std::string&, Split, Tran);
     std::optional<float> _report_slack(const std::string&, Split, Tran);
     std::optional<float> _report_load(const std::string&, Split, Tran);
-    std::optional<float> _cppr_credit(const Test&, Split, Tran) const;
-    std::optional<float> _cppr_credit(const CpprCache&, Pin&, Split, Tran) const;
-    std::optional<float> _cppr_offset(const CpprCache&, Pin&, Split, Tran) const;
-    std::optional<float> _sfxt_offset(const SfxtCache&, size_t) const;
+    std::optional<float_mod> _cppr_credit(const Test&, Split, Tran) const;
+    std::optional<float_mod> _cppr_credit(const CpprCache&, Pin&, Split, Tran) const;
+    std::optional<float_mod> _cppr_offset(const CpprCache&, Pin&, Split, Tran) const;
+    std::optional<float_mod> _sfxt_offset(const SfxtCache&, size_t) const;
     
     size_t _max_pin_name_size() const;
     size_t _max_net_name_size() const;

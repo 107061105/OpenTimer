@@ -24,7 +24,7 @@ class SfxtCache {
     SfxtCache& operator = (const SfxtCache&) = delete;
     SfxtCache& operator = (SfxtCache&&) = delete;
 
-    inline std::optional<float> slack() const;
+    inline std::optional<float_mod> slack() const;
     inline Split split() const;
     inline size_t root() const;
 
@@ -53,7 +53,7 @@ inline size_t SfxtCache::root() const {
 }
 
 // Function: slack
-inline std::optional<float> SfxtCache::slack() const {
+inline std::optional<float_mod> SfxtCache::slack() const {
   return __dist[_S];
 }
 
