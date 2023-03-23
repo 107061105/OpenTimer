@@ -49,8 +49,8 @@ class Timer {
     Timer& connect_pin(std::string, std::string);
     Timer& insert_primary_input(std::string);
     Timer& insert_primary_output(std::string);
-    Timer& set_at(std::string, Split, Tran, std::optional<float>);
-    Timer& set_rat(std::string, Split, Tran, std::optional<float>);
+    Timer& set_at(std::string, Split, Tran, std::optional<float_mod>);
+    Timer& set_rat(std::string, Split, Tran, std::optional<float_mod>);
     Timer& set_slew(std::string, Split, Tran, std::optional<float>);
     Timer& set_load(std::string, Split, Tran, std::optional<float>);
     Timer& create_clock(std::string, float);
@@ -66,10 +66,10 @@ class Timer {
     // Action.
     void update_timing();
 
-    std::optional<float> report_at(const std::string&, Split, Tran);
-    std::optional<float> report_rat(const std::string&, Split, Tran);
+    std::optional<float_mod> report_at(const std::string&, Split, Tran);
+    std::optional<float_mod> report_rat(const std::string&, Split, Tran);
     std::optional<float> report_slew(const std::string&, Split, Tran);
-    std::optional<float> report_slack(const std::string&, Split, Tran);
+    std::optional<float_mod> report_slack(const std::string&, Split, Tran);
     std::optional<float> report_load(const std::string&, Split, Tran);
     std::optional<float> report_area();
     std::optional<float> report_leakage_power();
@@ -238,9 +238,9 @@ class Timer {
     void _remove_pin(Pin&);
     void _remove_arc(Arc&);
     void _remove_test(Test&);
-    void _set_at(PrimaryInput&, Split, Tran, std::optional<float>);
+    void _set_at(PrimaryInput&, Split, Tran, std::optional<float_mod>);
     void _set_slew(PrimaryInput&, Split, Tran, std::optional<float>);
-    void _set_rat(PrimaryOutput&, Split, Tran, std::optional<float>);
+    void _set_rat(PrimaryOutput&, Split, Tran, std::optional<float_mod>);
     void _set_load(PrimaryOutput&, Split, Tran, std::optional<float>);
     void _cppr(bool);
     void _topologize(SfxtCache&, size_t, const PathGuide* = nullptr) const;
@@ -288,10 +288,10 @@ class Timer {
     Clock& _create_clock(const std::string&, Pin&, float);
     Clock& _create_clock(const std::string&, float);
 
-    std::optional<float> _report_at(const std::string&, Split, Tran);
-    std::optional<float> _report_rat(const std::string&, Split, Tran);
+    std::optional<float_mod> _report_at(const std::string&, Split, Tran);
+    std::optional<float_mod> _report_rat(const std::string&, Split, Tran);
     std::optional<float> _report_slew(const std::string&, Split, Tran);
-    std::optional<float> _report_slack(const std::string&, Split, Tran);
+    std::optional<float_mod> _report_slack(const std::string&, Split, Tran);
     std::optional<float> _report_load(const std::string&, Split, Tran);
     std::optional<float_mod> _cppr_credit(const Test&, Split, Tran) const;
     std::optional<float_mod> _cppr_credit(const CpprCache&, Pin&, Split, Tran) const;

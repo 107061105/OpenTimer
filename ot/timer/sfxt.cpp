@@ -249,7 +249,7 @@ SfxtCache Timer::_sfxt_cache(const Endpoint& ept, const PathGuide *pg) const {
 }
 
 // Function: _sfxt_offset
-std::optional<float> Timer::_sfxt_offset(const SfxtCache& sfxt, size_t v) const {
+std::optional<float_mod> Timer::_sfxt_offset(const SfxtCache& sfxt, size_t v) const { // TODO XD?
 
   auto [pin, rf] = _decode_pin(v);
   
@@ -260,7 +260,7 @@ std::optional<float> Timer::_sfxt_offset(const SfxtCache& sfxt, size_t v) const 
     if(_ideal_clock && pin->primary_input() == nullptr) {
       return 0.0f;
     }
-    return sfxt._el == MIN ? *at : -*at;
+    return sfxt._el == MIN ? (*at).numeric.mean() : -(*at).numeric.mean(); // TODO XD?
 
   }
   else {

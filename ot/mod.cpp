@@ -80,6 +80,8 @@ private:
     double st;
     double get_et() {return st + TIME_STEP * (dist.size() - 1);}
 
+    double time_unit = 1;
+
     friend float_mod float_mod_mm(float_mod&, float_mod&, bool);
 public:
 	float_mod(const std::vector<double>& Dist, double St = 0.0);
@@ -100,6 +102,7 @@ public:
     float mean();
     float variance();
     float accum(float);
+    float_mod sacle_time(float);
 };
 
 float_mod::float_mod(const std::vector<double>& Dist, double St) {
@@ -246,6 +249,10 @@ float float_mod::accum(float p = 0.5) {
     }
     std::cout << "error, in float_mod::accum(p), overflow" << std::endl;
     return 0;
+}
+
+float_mod float_mod::sacle_time(float s) {
+    return time_unit * s;
 }
 
 float_mod float_mod_mm(float_mod& x, float_mod&y, bool mode) {

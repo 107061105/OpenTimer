@@ -3,7 +3,7 @@
 namespace ot {
 
 // Constructor
-Point::Point(const Pin& p, Tran t, float v) :
+Point::Point(const Pin& p, Tran t, float_mod v) :
   pin        {p},
   transition {t},
   at         {v} {
@@ -12,7 +12,7 @@ Point::Point(const Pin& p, Tran t, float v) :
 // ------------------------------------------------------------------------------------------------
 
 // Constructor
-Path::Path(float slk, const Endpoint* ept) :
+Path::Path(float_mod slk, const Endpoint* ept) :
   slack    {slk},
   endpoint {ept} {
 }
@@ -96,7 +96,7 @@ void Path::dump_tau18(std::ostream& os) const{
   os << "Endpoint: " << std::regex_replace(back().pin.name(), replace, "/")  << '\n';
   os << "Beginpoint: " << std::regex_replace(front().pin.name(), replace, "/") << '\n';
   //os << "= Required Time " << '\n'; //TODO: ignore RAT for tau18 benchmark
-  float rat = 0.0;
+  float_mod rat(0);
   if(endpoint->test() != nullptr){
     rat = *(endpoint->test()->rat(el, rf));
   }

@@ -1329,32 +1329,32 @@ void Timer::_remove_scc(SCC& scc) {
 
 // Function: report_at   
 // Report the arrival time in picoseconds at a given pin name.
-std::optional<float> Timer::report_at(const std::string& name, Split m, Tran t) {
+std::optional<float_mod> Timer::report_at(const std::string& name, Split m, Tran t) {
   std::scoped_lock lock(_mutex);
   return _report_at(name, m, t);
 }
 
 // Function: _report_at
-std::optional<float> Timer::_report_at(const std::string& name, Split m, Tran t) {
+std::optional<float_mod> Timer::_report_at(const std::string& name, Split m, Tran t) {
   _update_timing();
   if(auto itr = _pins.find(name); itr != _pins.end() && itr->second._at[m][t]) {
-    return itr->second._at[m][t]->numeric.mean();
+    return itr->second._at[m][t]->numeric;
   }
   else return std::nullopt;
 }
 
 // Function: report_rat
 // Report the required arrival time in picoseconds at a given pin name.
-std::optional<float> Timer::report_rat(const std::string& name, Split m, Tran t) {
+std::optional<float_mod> Timer::report_rat(const std::string& name, Split m, Tran t) {
   std::scoped_lock lock(_mutex);
   return _report_rat(name, m, t);
 }
 
 // Function: _report_rat
-std::optional<float> Timer::_report_rat(const std::string& name, Split m, Tran t) {
+std::optional<float_mod> Timer::_report_rat(const std::string& name, Split m, Tran t) {
   _update_timing();
   if(auto itr = _pins.find(name); itr != _pins.end() && itr->second._at[m][t]) {
-    return itr->second._rat[m][t].value().numeric.mean();
+    return itr->second._rat[m][t].value().numeric;
   }
   else return std::nullopt;
 }
@@ -1376,16 +1376,16 @@ std::optional<float> Timer::_report_slew(const std::string& name, Split m, Tran 
 }
 
 // Function: report_slack
-std::optional<float> Timer::report_slack(const std::string& pin, Split m, Tran t) {
+std::optional<float_mod> Timer::report_slack(const std::string& pin, Split m, Tran t) {
   std::scoped_lock lock(_mutex);
   return _report_slack(pin, m, t);
 }
 
 // Function: _report_slack
-std::optional<float> Timer::_report_slack(const std::string& pin, Split m, Tran t) {
+std::optional<float_mod> Timer::_report_slack(const std::string& pin, Split m, Tran t) {
   _update_timing();
   if(auto itr = _pins.find(pin); itr != _pins.end()) {
-    return itr->second.slack(m, t).value().mean();
+    return itr->second.slack(m, t).value();
   }
   else return std::nullopt;
 }
@@ -1407,7 +1407,7 @@ std::optional<float> Timer::_report_load(const std::string& name, Split m, Tran 
 }
 
 // Function: set_at
-Timer& Timer::set_at(std::string name, Split m, Tran t, std::optional<float> v) {
+Timer& Timer::set_at(std::string name, Split m, Tran t, std::optional<float_mod> v) {
 
   std::scoped_lock lock(_mutex);
 
@@ -1426,13 +1426,13 @@ Timer& Timer::set_at(std::string name, Split m, Tran t, std::optional<float> v) 
 }
 
 // Procedure: _set_at
-void Timer::_set_at(PrimaryInput& pi, Split m, Tran t, std::optional<float> v) {
+void Timer::_set_at(PrimaryInput& pi, Split m, Tran t, std::optional<float_mod> v) {
   pi._at[m][t] = v;
   _insert_frontier(pi._pin);
 }
 
 // Function: set_rat
-Timer& Timer::set_rat(std::string name, Split m, Tran t, std::optional<float> v) {
+Timer& Timer::set_rat(std::string name, Split m, Tran t, std::optional<float_mod> v) {
 
   std::scoped_lock lock(_mutex);
   
@@ -1451,7 +1451,7 @@ Timer& Timer::set_rat(std::string name, Split m, Tran t, std::optional<float> v)
 }
 
 // Procedure: _set_rat
-void Timer::_set_rat(PrimaryOutput& po, Split m, Tran t, std::optional<float> v) {
+void Timer::_set_rat(PrimaryOutput& po, Split m, Tran t, std::optional<float_mod> v) {
   po._rat[m][t] = v;
   _insert_frontier(po._pin);
 }

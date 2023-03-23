@@ -11,7 +11,7 @@ Test::Test(Arc& arc) : _arc {arc} {
 }
 
 // Function: rat
-std::optional<float> Test::rat(Split el, Tran rf) const {
+std::optional<float_mod> Test::rat(Split el, Tran rf) const {
   return _rat[el][rf];
 }
 
@@ -26,11 +26,11 @@ std::optional<float> Test::cppr_credit(Split el, Tran rf) const {
 }
 
 // Function: slack
-std::optional<float> Test::slack(Split el, Tran rf) const {
+std::optional<float_mod> Test::slack(Split el, Tran rf) const {
   if(_arc._to._at[el][rf] && _rat[el][rf]) {
     return (
-      el == MIN ? *_arc._to._at[el][rf] - *_rat[el][rf] : 
-                  *_rat[el][rf] - *_arc._to._at[el][rf]
+      el == MIN ? _arc._to._at[el][rf].value().numeric - _rat[el][rf].value() : 
+                  _rat[el][rf].value() - _arc._to._at[el][rf].value().numeric
     ) + (
       _cppr_credit[el][rf] ? *_cppr_credit[el][rf] : 0.0f
     );
@@ -39,11 +39,11 @@ std::optional<float> Test::slack(Split el, Tran rf) const {
 }
 
 // Function: raw_slack
-std::optional<float> Test::raw_slack(Split el, Tran rf) const {
+std::optional<float_mod> Test::raw_slack(Split el, Tran rf) const {
   if(_arc._to._at[el][rf] && _rat[el][rf]) {
     return (
-      el == MIN ? *_arc._to._at[el][rf] - *_rat[el][rf] : 
-                  *_rat[el][rf] - *_arc._to._at[el][rf]
+      el == MIN ? (*_arc._to._at[el][rf]).numeric - _rat[el][rf].value() : 
+                  _rat[el][rf].value() - (*_arc._to._at[el][rf]).numeric
     );
   }
   else return std::nullopt;
@@ -85,7 +85,7 @@ void Test::_reset() {
 }
 
 // Procedure: _fprop_rat
-void Test::_fprop_rat(float period, bool ideal_clock) {
+void Test::_fprop_rat(float_mod period, bool ideal_clock) {
 
   auto tv = _arc.timing_view();
 
@@ -112,7 +112,7 @@ void Test::_fprop_rat(float period, bool ideal_clock) {
     if(el == MIN) {
       // PathGuide
       if(!ideal_clock) {
-        _related_at[el][rf] = *_arc._from._at[fel][frf];
+        _related_at[el][rf] = (*_arc._from._at[fel][frf]).numeric;
       }
       else {
         _related_at[el][rf] = 0;
@@ -121,7 +121,7 @@ void Test::_fprop_rat(float period, bool ideal_clock) {
     else {
       // PathGuide
       if(!ideal_clock) {
-        _related_at[el][rf] = *_arc._from._at[fel][frf] + period;
+        _related_at[el][rf] = (*_arc._from._at[fel][frf]).numeric + period;
       }
       else {
         _related_at[el][rf] = period;

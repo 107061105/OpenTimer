@@ -27,7 +27,7 @@ std::optional<float_mod> PrimaryOutput::slack(Split el, Tran rf) const {
 // Procedure: _scale_time
 void PrimaryOutput::_scale_time(float s) {
   FOR_EACH_EL_RF_IF(el, rf, _rat[el][rf]) {
-    _rat[el][rf] = _rat[el][rf].value() * s;
+    _rat[el][rf].value().sacle_time(s);
   }
 }
 
@@ -51,7 +51,7 @@ void PrimaryInput::_scale_time(float s) {
       _slew[el][rf] = _slew[el][rf].value() * s;
     }
     if(_at[el][rf]) {
-      _at[el][rf] = _at[el][rf].value() * s; // TODO XD
+      _at[el][rf].value().sacle_time(s); // TODO XD
     }
   }
 }

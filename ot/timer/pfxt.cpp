@@ -3,7 +3,7 @@
 namespace ot {
   
 // Constructor
-PfxtNode::PfxtNode(float s, size_t f, size_t t, const Arc* a, const PfxtNode* p) :
+PfxtNode::PfxtNode(float_mod s, size_t f, size_t t, const Arc* a, const PfxtNode* p) :
   slack  {s},
   from   {f},
   to     {t},
@@ -26,7 +26,7 @@ PfxtCache::PfxtCache(PfxtCache&& pfxt) :
 }
 
 // Procedure: _push
-void PfxtCache::_push(float s, size_t f, size_t t, const Arc* a, const PfxtNode* p) {
+void PfxtCache::_push(float_mod s, size_t f, size_t t, const Arc* a, const PfxtNode* p) {
   _nodes.emplace_back(std::make_unique<PfxtNode>(s, f, t, a, p));
   std::push_heap(_nodes.begin(), _nodes.end(), _comp);
 }
@@ -177,7 +177,7 @@ void Timer::_spur(PfxtCache& pfxt, const PfxtNode& pfx, const PathGuide* pg) con
           continue;
         }
 
-        auto w = (el == MIN) ? *arc->_delay[el][urf][vrf] : -(*arc->_delay[el][urf][vrf]);
+        auto w = (el == MIN) ? *arc->_delay[el][urf][vrf] : float_mod(0) - (*arc->_delay[el][urf][vrf]);
         auto s = *pfxt._sfxt.__dist[v] + w - *pfxt._sfxt.__dist[u] + pfx.slack;
 
         // Set slack uppper bound to 40000 for leon3mp_iccad in tau 2018 contest 

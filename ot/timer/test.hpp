@@ -23,10 +23,10 @@ class Test {
     
     Test(Arc&);
 
-    std::optional<float> rat(Split, Tran) const;
+    std::optional<float_mod> rat(Split, Tran) const;
     std::optional<float> constraint(Split, Tran) const;
-    std::optional<float> slack(Split, Tran) const;
-    std::optional<float> raw_slack(Split, Tran) const;
+    std::optional<float_mod> slack(Split, Tran) const;
+    std::optional<float_mod> raw_slack(Split, Tran) const;
     std::optional<float> cppr_credit(Split, Tran) const;
 
     const Pin& constrained_pin() const;
@@ -40,14 +40,14 @@ class Test {
     std::optional<std::list<Test>::iterator> _satellite;
     std::optional<std::list<Test*>::iterator> _pin_satellite;
     
-    TimingData<std::optional<float>, MAX_SPLIT, MAX_TRAN> _rat;
+    TimingData<std::optional<float_mod>, MAX_SPLIT, MAX_TRAN> _rat;
     TimingData<std::optional<float>, MAX_SPLIT, MAX_TRAN> _cppr_credit;
     TimingData<std::optional<float>, MAX_SPLIT, MAX_TRAN> _constraint;
-    TimingData<std::optional<float>, MAX_SPLIT, MAX_TRAN> _related_at;
+    TimingData<std::optional<float_mod>, MAX_SPLIT, MAX_TRAN> _related_at;
 
     void _reset();
     // PathGuide
-    void _fprop_rat(float, bool=false);
+    void _fprop_rat(float_mod, bool=false);
     
     Pin& _constrained_pin();
     Pin& _related_pin();

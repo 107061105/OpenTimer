@@ -15,9 +15,9 @@ struct Point {
 
   const Pin& pin;     // pin reference
   Tran  transition;   // rise/fall
-  float at;           // arrival
+  float_mod at;           // arrival
 
-  Point(const Pin&, Tran, float);
+  Point(const Pin&, Tran, float_mod);
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ struct Point {
 // Struct: Path
 struct Path : std::list<Point> {
 
-  Path(float, const Endpoint*);
+  Path(float_mod, const Endpoint*);
   Path(const Path&) = delete;
   Path(Path&&) = default; 
 
@@ -35,7 +35,7 @@ struct Path : std::list<Point> {
   void dump(std::ostream&) const;
   void dump_tau18(std::ostream&) const;
 
-  float slack {std::numeric_limits<float>::quiet_NaN()};
+  float_mod slack {std::numeric_limits<float>::quiet_NaN()};
   
   const Endpoint* endpoint {nullptr};
 };
@@ -128,8 +128,8 @@ struct PathConstraint {
   void to(const std::string&, std::optional<Tran> = std::nullopt);
 
   // These two functions are to set the range of slack
-  void slack_upper_bound(float);
-  void slack_lower_bound(float);
+  void slack_upper_bound(float); // TODO XD?
+  void slack_lower_bound(float); // TODO XD?
 
   void clear();
   void reset(const std::string&);

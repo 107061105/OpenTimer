@@ -22,7 +22,7 @@ Endpoint::Endpoint(Split el, Tran rf, PrimaryOutput& po) :
 }
 
 // Function: slack
-float Endpoint::slack() const {
+float_mod Endpoint::slack() const {
   return std::visit([this] (auto&& handle) {
     return *(handle->slack(_el, _rf));
   }, _handle);

@@ -1,6 +1,14 @@
 # Notes
 
+## TODO
+
+### Pfxt, Sfxt, test, dump, cppr
+
 ## Notations
+
+### res = resistance
+
+### PfxtNode = ?, Sfxt = ?
 
 ### el = early late
 
