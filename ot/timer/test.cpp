@@ -137,7 +137,7 @@ void Test::_fprop_rat(float_mod period, bool ideal_clock) {
     
     if(_constraint[el][rf] && _related_at[el][rf]) {
       if(el == MIN) {
-        _rat[el][rf] = *_constraint[el][rf] + *_related_at[el][rf];
+        _rat[el][rf] = *_related_at[el][rf] + *_constraint[el][rf];
       }
       else {
         _rat[el][rf] = *_related_at[el][rf] - *_constraint[el][rf];

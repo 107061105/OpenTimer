@@ -2,7 +2,6 @@
 #define OT_LIBERTY_TIMING_HPP_
 
 #include <ot/liberty/lut.hpp>
-#include <ot/mod.cpp>
 
 namespace ot {
 

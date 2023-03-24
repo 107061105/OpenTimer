@@ -1,25 +1,4 @@
-#ifndef FLOAT_MOD
-#define FLOAT_MOD
-
-#include <vector>
-#include <complex>
-#include <algorithm>
-#include <math.h>
-#include <iostream>
-
-#define CONVOLVE_MODE 0
-#define TIME_STEP 0.01
-#define SHRINK_THRESHOLD 1e-6;
-// careful with TIME_STEP, double arithmetic can cause imprecision
-
-
-typedef std::complex<double> Complex;
-
-
-enum min_max_mode {
-    Min,
-    Max
-};
+#include <ot/mod.hpp>
 
 
 std::vector<double> convolve(std::vector<double>& a, std::vector<double>& b) {
@@ -73,38 +52,6 @@ std::vector<double> fft_convolve(std::vector<double>& a, std::vector<double>& b)
 }
 
 
-class float_mod
-{
-private:
-    std::vector<double> dist;
-    double st;
-    double get_et() {return st + TIME_STEP * (dist.size() - 1);}
-
-    double time_unit = 1;
-
-    friend float_mod float_mod_mm(float_mod&, float_mod&, bool);
-public:
-	float_mod(const std::vector<double>& Dist, double St = 0.0);
-	float_mod(const float_mod& x) {dist = x.dist; st = x.st;}
-	float_mod(double);
-	float_mod();
-	float_mod& operator=(const double&);
-	float_mod& operator=(const float_mod&);
-    float_mod operator+(float_mod&);
-    float_mod operator-(float_mod&);
-    float_mod operator+(float);
-    float_mod operator-(float);
-    operator float () const {return st;} // TODO XD
-	void dist_norm();
-	void shrink();
-	void negate();
-    void print_info();
-    float mean();
-    float variance();
-    float accum(float);
-    float_mod sacle_time(float);
-};
-
 float_mod::float_mod(const std::vector<double>& Dist, double St) {
 	dist = Dist;
 	st = St;
@@ -135,15 +82,17 @@ float_mod& float_mod::operator=(const float_mod& x) {
     return *this;
 }
 
-float_mod float_mod::operator+(float_mod& x) {
-	double res_st = st + x.st;
+float_mod float_mod::operator+(const float_mod& x) const {
+    float_mod temp1 = *this;
+    float_mod temp2 = x;
+	double res_st = temp1.st + temp2.st;
 	std::cout << "convolution st: " << res_st << std::endl;
 
 	std::vector<double> res;
 	if (CONVOLVE_MODE == 0) {
-		res = convolve(dist, x.dist);
+		res = convolve(temp1.dist, temp2.dist);
 	} else if (CONVOLVE_MODE == 1) {
-		res = fft_convolve(dist, x.dist);
+		res = fft_convolve(temp1.dist, temp2.dist);
 	}
 	
 	std::cout << "convolution result: ";
@@ -156,21 +105,23 @@ float_mod float_mod::operator+(float_mod& x) {
 	return temp;
 }
 
-float_mod float_mod::operator-(float_mod& x) {
-	x.negate();
-    float_mod res = *this + x;
-    x.negate();
+float_mod float_mod::operator-(const float_mod& x) const {
+    float_mod temp = x;
+	temp.negate();
+    float_mod res = *this + temp;
     return res;
 }
 
-float_mod float_mod::operator+(float x) {
-	st += x;
-    return *this;
+float_mod float_mod::operator+(float x) const {
+    float_mod temp = *this;
+	temp.st += x;
+    return temp;
 }
 
-float_mod float_mod::operator-(float x) {
-	st -= x;
-    return *this;
+float_mod float_mod::operator-(float x) const {
+    float_mod temp = *this;
+	temp.st -= x;
+    return temp;
 }
 
 void float_mod::dist_norm() {
@@ -201,7 +152,7 @@ void float_mod::shrink() {
     dist_norm();
 }
 
-void float_mod::print_info() {
+void float_mod::print_info() const {
 	std::cout << "st: " << st << std::endl;
 	std::cout << "dist: ";
 	for (int i = 0; i < dist.size(); i++) {
@@ -210,7 +161,7 @@ void float_mod::print_info() {
 	std::cout << std::endl;
 }
 
-float float_mod::mean() {
+const float float_mod::mean() const {
     // sum = E[X] w/o st
     double sum = 0;
     double p_sum = 0;
@@ -222,7 +173,7 @@ float float_mod::mean() {
     return sum + st;
 }
 
-float float_mod::variance() {
+const float float_mod::variance() const {
     // sum = E[X^2] with st
     double sum = 0;
     double p_sum = 0;
@@ -234,17 +185,18 @@ float float_mod::variance() {
     return sum - pow(mean(), 2);
 }
 
-float float_mod::accum(float p = 0.5) {
+const float float_mod::accum(float p = 0.5) const {
     if (p <= 0 || p >= 1) {
         std::cout << "error, in float_mod::accum(p), p < 0 || p > 1" << std::endl;
         return 0;
     }
-    dist_norm();
+    float_mod temp = *this;
+    temp.dist_norm();
     double p_sum = 0;
-    for (int i = 0; i < dist.size(); i++) {
-        p_sum += dist[i];
+    for (int i = 0; i < temp.dist.size(); i++) {
+        p_sum += temp.dist[i];
         if (p_sum >= p) {
-            return TIME_STEP * i + st;
+            return TIME_STEP * i + temp.st;
         }
     }
     std::cout << "error, in float_mod::accum(p), overflow" << std::endl;
@@ -287,31 +239,8 @@ float_mod float_mod_mm(float_mod& x, float_mod&y, bool mode) {
     return res;
 }
 
-#endif
-
-// int main(int argc, char const *argv[])
-// {
-//     double a_st = 5;
-//     double b_st = 5;
-// 	std::vector<double> a = {1, 2, 3, 4};
-//     std::vector<double> b = {1, 1, 10};
-//     float_mod x(a, a_st);
-//     float_mod y(b, b_st);
-//     float_mod z = x + y;
-//     z = x - y;
-//     z.dist_norm();
-//     z.print_info();
-//     x.dist_norm();
-//     y.dist_norm();
-//     z = float_mod_mm(x, y, Min);
-//     z.print_info();
-//     z = float_mod_mm(x, y, Max);
-//     z.print_info();
-//     std::cout << x.mean() << std::endl;
-//     std::cout << x.variance() << std::endl;
-//     std::cout << x.accum(0.03) << std::endl;
-//     std::cout << x.accum(0.5) << std::endl;
-//     std::cout << x.accum(0.997) << std::endl;
-//     std::cout << x.accum(1.5) << std::endl;
-//     return 0;
-// }
+std::ostream& operator<<(std::ostream& os, const float_mod& obj) {
+    // write obj to stream
+    os << obj.mean();
+    return os;
+}

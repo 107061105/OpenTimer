@@ -64,7 +64,7 @@
 #include <ot/config.hpp>
 
 // modification
-#include <ot/mod.cpp>
+#include <ot/mod.hpp>
 
 namespace std {
   namespace filesystem = experimental::filesystem;

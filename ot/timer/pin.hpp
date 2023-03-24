@@ -2,7 +2,6 @@
 #define OT_TIMER_PIN_HPP_
 
 #include <ot/liberty/celllib.hpp>
-#include <ot/mod.cpp>
 
 namespace ot {
 

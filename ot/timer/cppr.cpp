@@ -74,7 +74,7 @@ CpprCache Timer::_cppr_cache(const Test& test, Split el, Tran rf) const {
 }
 
 // Function: _cppr_credit
-std::optional<float_mod> Timer::_cppr_credit(const Test& test, Split el, Tran rf) const {
+std::optional<float> Timer::_cppr_credit(const Test& test, Split el, Tran rf) const {
 
   assert(_cppr_analysis);
 
@@ -85,7 +85,7 @@ std::optional<float_mod> Timer::_cppr_credit(const Test& test, Split el, Tran rf
   if(sfxt.slack()) {
     auto tat = *test._arc._to._at[el][rf];
     auto rat = (el == MIN) ? tat.numeric - *sfxt.slack() : *sfxt.slack() + tat.numeric;
-    return rat - *test._rat[el][rf];
+    return (rat - test._rat[el][rf].value()).mean(); // TODO XD
   }
   else {
     return std::nullopt;
@@ -93,7 +93,7 @@ std::optional<float_mod> Timer::_cppr_credit(const Test& test, Split el, Tran rf
 }
 
 // Procedure: _cppr_credit
-std::optional<float_mod> Timer::_cppr_credit(const CpprCache& cppr, Pin& pin, Split el, Tran rf) const {
+std::optional<float> Timer::_cppr_credit(const CpprCache& cppr, Pin& pin, Split el, Tran rf) const {
 
   assert(_cppr_analysis);
 
@@ -115,14 +115,14 @@ std::optional<float_mod> Timer::_cppr_credit(const CpprCache& cppr, Pin& pin, Sp
 
       // Return the credit for the early (hold) test.  
       if(el == MIN) {
-        return dv;
+        return dv.value().mean(); // TODO XD
       }
       // Return the credit for the late (setup) test.
       else {
         auto [r, rrf] = _decode_pin(cppr._capb);
         auto dr = r->_delta_at(MAX, rrf, MIN, rrf);
         if(dv && dr) {
-          return *dv - *dr;
+          return (*dv - *dr).mean(); // TODO XD
         }
         else {
           return std::nullopt;
@@ -148,7 +148,7 @@ std::optional<float_mod> Timer::_cppr_credit(const CpprCache& cppr, Pin& pin, Sp
 }
 
 // Function: _cppr_offset
-std::optional<float_mod> Timer::_cppr_offset(const CpprCache& cppr, Pin& pin, Split el, Tran rf) const {
+std::optional<float> Timer::_cppr_offset(const CpprCache& cppr, Pin& pin, Split el, Tran rf) const {
 
   assert(_cppr_analysis);
 
@@ -157,10 +157,10 @@ std::optional<float_mod> Timer::_cppr_offset(const CpprCache& cppr, Pin& pin, Sp
   }
   else {
     if(auto credit = _cppr_credit(cppr, pin, el, rf); credit) {
-      return (el == MIN) ? (*at).numeric + *credit : *credit - (*at).numeric; 
+      return (el == MIN) ? (*at).numeric.mean() + *credit : *credit - (*at).numeric.mean(); // TODO XD
     }
     else {
-      return (el == MIN) ? (*at).numeric : float_mod() - (*at).numeric;
+      return (el == MIN) ? (*at).numeric.mean() : (*at).numeric.mean(); // TODO XD
     }
   }
 }

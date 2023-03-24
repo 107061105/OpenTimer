@@ -4,7 +4,6 @@
 #include <ot/spef/spef.hpp>
 #include <ot/timer/pin.hpp>
 #include <ot/traits.hpp>
-#include <ot/mod.cpp>
 
 namespace ot {
 

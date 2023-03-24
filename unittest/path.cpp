@@ -32,7 +32,7 @@ TEST_CASE("PathHeap") {
 
   std::vector<float> slacks;
   for(auto& path : paths) {
-    slacks.push_back(path->slack);
+    slacks.push_back(path->slack.mean());
     heap.push(std::move(path));
   }
   
@@ -42,7 +42,7 @@ TEST_CASE("PathHeap") {
   SUBCASE("Pop") {
     std::sort(slacks.begin(), slacks.end(), std::greater<float>());
     for(size_t i=0; i<slacks.size(); ++i) {
-      REQUIRE(heap.top()->slack == slacks[i]);
+      REQUIRE(heap.top()->slack.mean() == slacks[i]);
       heap.pop();
     }
   }
@@ -54,7 +54,7 @@ TEST_CASE("PathHeap") {
     REQUIRE(P.size() == N);
     REQUIRE(heap.num_paths() == 0);
     for(size_t i=0; i<P.size(); ++i) {
-      REQUIRE(P[i].slack == slacks[i]);
+      REQUIRE(P[i].slack.mean() == slacks[i]);
     }
   }
 
@@ -64,7 +64,7 @@ TEST_CASE("PathHeap") {
     heap.fit(10);
     REQUIRE(heap.num_paths() == 10);
     for(size_t i=0; i<10; ++i) {
-      REQUIRE(heap.top()->slack == slacks[N-(10-i)]);
+      REQUIRE(heap.top()->slack.mean() == slacks[N-(10-i)]);
       heap.pop();
     }
   }
@@ -78,7 +78,7 @@ TEST_CASE("PathHeap") {
     REQUIRE(P.size() == 10);
     REQUIRE(heap.num_paths() == 0);
     for(size_t i=0; i<P.size(); ++i) {
-      REQUIRE(P[i].slack == slacks[i]);
+      REQUIRE(P[i].slack.mean() == slacks[i]);
     }
   }
 
@@ -87,7 +87,7 @@ TEST_CASE("PathHeap") {
     ot::PathHeap heap2;
     auto paths2 = random_paths(N);
     for(auto& path : paths2) {
-      slacks.push_back(path->slack);
+      slacks.push_back(path->slack.mean());
       heap2.push(std::move(path));
     }
     heap.merge_and_fit(std::move(heap2), 2*N);
@@ -99,7 +99,7 @@ TEST_CASE("PathHeap") {
     REQUIRE(P.size() == 2*N);
     
     for(size_t i=0; i<P.size(); ++i) {
-      REQUIRE(P[i].slack == slacks[i]);
+      REQUIRE(P[i].slack.mean() == slacks[i]);
     }
   }
   

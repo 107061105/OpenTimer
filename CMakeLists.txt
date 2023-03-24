@@ -149,6 +149,7 @@ set(OT_CPP
   ot/utility/os.cpp
   ot/utility/tokenizer.cpp
   ot/spef/spef.cpp
+  ot/mod.cpp
 )
 
 #message(STATUS "OT_CPP: ${OT_CPP}")

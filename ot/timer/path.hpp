@@ -18,6 +18,7 @@ struct Point {
   float_mod at;           // arrival
 
   Point(const Pin&, Tran, float_mod);
+  Point(const Pin&, Tran, Pin::At&);
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -54,7 +55,7 @@ class PathHeap {
   // max heap
   struct PathComparator {
     bool operator () (const std::unique_ptr<Path>& a, const std::unique_ptr<Path>& b) const {
-      return a->slack < b->slack;
+      return a->slack.mean() < b->slack.mean(); // TODO XD
     }
   };
   

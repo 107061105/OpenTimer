@@ -119,7 +119,7 @@ void Timer::_spdp(SfxtCache& sfxt, const PathGuide* pg) const {
           continue;
         }
 
-        auto d = (el == MIN) ? *arc->_delay[el][urf][vrf] : -(*arc->_delay[el][urf][vrf]);
+        auto d = (el == MIN) ? *arc->_delay[el][urf][vrf] : float_mod(0) - arc->_delay[el][urf][vrf].value();
         sfxt._relax(u, v, _encode_arc(*arc, urf, vrf), d);
       }
     }
@@ -155,7 +155,7 @@ void Timer::_spfa(SfxtCache& sfxt) const {
     for(auto arc : pin->_fanin) {
       FOR_EACH_RF_IF(urf, arc->_delay[el][urf][vrf]) {
         auto u = _encode_pin(arc->_from, urf);
-        auto d = (el == MIN) ? *arc->_delay[el][urf][vrf] : -(*arc->_delay[el][urf][vrf]);
+        auto d = (el == MIN) ? *arc->_delay[el][urf][vrf] : float_mod(0) - arc->_delay[el][urf][vrf].value();
         if(sfxt._relax(u, v, _encode_arc(*arc, urf, vrf), d)) {
           if(!sfxt.__spfa[u] || *sfxt.__spfa[u] == false) {
             queue.push(u);
@@ -181,7 +181,7 @@ SfxtCache Timer::_sfxt_cache(const PrimaryOutput& po, Split el, Tran rf, const P
 
   // start at the root
   assert(!sfxt.__dist[v]);
-  sfxt.__dist[v] = (el == MIN) ? -(*po._rat[el][rf]) : *po._rat[el][rf];
+  sfxt.__dist[v] = (el == MIN) ? float_mod(0) - po._rat[el][rf].value() : *po._rat[el][rf];
 
   // shortest path dynamic programming
   _spdp(sfxt, pg);
@@ -212,7 +212,7 @@ SfxtCache Timer::_sfxt_cache(const Test& test, Split el, Tran rf, const PathGuid
 
   // Start at the D pin and perform SPFA all the way to the sources of data paths.
   assert(!sfxt.__dist[v]);
-  sfxt.__dist[v] = (el == MIN) ? -(*test._rat[el][rf]) : *test._rat[el][rf];
+  sfxt.__dist[v] = (el == MIN) ? float_mod(0) - test._rat[el][rf].value() : *test._rat[el][rf];
   
   // shortest path dynamic programming
   _spdp(sfxt, pg);

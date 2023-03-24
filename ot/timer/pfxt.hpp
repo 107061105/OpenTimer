@@ -34,7 +34,7 @@ class PfxtCache {
   // Min-heap comparator
   struct PfxtNodeComparator {
     bool operator () (std::unique_ptr<PfxtNode>& a, std::unique_ptr<PfxtNode>& b) const {
-      return a->slack > b->slack;
+      return a->slack.mean() > b->slack.mean(); // TODO XD
     }
   };
 

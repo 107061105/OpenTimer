@@ -9,6 +9,12 @@ Point::Point(const Pin& p, Tran t, float_mod v) :
   at         {v} {
 }
 
+Point::Point(const Pin& p, Tran t, Pin::At& v) :
+  pin        {p},
+  transition {t},
+  at         {v.numeric} {
+}
+
 // ------------------------------------------------------------------------------------------------
 
 // Constructor
@@ -106,20 +112,20 @@ void Path::dump_tau18(std::ostream& os) const{
   auto beg_at = front().at;
   auto end_at = back().at;
   auto path_slack = el == MIN ? ((end_at - beg_at) - rat) : (rat - (end_at - beg_at));
-  os << "= Required Time " << rat << '\n';
+  os << "= Required Time " << rat.mean() << '\n'; // TODO XD
   //Arrival Time is the total delay
-  os << "- Arrival Time " << end_at - beg_at << '\n';
+  os << "- Arrival Time " << (end_at - beg_at).mean() << '\n'; // TODO XD
   //os << "- Arrival Time " << back().at << '\n';  
-  os << "= Slack Time " << path_slack << '\n';
+  os << "= Slack Time " << path_slack.mean() << '\n'; // TODO XD
 
-  float at_offset = front().at;
-  std::optional<float> pi_at;
+  float_mod at_offset = front().at; // TODO XD
+  std::optional<float_mod> pi_at; // TODO XD
 
   for(const auto& p : *this) {
 
     if(!pi_at){ os << "- "; }
-    else{ os << p.at-*pi_at << " "; }
-    os << p.at-at_offset << " ";
+    else{ os << (p.at-*pi_at).mean() << " "; } // TODO XD
+    os << (p.at-at_offset).mean() << " "; // TODO XD
 
     if(p.transition == RISE){ os << "^ "; }
     else{ os << "v "; }
@@ -193,7 +199,7 @@ void Path::dump(std::ostream& os) const {
   
   // trace
   os << std::fixed << std::setprecision(3);
-  std::optional<float> pi_at;
+  std::optional<float_mod> pi_at;
 
   for(const auto& p : *this) {
 
@@ -207,11 +213,11 @@ void Path::dump(std::ostream& os) const {
 
     // delay
     os << std::setw(w2);
-    if(pi_at) os << p.at - *pi_at;
-    else os << p.at;
+    if(pi_at) os << (p.at - *pi_at).mean(); // TODO XD
+    else os << p.at.mean(); // TODO XD
     
     // arrival time
-    os << std::setw(w3) << p.at;
+    os << std::setw(w3) << p.at.mean(); // TODO XD
 
     // transition
     os << std::setw(w4) << to_string(p.transition);
@@ -228,7 +234,7 @@ void Path::dump(std::ostream& os) const {
   }
 
   os << std::setw(w1) << "arrival" 
-     << std::setw(w2+w3) << at;
+     << std::setw(w2+w3) << at.mean();
   std::fill_n(std::ostream_iterator<char>(os), w4 + 2, ' ');
   os << "data arrival time" << '\n'; 
 
@@ -240,13 +246,13 @@ void Path::dump(std::ostream& os) const {
     [&] (Test* test) {
         
       auto tv  = (test->_arc.timing_view())[split];
-      auto sum = 0.0f;
+      auto sum = float_mod(0);
 
       // related pin latency
       os << std::setw(w1) << "related pin";
       if(auto c = test->_related_at[split][tran]; c) {
-        sum += *c;
-        os << std::setw(w2) << *c << std::setw(w3) << sum;
+        sum = sum + *c;
+        os << std::setw(w2) << (*c).mean() << std::setw(w3) << sum.mean();
       }
       else {
         os << std::setw(w2+w3) << "n/a";
@@ -274,13 +280,13 @@ void Path::dump(std::ostream& os) const {
 
         switch(split) {
           case MIN: 
-            sum += *c;
-            os << std::setw(w2) << c.value() << std::setw(w3) << sum;
+            sum = sum + *c;
+            os << std::setw(w2) << c.value() << std::setw(w3) << sum.mean();
           break;
 
           case MAX:
-            sum -= *c;
-            os << std::setw(w2) << -c.value() << std::setw(w3) << sum;
+            sum = sum - *c;
+            os << std::setw(w2) << -c.value() << std::setw(w3) << sum.mean();
           break;
         }
         
@@ -300,19 +306,19 @@ void Path::dump(std::ostream& os) const {
       // cppr credit
       if(auto c = test->_cppr_credit[split][tran]; c) {
         os << std::setw(w1) << "cppr credit";
-        sum += *c;
-        os << std::setw(w2) << *c << std::setw(w3) << sum << '\n';
+        sum = sum + *c;
+        os << std::setw(w2) << *c << std::setw(w3) << sum.mean() << '\n';
       }
 
       OT_LOGW_IF(
-        std::fabs(sum - rat) > 1.0f, 
+        std::fabs((sum - rat).mean()) > 1.0f, 
         "unstable numerics in PBA and GBA rats: ", sum, " vs ", rat
       );
     },
     [&] (PrimaryOutput* po) {
       os << std::setw(w1) << "port";
       if(auto v = po->rat(split, tran); v) {
-        os << std::setw(w2) << *v << std::setw(w3) << *v;
+        os << std::setw(w2) << (*v).mean() << std::setw(w3) << (*v).mean();
         std::fill_n(std::ostream_iterator<char>(os), w4+2, ' ');
         os << "output port delay" << '\n';
       }
@@ -322,15 +328,15 @@ void Path::dump(std::ostream& os) const {
     }
   }, endpoint->_handle);
   
-  os << std::setw(w1) << "required" << std::setw(w2+w3) << rat;
+  os << std::setw(w1) << "required" << std::setw(w2+w3) << rat.mean();
   std::fill_n(std::ostream_iterator<char>(os), w4+2, ' ');
   os << "data required time" << '\n';
 
   // slack
   std::fill_n(std::ostream_iterator<char>(os), W, '-');
-  os << '\n' << std::setw(w1) << "slack" << std::setw(w2+w3) << slack;
+  os << '\n' << std::setw(w1) << "slack" << std::setw(w2+w3) << slack.mean();
   std::fill_n(std::ostream_iterator<char>(os), w4+2, ' ');
-  os << (slack < 0.0f ? "VIOLATED" : "MET") << '\n';
+  os << (slack.mean() < 0.0f ? "VIOLATED" : "MET") << '\n';
   
   // restore the format
   os.flags(fmt);
@@ -421,7 +427,7 @@ std::string PathHeap::dump() const {
   std::ostringstream oss;
   oss << "# Paths: " << _paths.size() << '\n';
   for(size_t i=0; i<_paths.size(); ++i) {
-    oss << "slack[" << i << "]: " << _paths[i]->slack << '\n'; 
+    oss << "slack[" << i << "]: " << _paths[i]->slack.mean() << '\n'; 
   }
   return oss.str();
 }

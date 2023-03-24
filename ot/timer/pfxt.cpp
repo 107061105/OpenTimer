@@ -81,7 +81,7 @@ PfxtCache Timer::_pfxt_cache(const SfxtCache& sfxt, const PathGuide* pg) const {
     }
     // Set slack uppper bound to 40000 for leon3mp_iccad in tau 2018 contest 
     //else if(auto s = *sfxt.__dist[k] + *v; s < 40000.0f) {
-    else if(auto s = *sfxt.__dist[k] + *v; s < slack_upper_bound && s > slack_lower_bound) { 
+    else if(auto s = *sfxt.__dist[k] + *v; s.mean() < slack_upper_bound && s.mean() > slack_lower_bound) { // TODO XD
       pfxt._push(s, sfxt._S, k, nullptr, nullptr);
     }
   }
@@ -109,7 +109,7 @@ void Timer::_spur(Endpoint& ept, size_t K, PathHeap& heap, const PathGuide* pg) 
 
     // If the maximum among the minimum is smaller than the current minimum,
     // there is no need to do more.
-    if(heap.num_paths() >= K && heap.top()->slack <= node->slack) {
+    if(heap.num_paths() >= K && heap.top()->slack.mean() <= node->slack.mean()) { // TODO XD
       break;
     }
     
@@ -182,7 +182,7 @@ void Timer::_spur(PfxtCache& pfxt, const PfxtNode& pfx, const PathGuide* pg) con
 
         // Set slack uppper bound to 40000 for leon3mp_iccad in tau 2018 contest 
         //if(s < 40000.0f) {
-        if(s < slack_upper_bound && s > slack_lower_bound) {
+        if(s.mean() < slack_upper_bound && s.mean() > slack_lower_bound) { // TODO XD
           pfxt._push(s, u, v, arc, &pfx);
         }
       }

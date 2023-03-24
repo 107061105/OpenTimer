@@ -4,6 +4,12 @@
 
 ### Pfxt, Sfxt, test, dump, cppr
 
+### in net.cpp, we have multiplication of float_mod
+
+### check out every float_mod.mean(), I use mean() to convert back to float for now, may need fix this
+
+### time unit
+
 ## Notations
 
 ### res = resistance

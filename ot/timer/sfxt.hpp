@@ -36,15 +36,15 @@ class SfxtCache {
 
     std::vector<size_t> _pins;
     
-    std::unordered_map<size_t, std::optional<float>> _srcs;
+    std::unordered_map<size_t, std::optional<float_mod>> _srcs;
     
     inline thread_local static std::vector<size_t> __pins;
-    inline thread_local static std::vector<std::optional<float>>  __dist;
+    inline thread_local static std::vector<std::optional<float_mod>>  __dist;
     inline thread_local static std::vector<std::optional<size_t>> __tree;
     inline thread_local static std::vector<std::optional<size_t>> __link;
     inline thread_local static std::vector<std::optional<bool>>   __spfa;
 
-    inline bool _relax(size_t, size_t, std::optional<size_t>, float);
+    inline bool _relax(size_t, size_t, std::optional<size_t>, float_mod);
 };
 
 // Function: root
@@ -63,8 +63,8 @@ inline Split SfxtCache::split() const {
 }
 
 // Function: _relax        
-inline bool SfxtCache::_relax(size_t u, size_t v, std::optional<size_t> e, float d) {
-  if(!__dist[u] || *__dist[v] + d < *__dist[u]) {
+inline bool SfxtCache::_relax(size_t u, size_t v, std::optional<size_t> e, float_mod d) {
+  if(!__dist[u] || (*__dist[v] + d).mean() < (*__dist[u]).mean()) { // TODO XD
     __dist[u] = *__dist[v] + d;
     __tree[u] = v;
     __link[u] = e;

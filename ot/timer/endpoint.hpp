@@ -75,17 +75,17 @@ inline const PrimaryOutput* Endpoint::primary_output() const {
 
 // Operator <
 inline bool Endpoint::operator < (const Endpoint& rhs) const {
-  return slack() < rhs.slack();
+  return slack().mean() < rhs.slack().mean(); // TODO XD
 }
 
 // Operator >
 inline bool Endpoint::operator > (const Endpoint& rhs) const {
-  return slack() > rhs.slack();
+  return slack().mean() > rhs.slack().mean(); // TODO XD
 }
 
 // Operator ==
 inline bool Endpoint::operator == (const Endpoint& rhs) const {
-  return slack() == rhs.slack();
+  return slack().mean() == rhs.slack().mean(); // TODO XD
 }
 
 };  // end of namespace ot. -----------------------------------------------------------------------

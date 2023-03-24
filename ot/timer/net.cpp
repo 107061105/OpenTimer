@@ -167,7 +167,7 @@ void Rct::_update_ldelay(RctNode* parent, RctNode* from) {
   }
 
   FOR_EACH_EL_RF(el, rf) {
-    from->_ldelay[el][rf] = from->_ldelay[el][rf] + from->cap(el, rf) * from->_delay[el][rf]; // TODO XD
+    from->_ldelay[el][rf] = from->_ldelay[el][rf] + from->cap(el, rf) * from->_delay[el][rf].mean(); // TODO XD
   }
 }
 
@@ -178,14 +178,14 @@ void Rct::_update_response(RctNode* parent, RctNode* from) {
   for(auto e : from->_fanout) {
     if(auto& to = e->_to; &to != parent) {
       FOR_EACH_EL_RF(el, rf) {
-        to._beta[el][rf] = from->_beta[el][rf] + e->_res * to._ldelay[el][rf]; // TODO XD
+        to._beta[el][rf] = from->_beta[el][rf] + e->_res * to._ldelay[el][rf].mean(); // TODO XD
       }
       _update_response(from, &to);
     }
   }
 
   FOR_EACH_EL_RF(el, rf) {
-    from->_impulse[el][rf] = 2.0f * from->_beta[el][rf] - std::pow(from->_delay[el][rf], 2); // TODO XD
+    from->_impulse[el][rf] = 2.0f * from->_beta[el][rf] - std::pow(from->_delay[el][rf].mean(), 2); // TODO XD
   }
 }
 

@@ -34,7 +34,7 @@ void Shell::_report_at() {
   }
 
   auto at = _timer.report_at(std::move(pin), el, rf);
-  _os << (at ? *at : std::numeric_limits<float>::quiet_NaN()) << '\n';
+  _os << (at ? (*at).mean() : std::numeric_limits<float>::quiet_NaN()) << '\n';
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ void Shell::_report_rat() {
   }
 
   auto rat = _timer.report_rat(std::move(pin), el, rf);
-  _os << (rat ? *rat : std::numeric_limits<float>::quiet_NaN()) << '\n';
+  _os << (rat ? (*rat).mean() : std::numeric_limits<float>::quiet_NaN()) << '\n';
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ void Shell::_report_slack() {
   }
 
   auto slack = _timer.report_slack(std::move(pin), el, rf);
-  _os << (slack ? *slack : std::numeric_limits<float>::quiet_NaN()) << '\n';
+  _os << (slack ? (*slack).mean() : std::numeric_limits<float>::quiet_NaN()) << '\n';
 }
 
 // ------------------------------------------------------------------------------------------------
