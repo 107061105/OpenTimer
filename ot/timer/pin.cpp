@@ -58,12 +58,20 @@ void PrimaryInput::_scale_time(float s) {
 
 // ------------------------------------------------------------------------------------------------
 
+// // Constructor
+// Pin::At::At(Arc* a, Split el, Tran rf, float v) : 
+//   pi_arc {a}, 
+//   pi_el  {el}, 
+//   pi_rf  {rf}, 
+//   numeric  {v} {
+// }
+
 // Constructor
-Pin::At::At(Arc* a, Split el, Tran rf, float v) : 
+Pin::At::At(Arc* a, Split el, Tran rf, Statisical_delay v) : 
   pi_arc {a}, 
   pi_el  {el}, 
   pi_rf  {rf}, 
-  numeric  {v} {
+  dist   {v} {
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -343,17 +351,56 @@ void Pin::_relax_slew(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, float 
 
 // Procedure: _relax_at
 // Update the arrival time of the node from a given fanin node.
+// void Pin::_relax_at(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, float val) {
+  
+//   switch (tel) {
+//     case MIN:
+//       if(!_at[tel][trf] || val < *_at[tel][trf]) {
+//         _at[tel][trf].emplace(arc, fel, frf, val);
+//       }
+//     break;
+//     case MAX:
+//       if(!_at[tel][trf] || val > *_at[tel][trf]) {
+//         _at[tel][trf].emplace(arc, fel, frf, val);
+//       }
+//     break;
+//   }
+// }
+
+// yclo
+// Procedure: _relax_at
+// Update the arrival time of the node from a given fanin node.
 void Pin::_relax_at(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, float val) {
   
+  Statisical_delay dist(val, 0.0f, 0.0f, 0.0f);
+
   switch (tel) {
     case MIN:
-      if(!_at[tel][trf] || val < *_at[tel][trf]) {
-        _at[tel][trf].emplace(arc, fel, frf, val);
+      if(!_at[tel][trf] || dist < *_at[tel][trf]) {
+        _at[tel][trf].emplace(arc, fel, frf, dist);
       }
     break;
     case MAX:
-      if(!_at[tel][trf] || val > *_at[tel][trf]) {
-        _at[tel][trf].emplace(arc, fel, frf, val);
+      if(!_at[tel][trf] || dist > *_at[tel][trf]) {
+        _at[tel][trf].emplace(arc, fel, frf, dist);
+      }
+    break;
+  }
+}
+
+// Procedure: _relax_at
+// Update the arrival time of the node from a given fanin node.
+void Pin::_relax_at(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, Statisical_delay dist) {
+  
+  switch (tel) {
+    case MIN:
+      if(!_at[tel][trf] || dist < *_at[tel][trf]) {
+        _at[tel][trf].emplace(arc, fel, frf, dist);
+      }
+    break;
+    case MAX:
+      if(!_at[tel][trf] || dist > *_at[tel][trf]) {
+        _at[tel][trf].emplace(arc, fel, frf, dist);
       }
     break;
   }

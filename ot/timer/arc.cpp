@@ -73,9 +73,17 @@ void Arc::_remap_timing(Split el, const Timing& timing) {
 }
 
 // Procedure: _reset_delay
-void Arc::_reset_delay() {
+// void Arc::_reset_delay() {
+//   FOR_EACH_EL_RF_RF(el, frf, trf) {
+//     _delay[el][frf][trf].reset();
+//   }
+// }
+
+// yclo
+// Procedure: _reset_s_delay
+void Arc::_reset_s_delay() {
   FOR_EACH_EL_RF_RF(el, frf, trf) {
-    _delay[el][frf][trf].reset();
+    _s_delay[el][frf][trf].reset();
   }
 }
 
@@ -110,7 +118,39 @@ void Arc::_fprop_slew() {
 }
 
 // Procedure: _fprop_delay
-void Arc::_fprop_delay() {
+// void Arc::_fprop_delay() {
+  
+//   if(_has_state(LOOP_BREAKER)) {
+//     return;
+//   }
+
+//   std::visit(Functors{
+//     // Case 1: Net arc
+//     [this] (Net* net) {
+//       FOR_EACH_EL_RF(el, rf) {
+//         _delay[el][rf][rf] = net->_delay(el, rf, _to);
+//       }
+//     },
+//     // Case 2: Cell arc
+//     [this] (TimingView tv) {
+//       FOR_EACH_EL_RF_RF_IF(el, frf, trf, (tv[el] && _from._slew[el][frf])) {
+//         auto lc = (_to._net) ? _to._net->_load(el, trf) : 0.0f;
+//         auto si = *_from._slew[el][frf];
+//         _delay[el][frf][trf] = tv[el]->delay(frf, trf, si, lc);
+//         // if ( _delay[el][frf][trf].has_value()) {
+//         //   OT_LOGD("Arc: ", name(),  " ", el, " ", frf, " ", trf, "\n", 
+//         //           "load: ", lc, " slew:", si, " delay: ", _delay[el][frf][trf].value(), "\n");
+//         // } 
+//         // else {
+//         //   OT_LOGD("Arc: ", name(),  " don't have value!!!\n");
+//         // }
+//       }
+//     }
+//   }, _handle);
+// }
+
+// Procedure: _fprop_s_delay
+void Arc::_fprop_s_delay() {
   
   if(_has_state(LOOP_BREAKER)) {
     return;
@@ -120,7 +160,7 @@ void Arc::_fprop_delay() {
     // Case 1: Net arc
     [this] (Net* net) {
       FOR_EACH_EL_RF(el, rf) {
-        _delay[el][rf][rf] = net->_delay(el, rf, _to);
+        _s_delay[el][rf][rf] = net->_s_delay(el, rf, _to);
       }
     },
     // Case 2: Cell arc
@@ -128,7 +168,15 @@ void Arc::_fprop_delay() {
       FOR_EACH_EL_RF_RF_IF(el, frf, trf, (tv[el] && _from._slew[el][frf])) {
         auto lc = (_to._net) ? _to._net->_load(el, trf) : 0.0f;
         auto si = *_from._slew[el][frf];
-        _delay[el][frf][trf] = tv[el]->delay(frf, trf, si, lc);
+        _s_delay[el][frf][trf] = tv[el]->s_delay(frf, trf, si, lc);
+        if ( _s_delay[el][frf][trf].has_value()) {
+          OT_LOGD("Arc: ", name(),  " ", el, " ", frf, " ", trf, "\n", " load: ", lc, " slew:", si, "\n",
+                  " nominal: ",   _s_delay[el][frf][trf].value().nominal(),   "\n",
+                  " meanshift: ", _s_delay[el][frf][trf].value().meanshift(), "\n",
+                  " std: ",       _s_delay[el][frf][trf].value().stdev(),     "\n",
+                  " skew: ",      _s_delay[el][frf][trf].value().skew(),      "\n"
+                 );
+        }
       }
     }
   }, _handle);
@@ -141,8 +189,8 @@ void Arc::_fprop_at() {
     return;
   }
 
-  FOR_EACH_EL_RF_RF_IF(el, frf, trf, _from._at[el][frf] && _delay[el][frf][trf]) {
-    _to._relax_at(this, el, frf, el, trf, *_delay[el][frf][trf] + *_from._at[el][frf]);
+  FOR_EACH_EL_RF_RF_IF(el, frf, trf, _from._at[el][frf] && _s_delay[el][frf][trf]) {
+    _to._relax_at(this, el, frf, el, trf, *_s_delay[el][frf][trf] + *_from._at[el][frf]);
   }
 }
 
@@ -156,8 +204,8 @@ void Arc::_bprop_rat() {
   std::visit(Functors{
     // Case 1: Net arc
     [this] (Net* net) {
-      FOR_EACH_EL_RF_IF(el, rf, _to._rat[el][rf] && _delay[el][rf][rf]) {
-        _from._relax_rat(this, el, rf, el, rf, *_to._rat[el][rf] - *_delay[el][rf][rf]);
+      FOR_EACH_EL_RF_IF(el, rf, _to._rat[el][rf] && _s_delay[el][rf][rf]) {
+        _from._relax_rat(this, el, rf, el, rf, *_to._rat[el][rf] - *_s_delay[el][rf][rf]);
       }
     },
     // Case 2: Cell arc
@@ -167,10 +215,10 @@ void Arc::_bprop_rat() {
         
         // propagation arc
         if(!tv[el]->is_constraint()) {
-          if(!_to._rat[el][trf] || !_delay[el][frf][trf]) {
+          if(!_to._rat[el][trf] || !_s_delay[el][frf][trf]) {
             continue;
           }
-          _from._relax_rat(this, el, frf, el, trf, *_to._rat[el][trf] - *_delay[el][frf][trf]);
+          _from._relax_rat(this, el, frf, el, trf, *_to._rat[el][trf] - *_s_delay[el][frf][trf]);
         }
         // constraint arc
         else {

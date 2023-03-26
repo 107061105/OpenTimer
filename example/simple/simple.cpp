@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
        .read_sdc("simple.sdc");
 
   // get the top-5 worst critical paths
-  auto paths = timer.report_timing(5);
+  auto paths = timer.report_timing(1);
 
   for(size_t i=0; i<paths.size(); ++i) {
     std::cout << "----- Critical Path " << i << " -----\n";
@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
   }
 
   // dump the timing graph to dot format for debugging
-  timer.dump_graph(std::cout);
+  // timer.dump_graph(std::cout);
 
   return 0;
 }

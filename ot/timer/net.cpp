@@ -443,6 +443,26 @@ std::optional<float> Net::_delay(Split m, Tran t, Pin& to) const {
   }, _rct);
 }
 
+// yclo
+// Function: _s_delay
+// Query the slew at the given pin through this net.
+std::optional<Statisical_delay> Net::_s_delay(Split m, Tran t, Pin& to) const {
+  
+  assert(_rc_timing_updated && to._net == this);
+
+  return std::visit(Functors{
+    [&] (const EmptyRct&) -> std::optional<Statisical_delay> {
+      return Statisical_delay(0.0f, 0.0f, 0.0f, 0.0f);
+    },
+    [&] (const Rct& rct) -> std::optional<Statisical_delay> {
+      if(auto node = rct.node(to._name); node) {
+        return Statisical_delay(node->delay(m, t), 0.0f, 0.0f, 0.0f);
+      }
+      else return std::nullopt;
+    }
+  }, _rct);
+}
+
 
 };  // end of namespace ot. -----------------------------------------------------------------------
 

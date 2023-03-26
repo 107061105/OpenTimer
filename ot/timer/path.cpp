@@ -176,16 +176,18 @@ void Path::dump(std::ostream& os) const {
   size_t w1 = 11;
   size_t w2 = 12;
   size_t w3 = 12;
-  size_t w4 = 6;
-  size_t w5 = 13;
-  size_t W = w1 + w2 + w3 + w4 + w5;
+  size_t w4 = 6; 
+  size_t w5 = 12;
+  size_t w6 = 13;
+  size_t W = w1 + w2 + w3 + w4 + w5 + w6;
 
   std::fill_n(std::ostream_iterator<char>(os), W, '-');
   os << '\n'
      << std::setw(w1) << "Type"
      << std::setw(w2) << "Delay"
      << std::setw(w3) << "Time"
-     << std::setw(w4) << "Dir";
+     << std::setw(w4) << "Dir"
+     << std::setw(w5) << "Slew";
   std::fill_n(std::ostream_iterator<char>(os), 2, ' ');
   os << "Description" << '\n';
   std::fill_n(std::ostream_iterator<char>(os), W, '-');
@@ -216,6 +218,8 @@ void Path::dump(std::ostream& os) const {
     // transition
     os << std::setw(w4) << to_string(p.transition);
 
+    os << std::setw(w5) << "delay";
+
     // pin name
     std::fill_n(std::ostream_iterator<char>(os), 2, ' ');
     if(os << p.pin.name(); p.pin.gate()) {
@@ -229,7 +233,7 @@ void Path::dump(std::ostream& os) const {
 
   os << std::setw(w1) << "arrival" 
      << std::setw(w2+w3) << at;
-  std::fill_n(std::ostream_iterator<char>(os), w4 + 2, ' ');
+  std::fill_n(std::ostream_iterator<char>(os), w4 + w5 + 2, ' ');
   os << "data arrival time" << '\n'; 
 
   // Print the required arrival time
@@ -551,7 +555,9 @@ void Timer::_recover_datapath(Path& path, const SfxtCache& sfxt) const {
     u = *sfxt.__tree[u];
     std::tie(upin, urf) = _decode_pin(u);
     assert(path.back().transition == frf && urf == trf);
-    auto at = path.back().at + *arc->_delay[sfxt._el][frf][trf];
+    // yclo
+    // auto at = path.back().at + *arc->_delay[sfxt._el][frf][trf];
+    auto at = path.back().at + *arc->_s_delay[sfxt._el][frf][trf];
     path.emplace_back(*upin, urf, at);
   }
 }
@@ -579,7 +585,9 @@ void Timer::_recover_datapath(
   // internal deviation
   else {
     assert(!path.empty());
-    auto at = path.back().at + *node->arc->_delay[sfxt._el][path.back().transition][urf];
+    // auto at = path.back().at + *node->arc->_delay[sfxt._el][path.back().transition][urf];
+    // yclo
+    float at = path.back().at + node->arc->_s_delay[sfxt._el][path.back().transition][urf].value().nominal();
     path.emplace_back(*upin, urf, at);
   }
 
@@ -589,7 +597,9 @@ void Timer::_recover_datapath(
     u = *sfxt.__tree[u];   
     std::tie(upin, urf) = _decode_pin(u);
     assert(path.back().transition == frf && urf == trf);
-    auto at = path.back().at + *arc->_delay[sfxt._el][frf][trf]; 
+    // yclo
+    // auto at = path.back().at + *arc->_delay[sfxt._el][frf][trf]; 
+    float at = path.back().at + *arc->_s_delay[sfxt._el][frf][trf]; 
     path.emplace_back(*upin, urf, at);
   }
 }
@@ -644,7 +654,9 @@ void Timer::_build_rank(PathGuide& pg, Pin& pin, size_t& rank) {
 
       bool is_arc = false;
       FOR_EACH_EL_RF_RF(el, urf, vrf){
-        is_arc = is_arc || arc->_delay[el][urf][vrf].has_value();
+        // yclo
+        // is_arc = is_arc || arc->_delay[el][urf][vrf].has_value();
+        is_arc = is_arc || arc->_s_delay[el][urf][vrf].has_value();
       }    
 
       //There is a possbile arc
@@ -839,7 +851,9 @@ void Timer::_build_level(PathGuide& pg, size_t v, size_t level){
   if(!pin->is_datapath_source() || level > 0) {
     for(auto arc : pin->_fanin) {
       //TODO: Question: el affect connection between pins?
-      FOR_EACH_EL_RF_IF(el, urf, arc->_delay[el][urf][vrf]) {
+      // FOR_EACH_EL_RF_IF(el, urf, arc->_delay[el][urf][vrf]) {
+      // yclo
+      FOR_EACH_EL_RF_IF(el, urf, arc->_s_delay[el][urf][vrf]) {
         auto u = _encode_pin(arc->_from, urf);
         //if the pin is not visited before AND reachable from source AND a fanin arc in range
         if(!_idx2lvl[pg.id][u] && 
@@ -910,7 +924,9 @@ void Timer::_bfs_forward(PathGuide& pg, size_t src_level) {
     auto [pin_u, urf] = _decode_pin(u);
 
     for(auto arc: pin_u->_fanout) {
-      FOR_EACH_EL_RF_IF(el, vrf, arc->_delay[el][urf][vrf]){
+      // yclo
+      // FOR_EACH_EL_RF_IF(el, vrf, arc->_delay[el][urf][vrf]){
+      FOR_EACH_EL_RF_IF(el, vrf, arc->_s_delay[el][urf][vrf]){
         size_t v = _encode_pin(arc->_to, vrf);
         if(_is_fanout_inbound(pg, v, src_level+1) && !_has_pin[pg.id][v]){
           _has_pin[pg.id][v] = true;
@@ -1039,7 +1055,9 @@ void Timer::_update_tail_connection(PathGuide& pg, PathSet& ps) {
 
     //check all fanout edges 
     for(auto arc : pin->_fanout){
-      FOR_EACH_EL_RF_IF(el, vrf, arc->_delay[el][urf][vrf]){
+      // yclo
+      FOR_EACH_EL_RF_IF(el, vrf, arc->_s_delay[el][urf][vrf]){
+      // FOR_EACH_EL_RF_IF(el, vrf, arc->_delay[el][urf][vrf]){
         size_t v = _encode_pin(arc->_to, vrf);
         //arc is in range and pin v is not visited
         if(!_has_pin[pg.id][v].has_value()){

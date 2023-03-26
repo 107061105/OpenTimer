@@ -739,12 +739,17 @@ void Timer::_fprop_delay(Pin& pin) {
 
   // clear delay
   for(auto arc : pin._fanin) {
-    arc->_reset_delay();
+    // arc->_reset_delay();
+    // yclo
+    arc->_reset_s_delay();
   }
 
   // Compute the delay from its fanin.
   for(auto arc : pin._fanin) {
-    arc->_fprop_delay();
+    // OT_LOGD("Pin: ", pin.name(), "\n");
+    // arc->_fprop_delay();
+    // yclo
+    arc->_fprop_s_delay();
   }
 }
 
@@ -758,6 +763,7 @@ void Timer::_fprop_at(Pin& pin) {
   if(auto pi = pin.primary_input(); pi) {
     FOR_EACH_EL_RF_IF(el, rf, pi->_at[el][rf]) {
       pin._relax_at(nullptr, el, rf, el, rf, *(pi->_at[el][rf]));
+      OT_LOGD("Pin: ", pin.name(), ", ", *(pi->_at[el][rf]), "\n");
     }
   }
 
@@ -1335,10 +1341,21 @@ std::optional<float> Timer::report_at(const std::string& name, Split m, Tran t) 
 }
 
 // Function: _report_at
+// std::optional<float> Timer::_report_at(const std::string& name, Split m, Tran t) {
+//   _update_timing();
+//   if(auto itr = _pins.find(name); itr != _pins.end() && itr->second._at[m][t]) {
+//     return itr->second._at[m][t]->numeric;
+//   }
+//   else return std::nullopt;
+// }
+
+// Function: _report_at
 std::optional<float> Timer::_report_at(const std::string& name, Split m, Tran t) {
   _update_timing();
   if(auto itr = _pins.find(name); itr != _pins.end() && itr->second._at[m][t]) {
-    return itr->second._at[m][t]->numeric;
+    // return itr->second._at[m][t]->numeric;
+    // yclo
+    return itr->second._at[m][t]->dist.nominal();
   }
   else return std::nullopt;
 }

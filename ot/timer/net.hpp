@@ -4,6 +4,7 @@
 #include <ot/spef/spef.hpp>
 #include <ot/timer/pin.hpp>
 #include <ot/traits.hpp>
+#include <ot/liberty/delay.hpp>
 
 namespace ot {
 
@@ -179,6 +180,8 @@ class Net {
 
     std::optional<float> _slew(Split, Tran, float, Pin&) const;
     std::optional<float> _delay(Split, Tran, Pin&) const;
+    // yclo
+    std::optional<Statisical_delay> _s_delay(Split, Tran, Pin&) const;
     
     void _update_rc_timing();
     void _attach(spef::Net&&);

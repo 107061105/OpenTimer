@@ -2,6 +2,7 @@
 #define OT_LIBERTY_TIMING_HPP_
 
 #include <ot/liberty/lut.hpp>
+#include <ot/liberty/delay.hpp>
 
 namespace ot {
 
@@ -127,6 +128,9 @@ struct Timing {
   void scale_capacitance(float);
 
   std::optional<float> delay(Tran, Tran, float, float) const;
+
+  // yclo
+  std::optional<Statisical_delay> s_delay(Tran, Tran, float, float) const;
   std::optional<float> stdev(Tran, Tran, float, float) const;
   std::optional<float> skew(Tran, Tran, float, float) const;
   std::optional<float> meanshift(Tran, Tran, float, float) const;

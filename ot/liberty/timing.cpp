@@ -477,6 +477,127 @@ std::optional<float> Timing::delay(Tran irf, Tran orf, float slew, float load) c
   return (*lut)(val1, val2); 
 }
 
+// yclo
+// Function: s_delay
+// Query the statisical delay, including nominal value, meanshift, standard deviation and skew,
+// which is referenced by the output transition status, input slew, and driving load. The output 
+// transition status indicates the type of lut that should be used during the linear interpolation 
+// or linear extrapolation.
+std::optional<Statisical_delay> Timing::s_delay(Tran irf, Tran orf, float slew, float load) const {
+
+  if(!is_transition_defined(irf, orf)) {
+    return std::nullopt;
+  }
+  
+  const Lut* lut_nom  {nullptr}; // nominal value
+  const Lut* lut_ms   {nullptr}; // mean shift
+  const Lut* lut_std  {nullptr}; // standard deviation
+  const Lut* lut_skew {nullptr}; // skewness
+
+  switch(orf) {
+    case RISE:
+      lut_nom  = cell_rise      ? &(cell_rise.value())      : nullptr;
+      lut_ms   = rise_meanshift ? &(rise_meanshift.value()) : nullptr;
+      lut_std  = rise_stdev     ? &(rise_stdev.value())     : nullptr;
+      lut_skew = rise_skew      ? &(rise_skew.value())      : nullptr;
+    break;
+
+    case FALL:
+      lut_nom  = cell_fall      ? &(cell_fall.value())      : nullptr;
+      lut_ms   = fall_meanshift ? &(fall_meanshift.value()) : nullptr;
+      lut_std  = fall_stdev     ? &(fall_stdev.value())     : nullptr;
+      lut_skew = fall_skew      ? &(fall_skew.value())      : nullptr;
+    break;
+
+    default:
+      assert(false);
+    break;
+  };
+  
+  if((lut_nom == nullptr) || (lut_ms == nullptr) || (lut_std == nullptr) || (lut_skew == nullptr)) {
+    return std::nullopt;
+  }
+  
+  float nominal = 0.0f, meanshift = 0.0f, stdev = 0.0f, skew = 0.0f;
+
+  // Case 1: scalar.
+  // nominal
+  if(lut_nom->lut_template == nullptr) {     
+    if(lut_nom->is_scalar()) {
+      nominal = lut_nom->table[0];
+    }
+    else {
+      OT_LOGF("lut of nominal without template must contain a single scalar");
+    }
+  }
+  // mean shift
+  if(lut_ms->lut_template == nullptr) {     
+    if(lut_ms->is_scalar()) {
+      meanshift = lut_ms->table[0];
+    }
+    else {
+      OT_LOGF("lut of mean shift without template must contain a single scalar");
+    }
+  }
+  // standard deviation
+  if(lut_std->lut_template == nullptr) {     
+    if(lut_std->is_scalar()) {
+      stdev = lut_std->table[0];
+    }
+    else {
+      OT_LOGF("lut of standard deviation without template must contain a single scalar");
+    }
+  }
+  // skewness
+  if(lut_skew->lut_template == nullptr) {     
+    if(lut_skew->is_scalar()) {
+      skew = lut_nom->table[0];
+    }
+    else {
+      OT_LOGF("lut of nominal without template must contain a single scalar");
+    }
+  }
+
+  // Case 2: non-scalar table.
+  float val1 {.0f}, val2 {.0f};
+  
+  // - obtain the input numerics
+  assert(lut_nom->lut_template->variable1 || lut_ms->lut_template->variable1 ||
+         lut_std->lut_template->variable1 || lut_skew->lut_template->variable1);
+
+  switch(*(lut_nom->lut_template->variable1)) {
+
+    case LutVar::TOTAL_OUTPUT_NET_CAPACITANCE:
+      if(lut_nom->lut_template->variable2) {
+        assert(lut_nom->lut_template->variable2 == LutVar::INPUT_NET_TRANSITION);
+      }
+      val1 = load;
+      val2 = slew;
+    break;
+
+    case LutVar::INPUT_NET_TRANSITION:
+      if(lut_nom->lut_template->variable2) {
+        assert(lut_nom->lut_template->variable2 == LutVar::TOTAL_OUTPUT_NET_CAPACITANCE);
+      }
+      val1 = slew;
+      val2 = load;
+    break;
+
+    default:
+      OT_LOGF("invalid delay lut template variable");
+    break;
+  };
+
+  nominal   = (*lut_nom)(val1, val2);
+  meanshift = (*lut_ms)(val1, val2);
+  stdev     = (*lut_std)(val1, val2);
+  skew      = (*lut_skew)(val1, val2);
+
+  
+  // - perform the linear inter/extro-polation on indices1 and indices2
+  return Statisical_delay(nominal, meanshift, stdev, skew); 
+}
+
 // Function: stdev
 // Query standard deviation of the delay which is referenced by the output transition status, 
 // input slew, and driving load. The output transition status indicates the type of lut that 

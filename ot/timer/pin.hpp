@@ -2,6 +2,7 @@
 #define OT_TIMER_PIN_HPP_
 
 #include <ot/liberty/celllib.hpp>
+#include <ot/liberty/delay.hpp>
 
 namespace ot {
 
@@ -33,6 +34,8 @@ class PrimaryInput {
 
     TimingData<std::optional<float>, MAX_SPLIT, MAX_TRAN> _slew;
     TimingData<std::optional<float>, MAX_SPLIT, MAX_TRAN> _at;
+    // yclo
+    // TimingData<std::optional<Statisical_delay>, MAX_SPLIT, MAX_TRAN> _at;
 
     void _scale_time(float s);
     void _scale_capacitance(float s);
@@ -74,8 +77,13 @@ class Pin {
     Arc*  pi_arc {nullptr}; 
     Split pi_el;
     Tran  pi_rf;
-    float numeric;
-    At(Arc*, Split, Tran, float);
+    // float numeric;
+    // yclo
+    Statisical_delay dist;
+
+    // At(Arc*, Split, Tran, float);
+    // yclo
+    At(Arc*, Split, Tran, Statisical_delay);
     inline operator float () const;
     inline auto pi() const;
   };
@@ -190,7 +198,10 @@ class Pin {
     void _reset_at();
     void _reset_rat();
     void _relax_slew(Arc*, Split, Tran, Split, Tran, float);
+    // void _relax_at(Arc*, Split, Tran, Split, Tran, float);
+    // yclo
     void _relax_at(Arc*, Split, Tran, Split, Tran, float);
+    void _relax_at(Arc*, Split, Tran, Split, Tran, Statisical_delay);
     void _relax_rat(Arc*, Split, Tran, Split, Tran, float);
     void _insert_state(int);
     void _remove_state(int = 0);
@@ -208,9 +219,15 @@ class Pin {
 
 // ------------------------------------------------------------------------------------------------
 
+// // Operator
+// inline Pin::At::operator float () const { 
+//   return numeric; 
+// }
+
+// yclo
 // Operator
 inline Pin::At::operator float () const { 
-  return numeric; 
+  return dist.nominal(); 
 }
 
 // Function: pi
