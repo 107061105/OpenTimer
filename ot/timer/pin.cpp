@@ -17,7 +17,7 @@ std::optional<float_mod> PrimaryOutput::rat(Split el, Tran rf) const {
 // Function: slack
 std::optional<float_mod> PrimaryOutput::slack(Split el, Tran rf) const {
   if(_pin._at[el][rf] && _rat[el][rf]) {
-    return el == MIN ? std::optional<float_mod>((*_pin._at[el][rf]).numeric - *_rat[el][rf]) : std::optional<float_mod>(*_rat[el][rf] - (*_pin._at[el][rf]).numeric);
+    return el == MIN ? (*_pin._at[el][rf]).numeric - *_rat[el][rf] : *_rat[el][rf] - (*_pin._at[el][rf]).numeric;
   }
   else {
     return std::nullopt;

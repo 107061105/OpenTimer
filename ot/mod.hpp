@@ -8,7 +8,7 @@
 #include <iostream>
 
 #define CONVOLVE_MODE 0
-#define TIME_STEP 0.01
+#define TIME_STEP 0.001
 #define SHRINK_THRESHOLD 1e-6;
 // careful with TIME_STEP, double arithmetic can cause imprecision
 

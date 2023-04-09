@@ -258,9 +258,9 @@ std::optional<float_mod> Timer::_sfxt_offset(const SfxtCache& sfxt, size_t v) co
 
     // In tau18 contest, ideal_clock is used
     if(_ideal_clock && pin->primary_input() == nullptr) {
-      return 0.0f;
+      return float_mod(0);
     }
-    return sfxt._el == MIN ? (*at).numeric.mean() : -(*at).numeric.mean(); // TODO XD?
+    return sfxt._el == MIN ? (*at).numeric : float_mod(0) - (*at).numeric; // TODO XD?
 
   }
   else {

@@ -86,7 +86,7 @@ float_mod float_mod::operator+(const float_mod& x) const {
     float_mod temp1 = *this;
     float_mod temp2 = x;
 	double res_st = temp1.st + temp2.st;
-	std::cout << "convolution st: " << res_st << std::endl;
+	// std::cout << "convolution st: " << res_st << std::endl;
 
 	std::vector<double> res;
 	if (CONVOLVE_MODE == 0) {
@@ -95,11 +95,11 @@ float_mod float_mod::operator+(const float_mod& x) const {
 		res = fft_convolve(temp1.dist, temp2.dist);
 	}
 	
-	std::cout << "convolution result: ";
-	for (int i = 0; i < res.size(); i++) {
-		std::cout << res[i] << " ";
-	}
-	std::cout << std::endl;
+	// std::cout << "convolution result: ";
+	// for (int i = 0; i < res.size(); i++) {
+	// 	std::cout << res[i] << " ";
+	// }
+	// std::cout << std::endl;
 
 	float_mod temp(res, res_st);
 	return temp;
@@ -211,7 +211,7 @@ float_mod float_mod_mm(float_mod& x, float_mod&y, bool mode) {
     double st = std::min(x.st, y.st);
     double et = std::max(x.get_et(), y.get_et());
     int length = std::round((et - st) / TIME_STEP) + 1;
-    std::cout << "min/max info (st, et, length): " << st << ", " << et << ", " << length << std::endl;
+    // std::cout << "min/max info (st, et, length): " << st << ", " << et << ", " << length << std::endl;
 
     int x_offset = std::round((x.st-st)/TIME_STEP);
     int y_offset = std::round((y.st-st)/TIME_STEP);
@@ -219,9 +219,9 @@ float_mod float_mod_mm(float_mod& x, float_mod&y, bool mode) {
     std::vector<int> index_order;
     double px_sum = 0; // x's probability sum
     double py_sum = 0;
-    if (mode == Min) {
+    if (mode == Max) {
         for (int i = 0; i < length; i++) index_order.push_back(i);
-    } else if (mode == Max) {
+    } else if (mode == Min) {
         for (int i = length - 1; i >= 0; i--) index_order.push_back(i);
     }
     for (const auto& i : index_order) {

@@ -173,7 +173,10 @@ void Path::dump(std::ostream& os) const {
   auto tran  = endpoint->transition();
   auto at    = back().at;
   auto rat   = (split == MIN ? at - slack : at + slack);
-  
+  os << "at            : " << at                 << '\n';
+  os << "rat           : " << rat                << '\n';
+  os << "slack         : " << slack              << '\n';
+
   // Print the head
   os << "Startpoint    : " << front().pin.name() << '\n';
   os << "Endpoint      : " << back().pin.name()  << '\n';
