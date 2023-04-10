@@ -122,7 +122,8 @@ void Timer::_spdp(SfxtCache& sfxt, const PathGuide* pg) const {
         }
         // yclo 
         // auto d = (el == MIN) ? *arc->_delay[el][urf][vrf] : -(*arc->_delay[el][urf][vrf]);
-        float d = (el == MIN) ? *arc->_s_delay[el][urf][vrf] : -(*arc->_s_delay[el][urf][vrf]);
+        float d = (el == MIN) ? (*arc->_s_delay[el][urf][vrf]).nominal() : -(*arc->_s_delay[el][urf][vrf]).nominal();
+
         sfxt._relax(u, v, _encode_arc(*arc, urf, vrf), d);
       }
     }
@@ -159,9 +160,10 @@ void Timer::_spfa(SfxtCache& sfxt) const {
       // FOR_EACH_RF_IF(urf, arc->_delay[el][urf][vrf]) {
       FOR_EACH_RF_IF(urf, arc->_s_delay[el][urf][vrf]) {
         auto u = _encode_pin(arc->_from, urf);
-        auto d = (el == MIN) ? *arc->_s_delay[el][urf][vrf] : -(*arc->_s_delay[el][urf][vrf]);
         // yclo
         // auto d = (el == MIN) ? *arc->_delay[el][urf][vrf] : -(*arc->_delay[el][urf][vrf]);
+        float d = (el == MIN) ? (*arc->_s_delay[el][urf][vrf]).nominal() : -(*arc->_s_delay[el][urf][vrf]).nominal();
+        
         if(sfxt._relax(u, v, _encode_arc(*arc, urf, vrf), d)) {
           if(!sfxt.__spfa[u] || *sfxt.__spfa[u] == false) {
             queue.push(u);
@@ -266,7 +268,8 @@ std::optional<float> Timer::_sfxt_offset(const SfxtCache& sfxt, size_t v) const 
     if(_ideal_clock && pin->primary_input() == nullptr) {
       return 0.0f;
     }
-    return sfxt._el == MIN ? *at : -*at;
+    // yclo
+    return sfxt._el == MIN ? (*at).dist.nominal() : -(*at).dist.nominal();
 
   }
   else {

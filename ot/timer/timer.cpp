@@ -763,7 +763,6 @@ void Timer::_fprop_at(Pin& pin) {
   if(auto pi = pin.primary_input(); pi) {
     FOR_EACH_EL_RF_IF(el, rf, pi->_at[el][rf]) {
       pin._relax_at(nullptr, el, rf, el, rf, *(pi->_at[el][rf]));
-      OT_LOGD("Pin: ", pin.name(), ", ", *(pi->_at[el][rf]), "\n");
     }
   }
 
@@ -1349,6 +1348,7 @@ std::optional<float> Timer::report_at(const std::string& name, Split m, Tran t) 
 //   else return std::nullopt;
 // }
 
+// yclo
 // Function: _report_at
 std::optional<float> Timer::_report_at(const std::string& name, Split m, Tran t) {
   _update_timing();
@@ -1371,7 +1371,9 @@ std::optional<float> Timer::report_rat(const std::string& name, Split m, Tran t)
 std::optional<float> Timer::_report_rat(const std::string& name, Split m, Tran t) {
   _update_timing();
   if(auto itr = _pins.find(name); itr != _pins.end() && itr->second._at[m][t]) {
-    return itr->second._rat[m][t];
+    // return itr->second._rat[m][t];
+    // yclo
+    return itr->second._rat[m][t]->dist.nominal();;
   }
   else return std::nullopt;
 }
@@ -1402,7 +1404,9 @@ std::optional<float> Timer::report_slack(const std::string& pin, Split m, Tran t
 std::optional<float> Timer::_report_slack(const std::string& pin, Split m, Tran t) {
   _update_timing();
   if(auto itr = _pins.find(pin); itr != _pins.end()) {
-    return itr->second.slack(m, t);
+    // return itr->second.slack(m, t);
+    // yclo
+    return (*itr->second.slack(m, t)).nominal();
   }
   else return std::nullopt;
 }
@@ -1564,6 +1568,7 @@ void Timer::_reset_level(PathGuide *pg) {
 // Procedure: report_timing_batch 
 // This function processes all path queries in a given file in parallel
 std::vector<PathSet> Timer::report_timing_batch(std::filesystem::path path) {
+
   std::scoped_lock lock(_mutex);
 
   std::ifstream ifs(path);

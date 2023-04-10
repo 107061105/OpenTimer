@@ -180,7 +180,7 @@ void Timer::_spur(PfxtCache& pfxt, const PfxtNode& pfx, const PathGuide* pg) con
         }
         // yclo
         // auto w = (el == MIN) ? *arc->_delay[el][urf][vrf] : -(*arc->_delay[el][urf][vrf]);
-        float w = (el == MIN) ? *arc->_s_delay[el][urf][vrf] : -(*arc->_s_delay[el][urf][vrf]);
+        float w = (el == MIN) ? (*arc->_s_delay[el][urf][vrf]).nominal() : -(*arc->_s_delay[el][urf][vrf]).nominal();
         auto s = *pfxt._sfxt.__dist[v] + w - *pfxt._sfxt.__dist[u] + pfx.slack;
 
         // Set slack uppper bound to 40000 for leon3mp_iccad in tau 2018 contest 

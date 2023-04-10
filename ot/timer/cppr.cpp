@@ -84,7 +84,9 @@ std::optional<float> Timer::_cppr_credit(const Test& test, Split el, Tran rf) co
   // compute the cppr credit
   if(sfxt.slack()) {
     auto tat = *test._arc._to._at[el][rf];
-    auto rat = (el == MIN) ? tat - *sfxt.slack() : *sfxt.slack() + tat;
+    // auto rat = (el == MIN) ? tat - *sfxt.slack() : *sfxt.slack() + tat;
+    // yclo
+    auto rat = (el == MIN) ? tat.dist.nominal() - *sfxt.slack() : *sfxt.slack() + tat.dist.nominal();
     return rat - *test._rat[el][rf];
   }
   else {
@@ -115,14 +117,20 @@ std::optional<float> Timer::_cppr_credit(const CpprCache& cppr, Pin& pin, Split 
 
       // Return the credit for the early (hold) test.  
       if(el == MIN) {
-        return dv;
+        // return dv;
+        // yclo
+        if (dv) return (*dv).nominal();
+        return std::nullopt;
       }
       // Return the credit for the late (setup) test.
       else {
         auto [r, rrf] = _decode_pin(cppr._capb);
         auto dr = r->_delta_at(MAX, rrf, MIN, rrf);
         if(dv && dr) {
-          return *dv - *dr;
+          // return *dv - *dr;
+          // yclo
+          return (*dv).nominal() - (*dr).nominal();
+
         }
         else {
           return std::nullopt;
@@ -157,10 +165,14 @@ std::optional<float> Timer::_cppr_offset(const CpprCache& cppr, Pin& pin, Split 
   }
   else {
     if(auto credit = _cppr_credit(cppr, pin, el, rf); credit) {
-      return (el == MIN) ? *at + *credit : -(*at) + *credit; 
+      // return (el == MIN) ? *at + *credit : -(*at) + *credit;
+      // yclo
+      return (el == MIN) ? (*at).dist.nominal() + *credit : -(*at).dist.nominal() + *credit; 
     }
     else {
-      return (el == MIN) ? *at : -(*at);
+      // return (el == MIN) ? *at : -(*at);
+      // yclo
+      return (el == MIN) ? (*at).dist.nominal() : -(*at).dist.nominal();
     }
   }
 }

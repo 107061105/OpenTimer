@@ -1,0 +1,22 @@
+----- Critical Path 0 -----
+Startpoint    : nx6
+Endpoint      : nx22
+Analysis type : max
+------------------------------------------------------------------
+       Type       Delay        Time   Dir        Slew  Description
+------------------------------------------------------------------
+       port       0.000       0.000  rise       delay  nx6
+        pin       0.137       0.137  rise       delay  inst_0:A2 (NAND2_X1)
+        pin      11.275      11.412  fall       delay  inst_0:ZN (NAND2_X1)
+        pin       0.076      11.488  fall       delay  inst_3:A2 (NAND2_X1)
+        pin       9.903      21.391  rise       delay  inst_3:ZN (NAND2_X1)
+        pin       0.065      21.457  rise       delay  inst_5:A2 (NAND2_X1)
+        pin      12.135      33.592  fall       delay  inst_5:ZN (NAND2_X1)
+       port       0.339      33.931  fall       delay  nx22
+    arrival                  33.931                    data arrival time
+
+       port      11.000      11.000        output port delay
+   required                  11.000        data required time
+------------------------------------------------------------------
+      slack                 -22.931        VIOLATED
+

@@ -76,6 +76,11 @@ class Timer {
     std::optional<float> report_tns(std::optional<Split> = {}, std::optional<Tran> = {});
     std::optional<float> report_wns(std::optional<Split> = {}, std::optional<Tran> = {});
     std::optional<size_t> report_fep(std::optional<Split> = {}, std::optional<Tran> = {});
+
+    // yclo 
+    // std::optional<Statisical_delay> report_at(const std::string&, Split, Tran);
+    // std::optional<Statisical_delay> report_rat(const std::string&, Split, Tran);
+    // std::optional<Statisical_delay> report_slack(const std::string&, Split, Tran);
   
     PathSet report_timing(size_t);
     PathSet report_timing(size_t, Split);
@@ -289,17 +294,20 @@ class Timer {
     Clock& _create_clock(const std::string&, float);
 
     std::optional<float> _report_at(const std::string&, Split, Tran);
-    // yclo
-    // std::optional<Statisical_delay> _report_at(const std::string&, Split, Tran);
     std::optional<float> _report_rat(const std::string&, Split, Tran);
-    std::optional<float> _report_slew(const std::string&, Split, Tran);
     std::optional<float> _report_slack(const std::string&, Split, Tran);
+    std::optional<float> _report_slew(const std::string&, Split, Tran);
     std::optional<float> _report_load(const std::string&, Split, Tran);
     std::optional<float> _cppr_credit(const Test&, Split, Tran) const;
     std::optional<float> _cppr_credit(const CpprCache&, Pin&, Split, Tran) const;
     std::optional<float> _cppr_offset(const CpprCache&, Pin&, Split, Tran) const;
     std::optional<float> _sfxt_offset(const SfxtCache&, size_t) const;
-    
+
+    // yclo
+    // std::optional<Statisical_delay> _report_at(const std::string&, Split, Tran);
+    // std::optional<Statisical_delay> _report_rat(const std::string&, Split, Tran);
+    // std::optional<Statisical_delay> _report_slack(const std::string&, Split, Tran);
+
     size_t _max_pin_name_size() const;
     size_t _max_net_name_size() const;
 

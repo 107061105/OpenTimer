@@ -1,4 +1,6 @@
 #include <ot/liberty/delay.hpp>
+#include <ot/static/logger.hpp>
+#include <ot/headerdef.hpp>
 #include <cmath>
 
 namespace ot {
@@ -10,29 +12,13 @@ Statisical_delay::Statisical_delay(float nom, float ms, float std, float skew) :
     _std {std},
     _skew {skew} {}
 
-// Return nominal value of delay distribution
-float Statisical_delay::nominal() const {
-    return _nominal;
-}
-
-// Return mean shift of delay distribution
-float Statisical_delay::meanshift() const {
-    return _mean_shift;
-}
-
-// Return mean of delay distribution
-float Statisical_delay::mean() const {
-    return _nominal + _mean_shift;
-}
-
-// Return standard deviation of delay distribution
-float Statisical_delay::stdev() const {
-    return _std;
-}
-
-// Return skewness of delay distribution
-float Statisical_delay::skew() const {
-    return _skew;
+// for debugging
+void Statisical_delay::display() {
+    OT_LOGD("Statisical delay\n"
+            "nom:  ", nominal(), "\n",
+            "ms:   ", meanshift(), "\n",
+            "std:  ", stdev(), "\n",
+            "skew: ", skew(), "\n\n");
 }
 
 // Operator
@@ -55,7 +41,7 @@ Statisical_delay Statisical_delay::operator- ( Statisical_delay dist ) const {
     float nominal = _nominal - dist.nominal();
     float meanshift = _mean_shift - dist.meanshift();
     float stdev = sqrt(_std * _std + dist.stdev() * dist.stdev());
-    float skew = _skew + dist.skew();
+    float skew = _skew - dist.skew();
 
     return Statisical_delay(nominal, meanshift, stdev, skew);
 }
