@@ -84,8 +84,10 @@ std::optional<float> Timer::_cppr_credit(const Test& test, Split el, Tran rf) co
   // compute the cppr credit
   if(sfxt.slack()) {
     auto tat = *test._arc._to._at[el][rf];
-    auto rat = (el == MIN) ? tat.numeric - *sfxt.slack() : *sfxt.slack() + tat.numeric;
-    return (rat - test._rat[el][rf].value()).mean(); // TODO XD
+    // auto rat = (el == MIN) ? tat - *sfxt.slack() : *sfxt.slack() + tat;
+    // yclo
+    auto rat = (el == MIN) ? tat.dist - *sfxt.slack() : *sfxt.slack() + tat.dist;
+    return (rat - *test._rat[el][rf]).mean(); // TODO XD?
   }
   else {
     return std::nullopt;
@@ -115,14 +117,20 @@ std::optional<float> Timer::_cppr_credit(const CpprCache& cppr, Pin& pin, Split 
 
       // Return the credit for the early (hold) test.  
       if(el == MIN) {
-        return dv.value().mean(); // TODO XD
+        // return dv;
+        // yclo
+        if (dv) return (*dv).mean(); // TODO XD?
+        return std::nullopt;
       }
       // Return the credit for the late (setup) test.
       else {
         auto [r, rrf] = _decode_pin(cppr._capb);
         auto dr = r->_delta_at(MAX, rrf, MIN, rrf);
         if(dv && dr) {
-          return (*dv - *dr).mean(); // TODO XD
+          // return *dv - *dr;
+          // yclo
+          return (*dv - *dr).mean(); // TODO XD?
+
         }
         else {
           return std::nullopt;
@@ -157,10 +165,14 @@ std::optional<float> Timer::_cppr_offset(const CpprCache& cppr, Pin& pin, Split 
   }
   else {
     if(auto credit = _cppr_credit(cppr, pin, el, rf); credit) {
-      return (el == MIN) ? (*at).numeric.mean() + *credit : *credit - (*at).numeric.mean(); // TODO XD
+      // return (el == MIN) ? *at + *credit : -(*at) + *credit;
+      // yclo
+      return (el == MIN) ? (*at).dist.mean() + *credit : -(*at).dist.mean() + *credit; 
     }
     else {
-      return (el == MIN) ? (*at).numeric.mean() : (*at).numeric.mean(); // TODO XD
+      // return (el == MIN) ? *at : -(*at);
+      // yclo
+      return (el == MIN) ? (*at).dist.mean() : -(*at).dist.mean();
     }
   }
 }

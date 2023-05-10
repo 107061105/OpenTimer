@@ -3,6 +3,8 @@
 
 #include <ot/traits.hpp>
 #include <ot/liberty/celllib.hpp>
+#include <ot/liberty/delay.hpp>
+
 
 namespace ot {
 
@@ -59,13 +61,16 @@ class Arc {
     std::optional<std::list<Arc*>::iterator> _fanout_satellite;
     std::optional<std::list<Arc*>::iterator> _fanin_satellite;
     
-    TimingData<std::optional<float_mod>, MAX_SPLIT, MAX_TRAN, MAX_TRAN> _delay;
+    // TimingData<std::optional<float>, MAX_SPLIT, MAX_TRAN, MAX_TRAN> _delay;
+    TimingData<std::optional<Statisical_delay>, MAX_SPLIT, MAX_TRAN, MAX_TRAN> _s_delay;  // yclo
 
     void _remap_timing(Split, const Timing&);
     void _fprop_slew();
     void _fprop_at();
-    void _reset_delay();
-    void _fprop_delay();
+    // void _reset_delay();
+    void _reset_s_delay();  // yclo
+    // void _fprop_delay();
+    void _fprop_s_delay();  // yclo
     void _bprop_rat();
     void _insert_state(int);
     void _remove_state(int = 0);

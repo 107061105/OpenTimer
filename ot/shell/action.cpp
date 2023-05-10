@@ -276,18 +276,23 @@ void Shell::_report_timing() {
     pc.max_paths(K);
     if(split) pc.split(*split);
     pathsets.emplace_back(_timer.report_timing(pc));
+    std::cout << "report_timing: 1\n";
   }
   else if(split && tran) {
     pathsets.emplace_back(_timer.report_timing(K, *split, *tran));
+    std::cout << "report_timing: 2\n";
   }
   else if(split && !tran) {
     pathsets.emplace_back(_timer.report_timing(K, *split));
+    std::cout << "report_timing: 3\n";
   }
   else if(!split && tran) {
     pathsets.emplace_back(_timer.report_timing(K, *tran));
+    std::cout << "report_timing: 4\n";
   }
   else {
     pathsets.emplace_back(_timer.report_timing(K));
+    std::cout << "report_timing: 5\n";
   }
 
   if(pathsets.empty()) {

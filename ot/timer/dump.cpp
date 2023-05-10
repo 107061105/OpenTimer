@@ -239,6 +239,8 @@ void Timer::_dump_slack(std::ostream& os) const {
       
       FOR_EACH_EL_RF(el, rf) {
         os << std::setw(10);
+        // if(auto slack = pin.slack(el, rf); slack) os << *slack;
+        // yclo
         if(auto slack = pin.slack(el, rf); slack) os << (*slack).mean();
         else os << "n/a";
         os << "  ";
@@ -281,6 +283,7 @@ void Timer::_dump_at(std::ostream& os) const {
       
       FOR_EACH_EL_RF(el, rf) {
         os << std::setw(10);
+        // if(auto at = pin.at(el, rf); at) os << *at;
         if(auto at = pin.at(el, rf); at) os << (*at).mean();
         else os << "n/a";
         os << "  ";

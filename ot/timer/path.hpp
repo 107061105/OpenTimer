@@ -2,6 +2,7 @@
 #define OT_TIMER_PATH_HPP_
 
 #include <ot/headerdef.hpp>
+#include <ot/liberty/delay.hpp>
 
 namespace ot {
 
@@ -15,10 +16,13 @@ struct Point {
 
   const Pin& pin;     // pin reference
   Tran  transition;   // rise/fall
-  float_mod at;           // arrival
+  // float at;           // arrival
+  // Point(const Pin&, Tran, float);
 
-  Point(const Pin&, Tran, float_mod);
-  Point(const Pin&, Tran, Pin::At&);
+  // yclo
+  Statisical_delay at;           // arrival
+  Point(const Pin&, Tran, Statisical_delay);
+
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -26,7 +30,9 @@ struct Point {
 // Struct: Path
 struct Path : std::list<Point> {
 
-  Path(float_mod, const Endpoint*);
+  // Path(float, const Endpoint*);
+  Path(Statisical_delay, const Endpoint*);
+
   Path(const Path&) = delete;
   Path(Path&&) = default; 
 
@@ -36,7 +42,7 @@ struct Path : std::list<Point> {
   void dump(std::ostream&) const;
   void dump_tau18(std::ostream&) const;
 
-  float_mod slack {std::numeric_limits<float>::quiet_NaN()};
+  Statisical_delay slack {std::numeric_limits<float>::quiet_NaN()};
   
   const Endpoint* endpoint {nullptr};
 };

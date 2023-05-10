@@ -1,24 +1,27 @@
 #include <ot/timer/timer.hpp>
+#include <ot/liberty/delay.hpp>
 
 namespace ot {
 
 // Constructor
-Point::Point(const Pin& p, Tran t, float_mod v) :
-  pin        {p},
-  transition {t},
-  at         {v} {
-}
+// Point::Point(const Pin& p, Tran t, float v) :
+//   pin        {p},
+//   transition {t},
+//   at         {v} {
+// }
 
-Point::Point(const Pin& p, Tran t, Pin::At& v) :
+// yclo
+// Constructor
+Point::Point(const Pin& p, Tran t, Statisical_delay dist) :
   pin        {p},
   transition {t},
-  at         {v.numeric} {
+  at         {dist} {
 }
 
 // ------------------------------------------------------------------------------------------------
 
 // Constructor
-Path::Path(float_mod slk, const Endpoint* ept) :
+Path::Path(Statisical_delay slk, const Endpoint* ept) :
   slack    {slk},
   endpoint {ept} {
 }
@@ -93,46 +96,46 @@ void Path::dump_tau18(std::ostream& os) const{
 
 void Path::dump_tau18(std::ostream& os) const{
 
-  std::regex replace(":");
+  // std::regex replace(":");
 
-  auto el = endpoint->split();
-  auto rf = endpoint->transition();
+  // auto el = endpoint->split();
+  // auto rf = endpoint->transition();
 
 
-  os << "Endpoint: " << std::regex_replace(back().pin.name(), replace, "/")  << '\n';
-  os << "Beginpoint: " << std::regex_replace(front().pin.name(), replace, "/") << '\n';
-  //os << "= Required Time " << '\n'; //TODO: ignore RAT for tau18 benchmark
-  float_mod rat(0);
-  if(endpoint->test() != nullptr){
-    rat = *(endpoint->test()->rat(el, rf));
-  }
-  else{
-    rat = *(endpoint->primary_output()->rat(el, rf));
-  }
-  auto beg_at = front().at;
-  auto end_at = back().at;
-  auto path_slack = el == MIN ? ((end_at - beg_at) - rat) : (rat - (end_at - beg_at));
-  os << "= Required Time " << rat.mean() << '\n'; // TODO XD
-  //Arrival Time is the total delay
-  os << "- Arrival Time " << (end_at - beg_at).mean() << '\n'; // TODO XD
-  //os << "- Arrival Time " << back().at << '\n';  
-  os << "= Slack Time " << path_slack.mean() << '\n'; // TODO XD
+  // os << "Endpoint: " << std::regex_replace(back().pin.name(), replace, "/")  << '\n';
+  // os << "Beginpoint: " << std::regex_replace(front().pin.name(), replace, "/") << '\n';
+  // //os << "= Required Time " << '\n'; //TODO: ignore RAT for tau18 benchmark
+  // float rat = 0.0;
+  // if(endpoint->test() != nullptr){
+  //   rat = *(endpoint->test()->rat(el, rf));
+  // }
+  // else{
+  //   rat = *(endpoint->primary_output()->rat(el, rf));
+  // }
+  // auto beg_at = front().at;
+  // auto end_at = back().at;
+  // auto path_slack = el == MIN ? ((end_at - beg_at) - rat) : (rat - (end_at - beg_at));
+  // os << "= Required Time " << rat << '\n';
+  // //Arrival Time is the total delay
+  // os << "- Arrival Time " << end_at - beg_at << '\n';
+  // //os << "- Arrival Time " << back().at << '\n';  
+  // os << "= Slack Time " << path_slack << '\n';
 
-  float_mod at_offset = front().at; // TODO XD
-  std::optional<float_mod> pi_at; // TODO XD
+  // float at_offset = front().at;
+  // std::optional<float> pi_at;
 
-  for(const auto& p : *this) {
+  // for(const auto& p : *this) {
 
-    if(!pi_at){ os << "- "; }
-    else{ os << (p.at-*pi_at).mean() << " "; } // TODO XD
-    os << (p.at-at_offset).mean() << " "; // TODO XD
+  //   if(!pi_at){ os << "- "; }
+  //   else{ os << p.at-*pi_at << " "; }
+  //   os << p.at-at_offset << " ";
 
-    if(p.transition == RISE){ os << "^ "; }
-    else{ os << "v "; }
+  //   if(p.transition == RISE){ os << "^ "; }
+  //   else{ os << "v "; }
 
-    os << std::regex_replace(p.pin.name(), replace, "/") << '\n';
-    pi_at = p.at;
-  }
+  //   os << std::regex_replace(p.pin.name(), replace, "/") << '\n';
+  //   pi_at = p.at;
+  // }
   os << '\n';
 
 }
@@ -202,7 +205,11 @@ void Path::dump(std::ostream& os) const {
   
   // trace
   os << std::fixed << std::setprecision(3);
-  std::optional<float_mod> pi_at;
+  // std::optional<float> pi_at;
+  // yclo
+  std::optional<Statisical_delay> pi_at;
+
+
 
   for(const auto& p : *this) {
 
@@ -216,11 +223,16 @@ void Path::dump(std::ostream& os) const {
 
     // delay
     os << std::setw(w2);
-    if(pi_at) os << (p.at - *pi_at).mean(); // TODO XD
-    else os << p.at.mean(); // TODO XD
+    // if(pi_at) os << p.at - *pi_at;
+    // else os << p.at;
+    // yclo
+    if(pi_at) os << p.at.mean() - (*pi_at).mean();
+    else os << p.at.mean();
     
     // arrival time
-    os << std::setw(w3) << p.at.mean(); // TODO XD
+    // os << std::setw(w3) << p.at;
+    // yclo
+    os << std::setw(w3) << p.at.mean();
 
     // transition
     os << std::setw(w4) << to_string(p.transition);
@@ -237,6 +249,8 @@ void Path::dump(std::ostream& os) const {
   }
 
   os << std::setw(w1) << "arrival" 
+    //  << std::setw(w2+w3) << at;
+    // yclo
      << std::setw(w2+w3) << at.mean();
   std::fill_n(std::ostream_iterator<char>(os), w4 + 2, ' ');
   os << "data arrival time" << '\n'; 
@@ -249,7 +263,7 @@ void Path::dump(std::ostream& os) const {
     [&] (Test* test) {
         
       auto tv  = (test->_arc.timing_view())[split];
-      auto sum = float_mod(0);
+      auto sum = Statisical_delay(0);
 
       // related pin latency
       os << std::setw(w1) << "related pin";
@@ -314,8 +328,11 @@ void Path::dump(std::ostream& os) const {
       }
 
       OT_LOGW_IF(
+        // std::fabs(sum - rat) > 1.0f, 
+        // "unstable numerics in PBA and GBA rats: ", sum, " vs ", rat
+        // yclo
         std::fabs((sum - rat).mean()) > 1.0f, 
-        "unstable numerics in PBA and GBA rats: ", sum, " vs ", rat
+        "unstable numerics in PBA and GBA rats: ", sum, " vs ", rat.mean()
       );
     },
     [&] (PrimaryOutput* po) {
@@ -331,6 +348,8 @@ void Path::dump(std::ostream& os) const {
     }
   }, endpoint->_handle);
   
+  // os << std::setw(w1) << "required" << std::setw(w2+w3) << rat;
+  // yclo
   os << std::setw(w1) << "required" << std::setw(w2+w3) << rat.mean();
   std::fill_n(std::ostream_iterator<char>(os), w4+2, ' ');
   os << "data required time" << '\n';
@@ -560,7 +579,9 @@ void Timer::_recover_datapath(Path& path, const SfxtCache& sfxt) const {
     u = *sfxt.__tree[u];
     std::tie(upin, urf) = _decode_pin(u);
     assert(path.back().transition == frf && urf == trf);
-    auto at = path.back().at + *arc->_delay[sfxt._el][frf][trf];
+    // auto at = path.back().at + *arc->_delay[sfxt._el][frf][trf];
+    // yclo
+    auto at = path.back().at + *arc->_s_delay[sfxt._el][frf][trf];
     path.emplace_back(*upin, urf, at);
   }
 }
@@ -588,7 +609,9 @@ void Timer::_recover_datapath(
   // internal deviation
   else {
     assert(!path.empty());
-    auto at = path.back().at + *node->arc->_delay[sfxt._el][path.back().transition][urf];
+    // auto at = path.back().at + *node->arc->_delay[sfxt._el][path.back().transition][urf];
+    // yclo
+    auto at = path.back().at + *node->arc->_s_delay[sfxt._el][path.back().transition][urf];
     path.emplace_back(*upin, urf, at);
   }
 
@@ -598,7 +621,9 @@ void Timer::_recover_datapath(
     u = *sfxt.__tree[u];   
     std::tie(upin, urf) = _decode_pin(u);
     assert(path.back().transition == frf && urf == trf);
-    auto at = path.back().at + *arc->_delay[sfxt._el][frf][trf]; 
+    // auto at = path.back().at + *arc->_delay[sfxt._el][frf][trf];
+    // yclo 
+    auto at = path.back().at + *arc->_s_delay[sfxt._el][frf][trf]; 
     path.emplace_back(*upin, urf, at);
   }
 }
@@ -653,7 +678,9 @@ void Timer::_build_rank(PathGuide& pg, Pin& pin, size_t& rank) {
 
       bool is_arc = false;
       FOR_EACH_EL_RF_RF(el, urf, vrf){
-        is_arc = is_arc || arc->_delay[el][urf][vrf].has_value();
+        // is_arc = is_arc || arc->_delay[el][urf][vrf].has_value();
+        // yclo
+        is_arc = is_arc || arc->_s_delay[el][urf][vrf].has_value();
       }    
 
       //There is a possbile arc
@@ -848,7 +875,9 @@ void Timer::_build_level(PathGuide& pg, size_t v, size_t level){
   if(!pin->is_datapath_source() || level > 0) {
     for(auto arc : pin->_fanin) {
       //TODO: Question: el affect connection between pins?
-      FOR_EACH_EL_RF_IF(el, urf, arc->_delay[el][urf][vrf]) {
+      // FOR_EACH_EL_RF_IF(el, urf, arc->_delay[el][urf][vrf]) {
+      // yclo
+      FOR_EACH_EL_RF_IF(el, urf, arc->_s_delay[el][urf][vrf]) {
         auto u = _encode_pin(arc->_from, urf);
         //if the pin is not visited before AND reachable from source AND a fanin arc in range
         if(!_idx2lvl[pg.id][u] && 
@@ -919,7 +948,9 @@ void Timer::_bfs_forward(PathGuide& pg, size_t src_level) {
     auto [pin_u, urf] = _decode_pin(u);
 
     for(auto arc: pin_u->_fanout) {
-      FOR_EACH_EL_RF_IF(el, vrf, arc->_delay[el][urf][vrf]){
+      // FOR_EACH_EL_RF_IF(el, vrf, arc->_delay[el][urf][vrf]){
+      // yclo
+      FOR_EACH_EL_RF_IF(el, vrf, arc->_s_delay[el][urf][vrf]) {
         size_t v = _encode_pin(arc->_to, vrf);
         if(_is_fanout_inbound(pg, v, src_level+1) && !_has_pin[pg.id][v]){
           _has_pin[pg.id][v] = true;
@@ -1048,7 +1079,9 @@ void Timer::_update_tail_connection(PathGuide& pg, PathSet& ps) {
 
     //check all fanout edges 
     for(auto arc : pin->_fanout){
-      FOR_EACH_EL_RF_IF(el, vrf, arc->_delay[el][urf][vrf]){
+      // FOR_EACH_EL_RF_IF(el, vrf, arc->_delay[el][urf][vrf]){
+      // yclo 
+      FOR_EACH_EL_RF_IF(el, vrf, arc->_s_delay[el][urf][vrf]){
         size_t v = _encode_pin(arc->_to, vrf);
         //arc is in range and pin v is not visited
         if(!_has_pin[pg.id][v].has_value()){
@@ -1203,4 +1236,3 @@ void PathConstraint::from_string(const std::string& cmd) {
 
 
 };  // end of namespace ot. -----------------------------------------------------------------------
-

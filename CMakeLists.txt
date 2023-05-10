@@ -138,6 +138,8 @@ set(OT_CPP
   ot/liberty/celllib.cpp
   ot/liberty/cell.cpp
   ot/liberty/cellpin.cpp
+  # add self-define source code
+  ot/liberty/delay.cpp
   ot/liberty/lut.cpp
   ot/liberty/timing.cpp
   ot/liberty/power.cpp
@@ -149,7 +151,7 @@ set(OT_CPP
   ot/utility/os.cpp
   ot/utility/tokenizer.cpp
   ot/spef/spef.cpp
-  ot/mod.cpp
+  # ot/mod.cpp
 )
 
 #message(STATUS "OT_CPP: ${OT_CPP}")
@@ -198,30 +200,35 @@ message(STATUS "OpenTimer shell: ${OT_SHELL}")
 # Example
 ###########################################################
 
+# c17
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c17)
+add_executable(c17 example/c17/c17.cpp)
+target_link_libraries(c17 ${OT_LINK_FLAGS})
+
 # simple
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/simple)
-add_executable(simple example/simple/simple.cpp)
-target_link_libraries(simple ${OT_LINK_FLAGS})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/simple)
+# add_executable(simple example/simple/simple.cpp)
+# target_link_libraries(simple ${OT_LINK_FLAGS})
 
 # incremental
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/incremental)
-add_executable(incremental example/incremental/incremental.cpp)
-target_link_libraries(incremental ${OT_LINK_FLAGS})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/incremental)
+# add_executable(incremental example/incremental/incremental.cpp)
+# target_link_libraries(incremental ${OT_LINK_FLAGS})
 
 # unit
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/unit)
-add_executable(unit example/unit/unit.cpp)
-target_link_libraries(unit ${OT_LINK_FLAGS})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/unit)
+# add_executable(unit example/unit/unit.cpp)
+# target_link_libraries(unit ${OT_LINK_FLAGS})
 
 # optimizer
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/optimizer)
-add_executable(optimizer example/optimizer/optimizer.cpp)
-target_link_libraries(optimizer ${OT_LINK_FLAGS})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/optimizer)
+# add_executable(optimizer example/optimizer/optimizer.cpp)
+# target_link_libraries(optimizer ${OT_LINK_FLAGS})
 
 # sizer
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/sizer)
-add_executable(sizer example/sizer/sizer.cpp)
-target_link_libraries(sizer ${OT_LINK_FLAGS})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/sizer)
+# add_executable(sizer example/sizer/sizer.cpp)
+# target_link_libraries(sizer ${OT_LINK_FLAGS})
 
 ##aes_cipher
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/aes_cipher)

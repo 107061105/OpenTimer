@@ -3,6 +3,7 @@
 
 #include <ot/headerdef.hpp>
 #include <ot/static/logger.hpp>
+#include <ot/liberty/delay.hpp>
 
 namespace ot {
 
@@ -24,7 +25,7 @@ class SfxtCache {
     SfxtCache& operator = (const SfxtCache&) = delete;
     SfxtCache& operator = (SfxtCache&&) = delete;
 
-    inline std::optional<float_mod> slack() const;
+    inline std::optional<Statisical_delay> slack() const;
     inline Split split() const;
     inline size_t root() const;
 
@@ -36,15 +37,15 @@ class SfxtCache {
 
     std::vector<size_t> _pins;
     
-    std::unordered_map<size_t, std::optional<float_mod>> _srcs;
+    std::unordered_map<size_t, std::optional<Statisical_delay>> _srcs;
     
     inline thread_local static std::vector<size_t> __pins;
-    inline thread_local static std::vector<std::optional<float_mod>>  __dist;
+    inline thread_local static std::vector<std::optional<Statisical_delay>> __dist;
     inline thread_local static std::vector<std::optional<size_t>> __tree;
     inline thread_local static std::vector<std::optional<size_t>> __link;
     inline thread_local static std::vector<std::optional<bool>>   __spfa;
 
-    inline bool _relax(size_t, size_t, std::optional<size_t>, float_mod);
+    inline bool _relax(size_t, size_t, std::optional<size_t>, Statisical_delay);
 };
 
 // Function: root
@@ -53,7 +54,7 @@ inline size_t SfxtCache::root() const {
 }
 
 // Function: slack
-inline std::optional<float_mod> SfxtCache::slack() const {
+inline std::optional<Statisical_delay> SfxtCache::slack() const {
   return __dist[_S];
 }
 
@@ -63,7 +64,7 @@ inline Split SfxtCache::split() const {
 }
 
 // Function: _relax        
-inline bool SfxtCache::_relax(size_t u, size_t v, std::optional<size_t> e, float_mod d) {
+inline bool SfxtCache::_relax(size_t u, size_t v, std::optional<size_t> e, Statisical_delay d) {
   if(!__dist[u] || (*__dist[v] + d).mean() < (*__dist[u]).mean()) { // TODO XD
     __dist[u] = *__dist[v] + d;
     __tree[u] = v;

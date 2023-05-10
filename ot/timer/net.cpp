@@ -29,7 +29,7 @@ float RctNode::slew(Split m, Tran t, float si) const {
 }
 
 // Function: delay
-float_mod RctNode::delay(Split m, Tran t) const {
+Statisical_delay RctNode::delay(Split m, Tran t) const {
   return _delay[m][t];
 }
 
@@ -213,7 +213,7 @@ float Rct::slew(const std::string& name, Split m, Tran t, float si) const {
 }
 
 // Function: delay
-float_mod Rct::delay(const std::string& name, Split m, Tran t) const {
+Statisical_delay Rct::delay(const std::string& name, Split m, Tran t) const {
   auto itr = _nodes.find(name);
   if(itr == _nodes.end()) {
     OT_THROW(Error::RCT, "failed to get delay (rct-node ", name, " not found)");
@@ -426,17 +426,37 @@ std::optional<float> Net::_slew(Split m, Tran t, float si, Pin& to) const {
 
 // Function: _delay
 // Query the slew at the given pin through this net.
-std::optional<float_mod> Net::_delay(Split m, Tran t, Pin& to) const {
+std::optional<Statisical_delay> Net::_delay(Split m, Tran t, Pin& to) const {
   
   assert(_rc_timing_updated && to._net == this);
 
   return std::visit(Functors{
-    [&] (const EmptyRct&) -> std::optional<float_mod> { // TODO XD?
-      return float_mod(0.0);
+    [&] (const EmptyRct&) -> std::optional<Statisical_delay> { // TODO XD?
+      return Statisical_delay(0.0);
     },
-    [&] (const Rct& rct) -> std::optional<float_mod> {
+    [&] (const Rct& rct) -> std::optional<Statisical_delay> {
       if(auto node = rct.node(to._name); node) {
         return node->delay(m, t);
+      }
+      else return std::nullopt;
+    }
+  }, _rct);
+}
+
+// yclo
+// Function: _s_delay
+// Query the slew at the given pin through this net.
+std::optional<Statisical_delay> Net::_s_delay(Split m, Tran t, Pin& to) const {
+  
+  assert(_rc_timing_updated && to._net == this);
+
+  return std::visit(Functors{
+    [&] (const EmptyRct&) -> std::optional<Statisical_delay> {
+      return Statisical_delay(0.0f, 0.0f, 0.0f, 0.0f);
+    },
+    [&] (const Rct& rct) -> std::optional<Statisical_delay> {
+      if(auto node = rct.node(to._name); node) {
+        return Statisical_delay(node->delay(m, t).nominal(), 0.0f, 0.0f, 0.0f);
       }
       else return std::nullopt;
     }

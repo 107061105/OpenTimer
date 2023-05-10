@@ -14,14 +14,14 @@ class Arc;
 // Class: PfxtNode
 struct PfxtNode {
   
-  float_mod slack;
+  Statisical_delay slack;
   size_t from;
   size_t to;
 
   const Arc* arc {nullptr};
   const PfxtNode* parent {nullptr};
 
-  PfxtNode(float_mod, size_t, size_t, const Arc*, const PfxtNode*);
+  PfxtNode(Statisical_delay, size_t, size_t, const Arc*, const PfxtNode*);
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ class PfxtCache {
     std::vector<std::unique_ptr<PfxtNode>> _paths;
     std::vector<std::unique_ptr<PfxtNode>> _nodes;
 
-    void _push(float_mod, size_t, size_t, const Arc*, const PfxtNode*);
+    void _push(Statisical_delay, size_t, size_t, const Arc*, const PfxtNode*);
 
     PfxtNode* _pop();
     PfxtNode* _top() const;

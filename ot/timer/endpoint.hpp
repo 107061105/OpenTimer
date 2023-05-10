@@ -27,7 +27,7 @@ class Endpoint {
     Endpoint(Split, Tran, Test&);
 	  Endpoint(Split, Tran, PrimaryOutput&);	
 
-    float_mod slack() const;
+    Statisical_delay slack() const;
 
     inline Split split() const;
     inline Tran transition() const;

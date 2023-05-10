@@ -60,7 +60,8 @@ void Timer::_topologize(SfxtCache& sfxt, size_t v, const PathGuide* pg) const {
   // Stop at the data source
   if(!pin->is_datapath_source()) {
     for(auto arc : pin->_fanin) {
-      FOR_EACH_RF_IF(urf, arc->_delay[sfxt._el][urf][vrf]) {
+      // FOR_EACH_RF_IF(urf, arc->_delay[sfxt._el][urf][vrf]) {
+      FOR_EACH_RF_IF(urf, arc->_s_delay[sfxt._el][urf][vrf]) {
         auto u = _encode_pin(arc->_from, urf);
 
         //if sftx is linked with guide, but node is not in range, ignore it 
@@ -112,14 +113,17 @@ void Timer::_spdp(SfxtCache& sfxt, const PathGuide* pg) const {
 
     // Relax on fanin
     for(auto arc : pin->_fanin) {
-      FOR_EACH_RF_IF(urf, arc->_delay[el][urf][vrf]) {
+      // FOR_EACH_RF_IF(urf, arc->_delay[el][urf][vrf]) {
+      FOR_EACH_RF_IF(urf, arc->_s_delay[el][urf][vrf]) {
         auto u = _encode_pin(arc->_from, urf);
         //if sftx is linked with guide, but node is not in range, ignore it 
         if(pg != nullptr && !_is_from_inbound(*pg, v, u)){
           continue;
         }
+        // yclo 
+        // auto d = (el == MIN) ? *arc->_delay[el][urf][vrf] : -(*arc->_delay[el][urf][vrf]);
+        auto d = (el == MIN) ? (*arc->_s_delay[el][urf][vrf]) : Statisical_delay(0) - (*arc->_s_delay[el][urf][vrf]);
 
-        auto d = (el == MIN) ? *arc->_delay[el][urf][vrf] : float_mod(0) - arc->_delay[el][urf][vrf].value();
         sfxt._relax(u, v, _encode_arc(*arc, urf, vrf), d);
       }
     }
@@ -153,9 +157,13 @@ void Timer::_spfa(SfxtCache& sfxt) const {
 
     // Relax on fanin
     for(auto arc : pin->_fanin) {
-      FOR_EACH_RF_IF(urf, arc->_delay[el][urf][vrf]) {
+      // FOR_EACH_RF_IF(urf, arc->_delay[el][urf][vrf]) {
+      FOR_EACH_RF_IF(urf, arc->_s_delay[el][urf][vrf]) {
         auto u = _encode_pin(arc->_from, urf);
-        auto d = (el == MIN) ? *arc->_delay[el][urf][vrf] : float_mod(0) - arc->_delay[el][urf][vrf].value();
+        // yclo
+        // auto d = (el == MIN) ? *arc->_delay[el][urf][vrf] : -(*arc->_delay[el][urf][vrf]);
+        auto d = (el == MIN) ? (*arc->_s_delay[el][urf][vrf]) : Statisical_delay(0) - (*arc->_s_delay[el][urf][vrf]);
+        
         if(sfxt._relax(u, v, _encode_arc(*arc, urf, vrf), d)) {
           if(!sfxt.__spfa[u] || *sfxt.__spfa[u] == false) {
             queue.push(u);
@@ -181,7 +189,7 @@ SfxtCache Timer::_sfxt_cache(const PrimaryOutput& po, Split el, Tran rf, const P
 
   // start at the root
   assert(!sfxt.__dist[v]);
-  sfxt.__dist[v] = (el == MIN) ? float_mod(0) - po._rat[el][rf].value() : *po._rat[el][rf];
+  sfxt.__dist[v] = (el == MIN) ? Statisical_delay(0) - po._rat[el][rf].value() : *po._rat[el][rf];
 
   // shortest path dynamic programming
   _spdp(sfxt, pg);
@@ -212,7 +220,7 @@ SfxtCache Timer::_sfxt_cache(const Test& test, Split el, Tran rf, const PathGuid
 
   // Start at the D pin and perform SPFA all the way to the sources of data paths.
   assert(!sfxt.__dist[v]);
-  sfxt.__dist[v] = (el == MIN) ? float_mod(0) - test._rat[el][rf].value() : *test._rat[el][rf];
+  sfxt.__dist[v] = (el == MIN) ? Statisical_delay(0) - test._rat[el][rf].value() : *test._rat[el][rf];
   
   // shortest path dynamic programming
   _spdp(sfxt, pg);
@@ -249,7 +257,7 @@ SfxtCache Timer::_sfxt_cache(const Endpoint& ept, const PathGuide *pg) const {
 }
 
 // Function: _sfxt_offset
-std::optional<float_mod> Timer::_sfxt_offset(const SfxtCache& sfxt, size_t v) const { // TODO XD?
+std::optional<Statisical_delay> Timer::_sfxt_offset(const SfxtCache& sfxt, size_t v) const { // TODO XD?
 
   auto [pin, rf] = _decode_pin(v);
   
@@ -258,9 +266,10 @@ std::optional<float_mod> Timer::_sfxt_offset(const SfxtCache& sfxt, size_t v) co
 
     // In tau18 contest, ideal_clock is used
     if(_ideal_clock && pin->primary_input() == nullptr) {
-      return float_mod(0);
+      return Statisical_delay(0);
     }
-    return sfxt._el == MIN ? (*at).numeric : float_mod(0) - (*at).numeric; // TODO XD?
+    // yclo
+    return sfxt._el == MIN ? (*at).dist : Statisical_delay(0) - (*at).dist;
 
   }
   else {
