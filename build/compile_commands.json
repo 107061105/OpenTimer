@@ -1,0 +1,222 @@
+[
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/unit/unit.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/unit/unit.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/unit/unit.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/shell/misc.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/shell/misc.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/shell/misc.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/shell/obselete.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/shell/obselete.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/shell/obselete.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/shell/builder.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/shell/builder.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/shell/builder.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/shell/action.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/shell/action.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/shell/action.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/shell/shell.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/shell/shell.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/shell/shell.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/shell/dump.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/shell/dump.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/shell/dump.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/scc.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/scc.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/scc.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/arc.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/arc.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/arc.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/celllib.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/celllib.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/celllib.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/test.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/test.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/test.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/timer.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/timer.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/timer.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/clock.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/clock.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/clock.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/sdc.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/sdc.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/sdc.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/endpoint.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/endpoint.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/endpoint.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/net.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/net.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/net.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/sfxt.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/sfxt.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/sfxt.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/pfxt.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/pfxt.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/pfxt.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/unit.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/unit.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/unit.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/path.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/path.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/path.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/spef.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/spef.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/spef.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/cppr.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/cppr.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/cppr.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/verilog.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/verilog.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/verilog.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/gate.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/gate.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/gate.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/dump.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/dump.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/dump.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/timer/pin.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/timer/pin.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/timer/pin.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/liberty/celllib.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/liberty/celllib.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/liberty/celllib.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/liberty/cell.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/liberty/cell.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/liberty/cell.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/liberty/cellpin.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/liberty/cellpin.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/liberty/cellpin.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/liberty/lut.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/liberty/lut.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/liberty/lut.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/liberty/timing.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/liberty/timing.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/liberty/timing.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/liberty/power.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/liberty/power.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/liberty/power.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/verilog/verilog.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/verilog/verilog.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/verilog/verilog.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/sdc/tokenize.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/sdc/tokenize.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/sdc/tokenize.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/sdc/object.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/sdc/object.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/sdc/object.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/sdc/sdc.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/sdc/sdc.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/sdc/sdc.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/tau/tau15.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/tau/tau15.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/tau/tau15.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/utility/os.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/utility/os.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/utility/os.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/utility/tokenizer.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/utility/tokenizer.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/utility/tokenizer.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/OpenTimer.dir/ot/spef/spef.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/ot/spef/spef.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/ot/spef/spef.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/ot-utility.dir/main/utility/utility.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/main/utility/utility.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/main/utility/utility.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/c17.dir/example/c17/c17.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/example/c17/c17.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/example/c17/c17.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/ot-shell.dir/main/shell/shell.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/main/shell/shell.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/main/shell/shell.cpp"
+},
+{
+  "directory": "/nfs/home/egoist410420/original/OpenTimer/build",
+  "command": "/usr/bin/c++  -I/nfs/home/egoist410420/original/OpenTimer -g -std=c++17 -o CMakeFiles/simple.dir/example/simple/simple.cpp.o -c /nfs/home/egoist410420/original/OpenTimer/example/simple/simple.cpp",
+  "file": "/nfs/home/egoist410420/original/OpenTimer/example/simple/simple.cpp"
+}
+]

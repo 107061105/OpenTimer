@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/c17.dir/example/c17/c17.cpp.o -o ../example/c17/c17  ../lib/libOpenTimer.a -lstdc++fs -lpthread 

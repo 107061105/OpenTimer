@@ -1,0 +1,117 @@
+----- Critical Path 0 -----
+Startpoint    : nx6
+Endpoint      : nx22
+Analysis type : max
+------------------------------------------------------
+       Type       Delay        Time   Dir  Description
+------------------------------------------------------
+       port       0.000       0.000  rise  nx6
+        pin       0.137       0.137  rise  inst_0:A2 (NAND2_X1)
+        pin      11.275      11.412  fall  inst_0:ZN (NAND2_X1)
+        pin       0.076      11.488  fall  inst_3:A2 (NAND2_X1)
+        pin       9.903      21.391  rise  inst_3:ZN (NAND2_X1)
+        pin       0.065      21.457  rise  inst_5:A2 (NAND2_X1)
+        pin      12.135      33.592  fall  inst_5:ZN (NAND2_X1)
+       port       0.339      33.931  fall  nx22
+    arrival                  33.931        data arrival time
+
+       port      11.000      11.000        output port delay
+   required                  11.000        data required time
+------------------------------------------------------
+      slack                 -22.931        VIOLATED
+
+Arrival time [pins:25]
+---------------------------------------------------------
+       E/R         E/F         L/R         L/F        Pin
+---------------------------------------------------------
+     0.137       0.137       0.137       0.137  inst_0:A2
+     6.729       7.851      21.391      21.398  inst_3:ZN
+     0.246       0.246       0.246       0.246  inst_0:A1
+     5.622       6.839      20.139      20.267  inst_4:A2
+     6.807       7.930      21.469      21.477  inst_4:A1
+     0.126       0.126       0.126       0.126  inst_3:A1
+    15.203      15.158      30.912      32.106  inst_4:ZN
+    15.439      15.395      31.149      32.343       nx23
+     0.000       0.000       0.000       0.000        nx2
+    14.265      14.119      32.299      33.592  inst_5:ZN
+     5.594       6.808       8.933      10.431  inst_1:ZN
+     0.000       0.000       0.000       0.000        nx1
+     6.845       7.968      10.031      11.412  inst_0:ZN
+    14.604      14.458      32.639      33.931       nx22
+     0.000       0.000       0.000       0.000        nx7
+     5.633       6.847       8.973      10.471  inst_5:A1
+     6.794       7.917      21.457      21.464  inst_5:A2
+     0.170       0.170       0.170       0.170  inst_2:A1
+     5.615       6.832      20.132      20.260  inst_2:ZN
+     6.928       8.051      10.114      11.496  inst_2:A2
+     0.000       0.000       0.000       0.000        nx6
+     0.000       0.000       0.000       0.000        nx3
+     0.118       0.118       0.118       0.118  inst_1:A1
+     6.921       8.044      10.107      11.488  inst_3:A2
+     0.268       0.268       0.268       0.268  inst_1:A2
+---------------------------------------------------------
+digraph TimingGraph {
+  "inst_0:A2";
+  "inst_3:ZN";
+  "inst_0:A1";
+  "inst_4:A2";
+  "inst_4:A1";
+  "inst_3:A1";
+  "inst_4:ZN";
+  "nx23";
+  "nx2";
+  "inst_5:ZN";
+  "inst_1:ZN";
+  "nx1";
+  "inst_0:ZN";
+  "nx22";
+  "nx7";
+  "inst_5:A1";
+  "inst_5:A2";
+  "inst_2:A1";
+  "inst_2:ZN";
+  "inst_2:A2";
+  "nx6";
+  "nx3";
+  "inst_1:A1";
+  "inst_3:A2";
+  "inst_1:A2";
+  "nx6" -> "inst_0:A2";
+  "nx3" -> "inst_0:A1";
+  "inst_0:ZN" -> "inst_3:A2";
+  "inst_0:ZN" -> "inst_2:A2";
+  "inst_0:A2" -> "inst_0:ZN";
+  "inst_0:A1" -> "inst_0:ZN";
+  "inst_0:A2" -> "inst_0:ZN";
+  "inst_0:A1" -> "inst_0:ZN";
+  "nx2" -> "inst_3:A1";
+  "inst_3:ZN" -> "inst_4:A1";
+  "inst_3:ZN" -> "inst_5:A2";
+  "inst_3:A2" -> "inst_3:ZN";
+  "inst_3:A1" -> "inst_3:ZN";
+  "inst_3:A2" -> "inst_3:ZN";
+  "inst_3:A1" -> "inst_3:ZN";
+  "inst_2:ZN" -> "inst_4:A2";
+  "inst_4:ZN" -> "nx23";
+  "inst_4:A2" -> "inst_4:ZN";
+  "inst_4:A1" -> "inst_4:ZN";
+  "inst_4:A2" -> "inst_4:ZN";
+  "inst_4:A1" -> "inst_4:ZN";
+  "nx3" -> "inst_1:A2";
+  "nx1" -> "inst_1:A1";
+  "inst_1:ZN" -> "inst_5:A1";
+  "inst_1:A2" -> "inst_1:ZN";
+  "inst_1:A1" -> "inst_1:ZN";
+  "inst_1:A2" -> "inst_1:ZN";
+  "inst_1:A1" -> "inst_1:ZN";
+  "nx7" -> "inst_2:A1";
+  "inst_2:A2" -> "inst_2:ZN";
+  "inst_2:A1" -> "inst_2:ZN";
+  "inst_2:A2" -> "inst_2:ZN";
+  "inst_2:A1" -> "inst_2:ZN";
+  "inst_5:ZN" -> "nx22";
+  "inst_5:A2" -> "inst_5:ZN";
+  "inst_5:A1" -> "inst_5:ZN";
+  "inst_5:A2" -> "inst_5:ZN";
+  "inst_5:A1" -> "inst_5:ZN";
+}

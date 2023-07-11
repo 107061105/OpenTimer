@@ -1,0 +1,482 @@
+----- Critical Path 0 -----
+Startpoint    : nx6
+Endpoint      : nx22
+Analysis type : max
+------------------------------------------------------------------
+       Type       Delay        Time   Dir        Slew  Description
+------------------------------------------------------------------
+       port       0.000       0.000  rise       delay  nx6
+        pin       0.137       0.137  rise       delay  inst_0:A2 (NAND2_X1)
+        pin      11.275      11.412  fall       delay  inst_0:ZN (NAND2_X1)
+        pin       0.076      11.488  fall       delay  inst_3:A2 (NAND2_X1)
+        pin       9.903      21.391  rise       delay  inst_3:ZN (NAND2_X1)
+        pin       0.065      21.457  rise       delay  inst_5:A2 (NAND2_X1)
+        pin      12.135      33.592  fall       delay  inst_5:ZN (NAND2_X1)
+       port       0.339      33.931  fall       delay  nx22
+    arrival                  33.931                    data arrival time
+
+       port      11.000      11.000        output port delay
+   required                  11.000        data required time
+------------------------------------------------------------------
+      slack                 -22.931        VIOLATED
+
+Slew [pins:25]
+---------------------------------------------------------
+       E/R         E/F         L/R         L/F        Pin
+---------------------------------------------------------
+     5.002       5.002       5.002       5.002  inst_0:A2
+     4.193       3.884       6.173       5.258  inst_3:ZN
+     5.006       5.006       5.006       5.006  inst_0:A1
+     3.296       3.136       5.167       4.517  inst_4:A2
+     4.193       3.885       6.173       5.258  inst_4:A1
+     5.001       5.001       5.001       5.001  inst_3:A1
+     4.722       4.328       6.769       5.713  inst_4:ZN
+     4.727       4.334       6.773       5.718       nx23
+     5.000       5.000       5.000       5.000        nx2
+     4.840       4.435       6.913       5.805  inst_5:ZN
+     3.320       3.160       5.193       4.537  inst_1:ZN
+     5.000       5.000       5.000       5.000        nx1
+     4.190       3.885       6.168       5.255  inst_0:ZN
+     4.851       4.447       6.920       5.814       nx22
+     5.000       5.000       5.000       5.000        nx7
+     3.320       3.160       5.193       4.537  inst_5:A1
+     4.193       3.885       6.173       5.258  inst_5:A2
+     5.003       5.003       5.003       5.003  inst_2:A1
+     3.296       3.136       5.167       4.517  inst_2:ZN
+     4.190       3.886       6.168       5.256  inst_2:A2
+     5.000       5.000       5.000       5.000        nx6
+     5.000       5.000       5.000       5.000        nx3
+     5.001       5.001       5.001       5.001  inst_1:A1
+     4.190       3.886       6.168       5.256  inst_3:A2
+     5.006       5.006       5.006       5.006  inst_1:A2
+---------------------------------------------------------
+
+Required arrival time [pins:25]
+---------------------------------------------------------
+       E/R         E/F         L/R         L/F        Pin
+---------------------------------------------------------
+   -18.875     -17.811     -22.794     -21.501  inst_0:A2
+     0.334       1.412      -1.540      -0.240  inst_3:ZN
+   -16.396     -15.459     -20.054     -18.902  inst_0:A1
+    -2.044      -0.839      -1.203       0.119  inst_4:A2
+     0.412       1.490       1.504       2.694  inst_4:A1
+    -6.313      -6.269      -8.779      -8.838  inst_3:A1
+     8.763       8.763      10.763      10.763  inst_4:ZN
+     9.000       9.000      11.000      11.000       nx23
+    -6.439      -6.395      -8.905      -8.964        nx2
+     8.661       8.661      10.661      10.661  inst_5:ZN
+     0.135       1.204       1.215       2.392  inst_1:ZN
+    -5.604      -5.458      -5.120      -4.956        nx1
+    -8.860      -8.674     -11.608     -11.519  inst_0:ZN
+     9.000       9.000      11.000      11.000       nx22
+    -7.678      -7.667      -7.421      -7.399        nx7
+     0.175       1.243       1.254       2.431  inst_5:A1
+    -2.299      -1.114      -1.475      -0.175  inst_5:A2
+    -7.507      -7.496      -7.251      -7.229  inst_2:A1
+    -2.051      -0.846      -1.210       0.112  inst_2:ZN
+   -10.005      -9.838     -10.034      -9.847  inst_2:A2
+   -19.012     -17.948     -22.931     -21.639        nx6
+    -8.259      -7.973     -20.300     -19.148        nx3
+    -5.486      -5.341      -5.002      -4.839  inst_1:A1
+    -8.784      -8.598     -11.532     -11.444  inst_3:A2
+    -7.992      -7.705      -7.771      -7.451  inst_1:A2
+---------------------------------------------------------
+
+Arrival time [pins:25]
+---------------------------------------------------------
+       E/R         E/F         L/R         L/F        Pin
+---------------------------------------------------------
+     0.137       0.137       0.137       0.137  inst_0:A2
+     6.729       7.851      21.391      21.398  inst_3:ZN
+     0.246       0.246       0.246       0.246  inst_0:A1
+     5.622       6.839      20.139      20.267  inst_4:A2
+     6.807       7.930      21.469      21.477  inst_4:A1
+     0.126       0.126       0.126       0.126  inst_3:A1
+    15.203      15.158      30.912      32.106  inst_4:ZN
+    15.439      15.395      31.149      32.343       nx23
+     0.000       0.000       0.000       0.000        nx2
+    14.265      14.119      32.299      33.592  inst_5:ZN
+     5.594       6.808       8.933      10.431  inst_1:ZN
+     0.000       0.000       0.000       0.000        nx1
+     6.845       7.968      10.031      11.412  inst_0:ZN
+    14.604      14.458      32.639      33.931       nx22
+     0.000       0.000       0.000       0.000        nx7
+     5.633       6.847       8.973      10.471  inst_5:A1
+     6.794       7.917      21.457      21.464  inst_5:A2
+     0.170       0.170       0.170       0.170  inst_2:A1
+     5.615       6.832      20.132      20.260  inst_2:ZN
+     6.928       8.051      10.114      11.496  inst_2:A2
+     0.000       0.000       0.000       0.000        nx6
+     0.000       0.000       0.000       0.000        nx3
+     0.118       0.118       0.118       0.118  inst_1:A1
+     6.921       8.044      10.107      11.488  inst_3:A2
+     0.268       0.268       0.268       0.268  inst_1:A2
+---------------------------------------------------------
+
+Slack [pins:25]
+---------------------------------------------------------
+       E/R         E/F         L/R         L/F        Pin
+---------------------------------------------------------
+    19.012      17.948     -22.931     -21.639  inst_0:A2
+     6.395       6.439     -22.931     -21.639  inst_3:ZN
+    16.642      15.705     -20.300     -19.148  inst_0:A1
+     7.667       7.678     -21.343     -20.149  inst_4:A2
+     6.395       6.439     -19.966     -18.783  inst_4:A1
+     6.439       6.395      -8.905      -8.964  inst_3:A1
+     6.439       6.395     -20.149     -21.343  inst_4:ZN
+     6.439       6.395     -20.149     -21.343       nx23
+     6.439       6.395      -8.905      -8.964        nx2
+     5.604       5.458     -21.639     -22.931  inst_5:ZN
+     5.458       5.604      -7.719      -8.039  inst_1:ZN
+     5.604       5.458      -5.120      -4.956        nx1
+    15.705      16.642     -21.639     -22.931  inst_0:ZN
+     5.604       5.458     -21.639     -22.931       nx22
+     7.678       7.667      -7.421      -7.399        nx7
+     5.458       5.604      -7.719      -8.039  inst_5:A1
+     9.093       9.031     -22.931     -21.639  inst_5:A2
+     7.678       7.667      -7.421      -7.399  inst_2:A1
+     7.667       7.678     -21.343     -20.149  inst_2:ZN
+    16.933      17.889     -20.149     -21.343  inst_2:A2
+    19.012      17.948     -22.931     -21.639        nx6
+     8.259       7.973     -20.300     -19.148        nx3
+     5.604       5.458      -5.120      -4.956  inst_1:A1
+    15.705      16.642     -21.639     -22.931  inst_3:A2
+     8.259       7.973      -8.039      -7.719  inst_1:A2
+---------------------------------------------------------
+
+D 50944 23-03-26 00:57:05 arc.cpp:178] Arc: inst_1:A1->inst_1:ZN min rise fall
+ load: 1.77403 slew:5.00119
+ nominal: 6.68986
+ meanshift: 4.06182
+ std: 4.07981
+ skew: 4.0537
+
+D 50944 23-03-26 00:57:05 arc.cpp:178] Arc: inst_1:A1->inst_1:ZN min fall rise
+ load: 1.77403 slew:5.00119
+ nominal: 5.47602
+ meanshift: 3.07934
+ std: 3.02901
+ skew: 3.07132
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_0:A1->inst_0:ZN min rise fall
+ load: 3.6672 slew:5.00598
+ nominal: 7.7217
+ meanshift: 4.113
+ std: 4.12777
+ skew: 4.10214
+
+D 50944 23-03-26 00:57:05 arc.cpp:178] Arc: inst_1:A2->inst_1:ZN min rise fall
+ load: 1.77403 slew:5.00606
+ nominal: 9.19527
+ meanshift: 4.06185
+ std: 4.07982
+ skew: 4.05372
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_0:A1->inst_0:ZN min fall rise
+ load: 3.6672 slew:5.00598
+ nominal: 6.59877
+ meanshift: 3.14524
+ std: 3.08725
+ skew: 3.10953
+
+D 50944 23-03-26 00:57:05 arc.cpp:178] Arc: inst_1:A2->inst_1:ZN min fall rise
+ load: 1.77403 slew:5.00606
+ nominal: 7.84029
+ meanshift: 3.07936
+ std: 3.02904
+ skew: 3.07133
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_0:A2->inst_0:ZN min rise fall
+ load: 3.6672 slew:5.00168
+ nominal: 10.201
+ meanshift: 4.11299
+ std: 4.12775
+ skew: 4.10212
+
+D 50944 23-03-26 00:57:05 arc.cpp:178] Arc: inst_1:A1->inst_1:ZN max rise fall
+ load: 1.77403 slew:5.00119
+ nominal: 7.39418
+ meanshift: 2.09173
+ std: 2.09153
+ skew: 2.09524
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_0:A2->inst_0:ZN min fall rise
+ load: 3.6672 slew:5.00168
+ nominal: 8.95101
+ meanshift: 3.14523
+ std: 3.08723
+ skew: 3.10952
+
+D 50944 23-03-26 00:57:05 arc.cpp:178] Arc: inst_1:A1->inst_1:ZN max fall rise
+ load: 1.77403 slew:5.00119
+ nominal: 6.05321
+ meanshift: 1.09624
+ std: 1.07801
+ skew: 1.03313
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_0:A1->inst_0:ZN max rise fall
+ load: 3.6672 slew:5.00598
+ nominal: 8.53441
+ meanshift: 2.11626
+ std: 2.15397
+ skew: 2.11636
+
+D 50944 23-03-26 00:57:05 arc.cpp:178] Arc: inst_1:A2->inst_1:ZN max rise fall
+ load: 1.77403 slew:5.00606
+ nominal: 10.1634
+ meanshift: 2.09174
+ std: 2.09154
+ skew: 2.09525
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_0:A1->inst_0:ZN max fall rise
+ load: 3.6672 slew:5.00598
+ nominal: 7.29382
+ meanshift: 1.13572
+ std: 1.14064
+ skew: 1.07821
+
+D 50944 23-03-26 00:57:05 arc.cpp:178] Arc: inst_1:A2->inst_1:ZN max fall rise
+ load: 1.77403 slew:5.00606
+ nominal: 8.66529
+ meanshift: 1.09626
+ std: 1.07802
+ skew: 1.03315
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_0:A2->inst_0:ZN max rise fall
+ load: 3.6672 slew:5.00168
+ nominal: 11.2747
+ meanshift: 2.11625
+ std: 2.15396
+ skew: 2.11635
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_0:A2->inst_0:ZN max fall rise
+ load: 3.6672 slew:5.00168
+ nominal: 9.89338
+ meanshift: 1.13571
+ std: 1.14062
+ skew: 1.07819
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_2:A1->inst_2:ZN min rise fall
+ load: 1.7216 slew:5.00252
+ nominal: 6.66131
+ meanshift: 4.06041
+ std: 4.07848
+ skew: 4.05236
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_2:A1->inst_2:ZN min fall rise
+ load: 1.7216 slew:5.00252
+ nominal: 5.44496
+ meanshift: 3.07752
+ std: 3.02741
+ skew: 3.07027
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_2:A2->inst_2:ZN min rise fall
+ load: 1.7216 slew:4.19038
+ nominal: 9.159
+ meanshift: 4.05667
+ std: 4.07653
+ skew: 4.0494
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_2:A2->inst_2:ZN min fall rise
+ load: 1.7216 slew:3.88603
+ nominal: 7.78654
+ meanshift: 3.07367
+ std: 3.02036
+ skew: 3.067
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_2:A1->inst_2:ZN max rise fall
+ load: 1.7216 slew:5.00252
+ nominal: 7.36262
+ meanshift: 2.09105
+ std: 2.0898
+ skew: 2.09466
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_2:A1->inst_2:ZN max fall rise
+ load: 1.7216 slew:5.00252
+ nominal: 6.01888
+ meanshift: 1.09515
+ std: 1.07628
+ skew: 1.03189
+
+D 38656 23-03-26 00:57:05 arc.cpp:178] Arc: inst_3:A1->inst_3:ZN min rise fall
+ load: 3.67373 slew:5.00139
+ nominal: 7.7252
+ meanshift: 4.11316
+ std: 4.12792
+ skew: 4.10229
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_2:A2->inst_2:ZN max rise fall
+ load: 1.7216 slew:6.16813
+ nominal: 10.1459
+ meanshift: 2.09489
+ std: 2.09277
+ skew: 2.09918
+
+D 38656 23-03-26 00:57:05 arc.cpp:178] Arc: inst_3:A1->inst_3:ZN min fall rise
+ load: 3.67373 slew:5.00139
+ nominal: 6.60255
+ meanshift: 3.14545
+ std: 3.08742
+ skew: 3.10965
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_2:A2->inst_2:ZN max fall rise
+ load: 1.7216 slew:5.25587
+ nominal: 8.63694
+ meanshift: 1.09597
+ std: 1.07715
+ skew: 1.03313
+
+D 38656 23-03-26 00:57:05 arc.cpp:178] Arc: inst_3:A2->inst_3:ZN min rise fall
+ load: 3.67373 slew:4.19034
+ nominal: 10.1961
+ meanshift: 4.11055
+ std: 4.12507
+ skew: 4.09905
+
+D 38656 23-03-26 00:57:05 arc.cpp:178] Arc: inst_3:A2->inst_3:ZN min fall rise
+ load: 3.67373 slew:3.88598
+ nominal: 8.93195
+ meanshift: 3.14107
+ std: 3.08121
+ skew: 3.10569
+
+D 38656 23-03-26 00:57:05 arc.cpp:178] Arc: inst_3:A1->inst_3:ZN max rise fall
+ load: 3.67373 slew:5.00139
+ nominal: 8.53827
+ meanshift: 2.11633
+ std: 2.15417
+ skew: 2.11642
+
+D 38656 23-03-26 00:57:05 arc.cpp:178] Arc: inst_3:A1->inst_3:ZN max fall rise
+ load: 3.67373 slew:5.00139
+ nominal: 7.29799
+ meanshift: 1.13585
+ std: 1.14084
+ skew: 1.07834
+
+D 38656 23-03-26 00:57:05 arc.cpp:178] Arc: inst_3:A2->inst_3:ZN max rise fall
+ load: 3.67373 slew:6.16811
+ nominal: 11.2918
+ meanshift: 2.12061
+ std: 2.15718
+ skew: 2.12039
+
+D 38656 23-03-26 00:57:05 arc.cpp:178] Arc: inst_3:A2->inst_3:ZN max fall rise
+ load: 3.67373 slew:5.25584
+ nominal: 9.90339
+ meanshift: 1.13641
+ std: 1.14185
+ skew: 1.07959
+
+D 38656 23-03-26 00:57:05 arc.cpp:178] Arc: inst_5:A1->inst_5:ZN min rise fall
+ load: 5.1384 slew:3.3199
+ nominal: 8.48573
+ meanshift: 4.14773
+ std: 4.15633
+ skew: 4.13143
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_4:A1->inst_4:ZN min rise fall
+ load: 4.8421 slew:4.19322
+ nominal: 8.3511
+ meanshift: 4.14281
+ std: 4.15413
+ skew: 4.12877
+
+D 38656 23-03-26 00:57:05 arc.cpp:178] Arc: inst_5:A1->inst_5:ZN min fall rise
+ load: 5.1384 slew:3.15991
+ nominal: 7.41749
+ meanshift: 3.18537
+ std: 3.12173
+ skew: 3.13254
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_4:A1->inst_4:ZN min fall rise
+ load: 4.8421 slew:3.88486
+ nominal: 7.27284
+ meanshift: 3.1814
+ std: 3.11762
+ skew: 3.12884
+
+D 38656 23-03-26 00:57:05 arc.cpp:178] Arc: inst_5:A2->inst_5:ZN min rise fall
+ load: 5.1384 slew:4.19315
+ nominal: 10.9595
+ meanshift: 4.14977
+ std: 4.1601
+ skew: 4.13516
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_4:A2->inst_4:ZN min rise fall
+ load: 4.8421 slew:3.2956
+ nominal: 10.8075
+ meanshift: 4.14066
+ std: 4.15038
+ skew: 4.125
+
+D 38656 23-03-26 00:57:05 arc.cpp:178] Arc: inst_5:A2->inst_5:ZN min fall rise
+ load: 5.1384 slew:3.88478
+ nominal: 9.77511
+ meanshift: 3.18845
+ std: 3.12539
+ skew: 3.13541
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_4:A2->inst_4:ZN min fall rise
+ load: 4.8421 slew:3.13603
+ nominal: 9.6021
+ meanshift: 3.17824
+ std: 3.11378
+ skew: 3.1259
+
+D 38656 23-03-26 00:57:05 arc.cpp:178] Arc: inst_5:A1->inst_5:ZN max rise fall
+ load: 5.1384 slew:5.19281
+ nominal: 9.40655
+ meanshift: 2.13679
+ std: 2.19906
+ skew: 2.13482
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_4:A1->inst_4:ZN max rise fall
+ load: 4.8421 slew:6.17324
+ nominal: 9.25936
+ meanshift: 2.13602
+ std: 2.19575
+ skew: 2.1331
+
+D 38656 23-03-26 00:57:05 arc.cpp:178] Arc: inst_5:A1->inst_5:ZN max fall rise
+ load: 5.1384 slew:4.53692
+ nominal: 8.22921
+ meanshift: 1.16566
+ std: 1.1837
+ skew: 1.11155
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_4:A1->inst_4:ZN max fall rise
+ load: 4.8421 slew:5.2582
+ nominal: 8.0693
+ meanshift: 1.16061
+ std: 1.18058
+ skew: 1.10741
+
+D 38656 23-03-26 00:57:05 arc.cpp:178] Arc: inst_5:A2->inst_5:ZN max rise fall
+ load: 5.1384 slew:6.1732
+ nominal: 12.1354
+ meanshift: 2.14065
+ std: 2.20169
+ skew: 2.13787
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_4:A2->inst_4:ZN max rise fall
+ load: 4.8421 slew:5.16748
+ nominal: 11.9662
+ meanshift: 2.13211
+ std: 2.19313
+ skew: 2.12996
+
+D 38656 23-03-26 00:57:05 arc.cpp:178] Arc: inst_5:A2->inst_5:ZN max fall rise
+ load: 5.1384 slew:5.25814
+ nominal: 10.8357
+ meanshift: 1.1668
+ std: 1.18684
+ skew: 1.11504
+
+D 46848 23-03-26 00:57:05 arc.cpp:178] Arc: inst_4:A2->inst_4:ZN max fall rise
+ load: 4.8421 slew:4.51688
+ nominal: 10.6446
+ meanshift: 1.15945
+ std: 1.17741
+ skew: 1.10377
+

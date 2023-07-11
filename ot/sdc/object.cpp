@@ -13,7 +13,7 @@ Object parse_port(const std::string& line) {
     return AllOutputs{};
   }
 
-  const static std::regex ws_re("\\s+|\\n+|\\t+"); 
+  const static std::regex ws_re("\\s+|\\n+|\\t+|\\{|\\}");
   
   auto itr = std::sregex_token_iterator(line.begin(), line.end(), ws_re, -1);
   auto end = std::sregex_token_iterator();

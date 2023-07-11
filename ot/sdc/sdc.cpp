@@ -90,7 +90,12 @@ void SDC::read(const std::filesystem::path& path) {
     Json json;
     ifs >> json;
 
+    // Save JSON data to a file
+    // std::ofstream file(sdc_);
+    
     for(const auto& j : json) {
+      
+      // file << j.dump(4);  // 4 is used for pretty printing
 
       if(const auto& c = j["command"]; c == "set_input_delay") {
         commands.emplace_back(std::in_place_type_t<SetInputDelay>{}, j);  
@@ -111,14 +116,18 @@ void SDC::read(const std::filesystem::path& path) {
         OT_LOGE("sdc command ", c, " not supported yet");
       }
     }
+    
+    // file.close();
 
-    try {
-      std::filesystem::remove(sdc_json);
-    }
-    catch(const std::exception& e) {
-      OT_LOGW("can't remove ", sdc_json, ": ", e.what());
-    }
+    // try {
+    //   std::filesystem::remove(sdc_json);
+    // }
+    // catch(const std::exception& e) {
+    //   OT_LOGW("can't remove ", sdc_json, ": ", e.what());
+    // }
   }
+
+
 }
 
 // ------------------------------------------------------------------------------------------------

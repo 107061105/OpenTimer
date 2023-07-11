@@ -45,7 +45,6 @@ proc sdc_callback {cmd parsing_result} {
       }
 
       #puts stdout [json::write object {*}$cmd_body]
-
       lappend sdc_json [json::write object {*}$cmd_body]
 
       return ""
