@@ -68,12 +68,19 @@ const RctNode* Rct::node(const std::string& name) const {
 // Procedure: insert_node
 void Rct::insert_node(const std::string& name, float cap) {
 
-  auto& node = _nodes[name];
+  if (_nodes.find(name) != _nodes.end()) {
+    FOR_EACH_EL_RF(el, rf) {
+      _nodes[name]._ncap[el][rf] += cap;
+    }
+  }
+  else {
+    auto& node = _nodes[name];
 
-  node._name = name;
+    node._name = name;
 
-  FOR_EACH_EL_RF(el, rf) {
-    node._ncap[el][rf] = cap;
+    FOR_EACH_EL_RF(el, rf) {
+      node._ncap[el][rf] = cap;
+    }
   }
 }
 
@@ -249,17 +256,19 @@ void Net::_make_rct() {
   
   if(!_spef_net) return;
 
-  // Step 1: create a new rctree object
+  // Step 0: create a new rctree object
   auto& rct = _rct.emplace<Rct>();
+
+  // Step 1: insert the node and set the capacitance to 0 (*CONN section).
+  for (const auto& conn: _spef_net->connections) {
+    rct.insert_node(conn.name, 0.f);
+  }
 
   // Step 2: insert the node and capacitance (*CAP section).
   for(const auto& [node1, node2, cap] : _spef_net->caps) {
-    
-    // ground capacitance
-    if(node2.empty()) {
-      rct.insert_node(node1, cap);
-    }
-    // TODO: coupling capacitance
+    // ground capacitance & coupling capacitance
+    // break the coupling capacitance to the ground capacitance.
+    rct.insert_node(node1, cap);
   }
 
   // Step 3: insert the segment (*RES section).

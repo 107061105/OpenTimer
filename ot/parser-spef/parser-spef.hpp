@@ -29,11 +29,13 @@ namespace spef {
 // first to understand what are essential field in a SPEF.
 
 // ConnectionType: 
+//   INSTANCE: connection to a cell instance (*I)
 //   EXTERNAL: connection to a external port (*P)
-//   INTERNAL: connection to a cell instance (*I)
+//   INTERNAL: connection to a internal node (*N)
 enum class ConnectionType {
-  INTERNAL,
-  EXTERNAL
+  INSTANCE,
+  EXTERNAL,
+  INTERNAL
 };
 
 // ConnectionDirection:
@@ -937,43 +939,52 @@ struct Action<RuleConn>
   template <typename Input>
   static void apply(const Input& in, Spef& d){
     auto &c = d._current_net->connections.emplace_back();
+    int start_idx = 0;
 
     split_on_space(in.begin(), in.end(), d._tokens);
 
-    c.type = d._tokens[0][1] == 'P' ? ConnectionType::EXTERNAL : ConnectionType::INTERNAL;
-    c.name = d._tokens[1];
-    switch(d._tokens[2][0]){
-      case 'I':
-        c.direction = ConnectionDirection::INPUT;
-        break;
-      case 'O':
-        c.direction = ConnectionDirection::OUTPUT;
-        break;
-      default:
-        c.direction = ConnectionDirection::INOUT;
-        break;
-    }
+    if (d._tokens[0][1] == 'N'){
+      c.type = ConnectionType::INTERNAL;
+      c.name = d._tokens[1];
+      c.coordinate = std::make_pair(
+        std::strtof(d._tokens[3].data(), nullptr), std::strtof(d._tokens[4].data(), nullptr)
+      );
+    } 
+    else{
+      c.type = d._tokens[0][1] == 'P' ? ConnectionType::EXTERNAL : ConnectionType::INSTANCE;
+      c.name = d._tokens[1];
+      switch(d._tokens[2][0]){
+        case 'I':
+          c.direction = ConnectionDirection::INPUT;
+          break;
+        case 'O':
+          c.direction = ConnectionDirection::OUTPUT;
+          break;
+        default:
+          c.direction = ConnectionDirection::INOUT;
+          break;
+      }
 
-    for(size_t i=3; i<d._tokens.size(); i++){
-      if(d._tokens[i].compare("*C") == 0){
-        c.coordinate = std::make_pair(
-          std::strtof(d._tokens[i+1].data(), nullptr), std::strtof(d._tokens[i+2].data(), nullptr)
-        );
-        i += 2;
-      }
-      else if(d._tokens[i].compare("*L") == 0){
-        c.load = std::strtof(d._tokens[i+1].data(), nullptr);
-        i += 1;
-      }
-      else if(d._tokens[i].compare("*D") == 0){
-        c.driving_cell = d._tokens[i+1];
-        i += 1;
-      }
-      else{
-        throw pegtl::parse_error("Unrecognized token in CONN section", in);
+      for(size_t i=3; i<d._tokens.size(); i++){
+        if(d._tokens[i].compare("*C") == 0){
+          c.coordinate = std::make_pair(
+            std::strtof(d._tokens[i+1].data(), nullptr), std::strtof(d._tokens[i+2].data(), nullptr)
+          );
+          i += 2;
+        }
+        else if(d._tokens[i].compare("*L") == 0){
+          c.load = std::strtof(d._tokens[i+1].data(), nullptr);
+          i += 1;
+        }
+        else if(d._tokens[i].compare("*D") == 0){
+          c.driving_cell = d._tokens[i+1];
+          i += 1;
+        }
+        else{
+          throw pegtl::parse_error("Unrecognized token in CONN section", in);
+        }
       }
     }
-
   }
 };
 
