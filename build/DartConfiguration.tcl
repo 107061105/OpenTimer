@@ -4,8 +4,8 @@
 
 
 # Configuration directories and files
-SourceDirectory: /nfs/home/egoist410420/original/OpenTimer
-BuildDirectory: /nfs/home/egoist410420/original/OpenTimer/build
+SourceDirectory: /nfs/home/egoist410420/OpenTimer
+BuildDirectory: /nfs/home/egoist410420/OpenTimer/build
 
 # Where to place the cost data store
 CostDataFile: 
@@ -26,7 +26,7 @@ SubmitURL: http://
 NightlyStartTime: 00:00:00 EDT
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "/usr/bin/cmake" "/nfs/home/egoist410420/original/OpenTimer"
+ConfigureCommand: "/usr/bin/cmake" "/nfs/home/egoist410420/OpenTimer"
 MakeCommand: /usr/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}"
 DefaultCTestConfigurationType: Release
 
@@ -63,7 +63,7 @@ UpdateType: git
 
 # Compiler info
 Compiler: /usr/bin/c++
-CompilerVersion: 8.5.0
+CompilerVersion: 9.5.0
 
 # Dynamic analysis (MemCheck)
 PurifyCommand: 
