@@ -49,6 +49,8 @@ class RctNode {
     Pin* _pin {nullptr};
 
     void _scale_capacitance(float);
+
+    bool is_visited {false};
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -97,7 +99,7 @@ class Rct {
 
   public:
 
-    void update_rc_timing();
+    bool update_rc_timing();
     void insert_segment(const std::string&, const std::string&, float);
     void insert_node(const std::string&, float = 0.0f);
     void insert_edge(const std::string&, const std::string&, float);
@@ -117,6 +119,8 @@ class Rct {
 
     std::unordered_map<std::string, RctNode> _nodes;
     std::list<RctEdge> _edges;
+
+    bool _is_self_loop {false};
 
     void _update_load(RctNode*, RctNode*);
     void _update_delay(RctNode*, RctNode*);
@@ -174,6 +178,7 @@ class Net {
     std::optional<spef::Net> _spef_net;
 
     bool _rc_timing_updated {false};
+    bool _is_self_loop      {false};
 
     float _load(Split, Tran) const;
 

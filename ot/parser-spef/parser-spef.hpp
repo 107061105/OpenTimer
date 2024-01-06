@@ -208,8 +208,9 @@ inline void split_on_space(const char* beg, const char* end, std::vector<std::st
 inline std::ostream& operator<<(std::ostream& os, const ConnectionType& c)
 {
   switch(c){
-    case ConnectionType::INTERNAL: os << "*I"; break;
+    case ConnectionType::INSTANCE: os << "*I"; break;
     case ConnectionType::EXTERNAL: os << "*P"; break;
+    case ConnectionType::INTERNAL: os << "*N"; break;
   }
   return os;
 }
@@ -918,10 +919,12 @@ struct Action<RuleConnBeg>
 };
 
 struct RuleConn: pegtl::seq<
-  pegtl::sor<TAO_PEGTL_STRING("*P"), TAO_PEGTL_STRING("*I")>, 
-  RuleSpace, RuleVar, RuleSpace, pegtl::must<pegtl::one<'I','O','B'>>, 
+  pegtl::sor<TAO_PEGTL_STRING("*P"), TAO_PEGTL_STRING("*I"), TAO_PEGTL_STRING("*N")>, 
+  RuleSpace, RuleVar, RuleSpace, pegtl::must<pegtl::one<'I','O','B','*'>>, 
   
   pegtl::star<pegtl::sor<
+    pegtl::seq<TAO_PEGTL_STRING("C"), RuleSpace, double_::rule, RuleSpace, double_::rule>,
+    
     pegtl::seq<RuleSpace, pegtl::seq<TAO_PEGTL_STRING("*C"), RuleSpace, double_::rule, 
       RuleSpace, double_::rule>>,
 
@@ -939,20 +942,29 @@ struct Action<RuleConn>
   template <typename Input>
   static void apply(const Input& in, Spef& d){
     auto &c = d._current_net->connections.emplace_back();
-    int start_idx = 0;
 
     split_on_space(in.begin(), in.end(), d._tokens);
 
-    if (d._tokens[0][1] == 'N'){
-      c.type = ConnectionType::INTERNAL;
-      c.name = d._tokens[1];
+    switch(d._tokens[0][1]) {
+      case 'I':
+        c.type = ConnectionType::INSTANCE;
+        break;
+      case 'P':
+        c.type = ConnectionType::EXTERNAL;
+        break;
+      case 'N':
+        c.type = ConnectionType::INTERNAL;
+        break;
+    }
+
+    c.name = d._tokens[1];
+
+    if (c.type == ConnectionType::INTERNAL) {
       c.coordinate = std::make_pair(
         std::strtof(d._tokens[3].data(), nullptr), std::strtof(d._tokens[4].data(), nullptr)
       );
     } 
-    else{
-      c.type = d._tokens[0][1] == 'P' ? ConnectionType::EXTERNAL : ConnectionType::INSTANCE;
-      c.name = d._tokens[1];
+    else {
       switch(d._tokens[2][0]){
         case 'I':
           c.direction = ConnectionDirection::INPUT;

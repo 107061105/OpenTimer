@@ -102,7 +102,7 @@ void Rct::insert_segment(const std::string& name1, const std::string& name2, flo
 }
 
 // Procedure: update_rc_timing
-void Rct::update_rc_timing() {
+bool Rct::update_rc_timing() {
 
   if(!_root) {
     OT_THROW(Error::RCT, "rctree root not found");
@@ -120,18 +120,33 @@ void Rct::update_rc_timing() {
   }
   
   _update_load(nullptr, _root);
+  if (_is_self_loop) {
+    return true;
+  }
   _update_delay(nullptr, _root);   
   _update_ldelay(nullptr, _root);  
   _update_response(nullptr, _root);
 
+  return false;
 }
 
 // Procedure: _update_load
 // Compute the load capacitance of each rctree node along the downstream traversal of the rctree.
 void Rct::_update_load(RctNode* parent, RctNode* from) {
+  
+  if (_is_self_loop) {
+    return;
+  }
+  
   // Add downstream capacitances.
   for(auto e : from->_fanout) {
     if(auto& to = e->_to; &to != parent) {
+      if (to.is_visited) {
+        _is_self_loop = true;
+        return;
+      } else {
+        to.is_visited = true;
+      }
       _update_load(from, &to);
       FOR_EACH_EL_RF(el, rf) {
         from->_load[el][rf] += to._load[el][rf];
@@ -346,7 +361,9 @@ void Net::_update_rc_timing() {
           }
         }
       }
-      rct.update_rc_timing();
+      if (rct.update_rc_timing()) {
+        _is_self_loop = true;
+      }
     }
   }, _rct);
 
@@ -402,7 +419,7 @@ void Net::_insert_pin(Pin& pin) {
 float Net::_load(Split m, Tran t) const {
 
   // TODO: outdated?
-  assert(_rc_timing_updated);
+  // assert(_rc_timing_updated);
 
   return std::visit(Functors{
     [&] (const EmptyRct& rct) {

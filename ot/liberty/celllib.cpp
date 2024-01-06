@@ -174,20 +174,23 @@ Cell* Celllib::cell(const std::string& name) {
 }
 
 // Function: _extract_lut_template
-LutTemplate Celllib::_extract_lut_template(token_iterator& itr, const token_iterator end) {
+std::optional<LutTemplate> Celllib::_extract_lut_template(token_iterator& itr, const token_iterator end) {
 
   LutTemplate lt;
+  bool check = true;
 
   if(itr=on_next_parentheses(
     itr, 
     end, 
     [&] (auto& name) mutable { lt.name = name; }); itr == end) {
     OT_LOGF("can't find lut template name");
+    check = false;
   }
   
   // Extract the lut template group
   if(itr = std::find(itr, end, "{"); itr == end) {
     OT_LOGF("can't find lut template group brace '{'");
+    check = false;
   }
 
   //std::cout << lt.name << std::endl;
@@ -201,6 +204,7 @@ LutTemplate Celllib::_extract_lut_template(token_iterator& itr, const token_iter
 
       if(++itr == end) {
         OT_LOGF("variable_1 error in lut template ", lt.name);
+        check = false;
       }
 
       if(auto vitr = lut_vars.find(*itr); vitr != lut_vars.end()) {
@@ -208,6 +212,7 @@ LutTemplate Celllib::_extract_lut_template(token_iterator& itr, const token_iter
       }
       else {
         OT_LOGW("unexpected lut template variable ", *itr);
+        check = false;
       }
     }
     // variable 2
@@ -215,6 +220,7 @@ LutTemplate Celllib::_extract_lut_template(token_iterator& itr, const token_iter
 
       if(++itr == end) {
         OT_LOGF("variable_2 error in lut template ", lt.name);
+        check = false;
       }
 
       if(auto vitr = lut_vars.find(*itr); vitr != lut_vars.end()) {
@@ -222,6 +228,7 @@ LutTemplate Celllib::_extract_lut_template(token_iterator& itr, const token_iter
       }
       else {
         OT_LOGW("unexpected lut template variable ", *itr);
+        check = false;
       }
     }
     // index_1
@@ -235,6 +242,10 @@ LutTemplate Celllib::_extract_lut_template(token_iterator& itr, const token_iter
       itr = on_next_parentheses(itr, end, [&] (auto& str) { 
         lt.indices2.push_back(std::strtof(str.data(), nullptr)); 
       });
+    }
+    else if (*itr == "variable_3" || *itr == "variable_4") {
+      OT_LOGW("lut template not support variable_3 and variable_4 ...");
+      check = false;
     }
     else if(*itr == "}") {
       stack--;
@@ -250,7 +261,8 @@ LutTemplate Celllib::_extract_lut_template(token_iterator& itr, const token_iter
     OT_LOGF("can't find lut template group brace '}'");
   }
 
-  return lt;
+  if (check) return lt;
+  else return std::nullopt;
 }
 
 // Function: _extract_lut
@@ -514,7 +526,16 @@ Cellpin Celllib::_extract_cellpin(token_iterator& itr, const token_iterator end)
       cellpin.original_pin = *itr;
     }
     else if(*itr == "timing") {
-      cellpin.timings.push_back(_extract_timing(itr, end));
+      auto tm = _extract_timing(itr, end);
+      if (tm.type != TimingType::MIN_PULSE_WIDTH && tm.type != TimingType::CLEAR && tm.type != TimingType::PRESET) {
+        if (cellpin.timings.empty()) {
+          cellpin.timings.push_back(tm);
+        } else {
+          if (auto last_tm = cellpin.timings.back(); tm.type != last_tm.type || tm.related_pin != last_tm.related_pin) {
+            cellpin.timings.push_back(tm);
+          }
+        }
+      }
     }
     else if(*itr == "}") {
       stack--;
@@ -569,6 +590,21 @@ Cell Celllib::_extract_cell(token_iterator& itr, const token_iterator end) {
     else if(*itr == "pin") {                         // Read the cell pin group.
       auto pin = _extract_cellpin(itr, end);
       cell.cellpins[pin.name] = std::move(pin);
+    } else if (*itr == "test_cell") {
+      int test_stack = 1;
+      if (itr = std::find(itr, end, "{"); itr == end) {
+        OT_LOGF("group brace '{' error in cell ", cell.name);
+      }
+      while (test_stack && ++itr != end) {
+        if (*itr == "}") {
+          test_stack--;
+        } 
+        else if (*itr == "{") {
+          test_stack++;
+        } 
+        else {
+        }
+      }
     }
     else if(*itr == "}") {
       stack--;
@@ -636,7 +672,9 @@ void Celllib::read(const std::filesystem::path& path) {
     
     if(*itr == "lu_table_template") {
       auto lut = _extract_lut_template(itr, end);
-      lut_templates[lut.name] = lut;
+      if (lut) {
+        lut_templates[lut->name] = *lut;
+      }
     }
     else if(*itr == "delay_model") {
       OT_LOGF_IF(++itr == end, "syntax error in delay_model");

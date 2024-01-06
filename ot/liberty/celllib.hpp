@@ -71,7 +71,7 @@ struct Celllib {
 
   private:
 
-    LutTemplate _extract_lut_template(token_iterator&, const token_iterator);
+    std::optional<LutTemplate> _extract_lut_template(token_iterator&, const token_iterator);
     Lut         _extract_lut         (token_iterator&, const token_iterator);
     Cell        _extract_cell        (token_iterator&, const token_iterator);
     Cellpin     _extract_cellpin     (token_iterator&, const token_iterator);

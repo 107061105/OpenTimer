@@ -126,8 +126,13 @@ void Arc::_fprop_delay() {
     // Case 2: Cell arc
     [this] (TimingView tv) {
       FOR_EACH_EL_RF_RF_IF(el, frf, trf, (tv[el] && _from._slew[el][frf])) {
-        auto lc = (_to._net) ? _to._net->_load(el, trf) : 0.0f;
+        auto lc = 0.0f;
         auto si = *_from._slew[el][frf];
+        if (_to._net) {
+          if (!(_to._net->_is_self_loop)) {
+            lc = _to._net->_load(el, trf);
+          }
+        }
         _delay[el][frf][trf] = tv[el]->delay(frf, trf, si, lc);
       }
     }
