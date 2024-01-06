@@ -28,9 +28,9 @@
 *.app
 
 # My ignore
-.vscode/
-bin/
-build/
-example/
-unittest/
+.vscode/*
+bin/*
+build/*
+example/*
+unittest/*
 ot/config.hpp

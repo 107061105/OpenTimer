@@ -20,6 +20,8 @@ int main(int argc, char *argv[]) {
        .read_spef("c17.spef")
        .read_sdc("c17.sdc");
 
+  std::cout << "hi\n";
+
   // get the top-5 worst critical paths
   auto paths = timer.report_timing(1);
 
