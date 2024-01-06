@@ -32,3 +32,4 @@ bin/
 build/
 example/
 unittest/
+*test*
