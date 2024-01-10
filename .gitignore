@@ -33,3 +33,4 @@ build/
 example/
 unittest/
 *test*
+*.txt

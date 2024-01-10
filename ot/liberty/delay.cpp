@@ -78,15 +78,23 @@ Distribution Distribution::operator+(float value)
  */
 Distribution Distribution::operator+(Distribution &rhs) 
 {
-    std::vector<float> result;
-    int start_time = 0;
+    if (rhs.get_type() == Distribution_type::Constant) 
+    {
+        assert(rhs.get_bin_num() == 1);
+        return Distribution(_pdf, _start + rhs.get_start_point());
+    } 
+    else 
+    {
+        std::vector<float> result;
+        int start_time = 0;
 
-    start_time = _start + rhs.get_start_point();
-    fft_convolve(_pdf, rhs.get_pdf(), result);
-    Distribution temp(result, start_time);
-    temp.shrink();
+        start_time = _start + rhs.get_start_point();
+        fft_convolve(_pdf, rhs.get_pdf(), result);
+        Distribution temp(result, start_time);
+        temp.shrink();
 
-    return temp;
+        return temp;
+    }
 }
 
 /**
@@ -108,18 +116,9 @@ Distribution Distribution::operator-(float value)
  */
 Distribution Distribution::operator-(Distribution &rhs) 
 {
-    // TODO
-    std::vector<float> result;
-    int start_time = 0;
-
-    // subtraction = negate rhs & summation 
-    rhs.negate();
-    start_time = _start + rhs.get_start_time();
-    fft_convolve(_pdf, rhs.get_pdf(), result);
-    Distribution temp(result, start_time);
-    temp.shrink();
-
-    return temp;
+    Distribution temp = rhs;
+    temp.negate();
+    return *this + temp;
 }
 
 /**
@@ -313,6 +312,5 @@ Distribution min(const Distribution &dist1, const Distribution &dist2)
 
     return temp;
 }
-
 
 }

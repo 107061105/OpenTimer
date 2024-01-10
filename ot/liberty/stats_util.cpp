@@ -165,7 +165,7 @@ void saveProbabilityDensityToFile(const std::vector<float>& dist, const std::str
     }
 
     // cout << *max_element(data.begin(), data.end()) << endl;
-    for (size_t i = 0; i < dist.size(); i++) {
+    for (int i = 0; i < static_cast<int>(dist.size()); i++) {
         float binStart = (st + i) * TIME_STEP;
         float binEnd = binStart + TIME_STEP;
         outputFile << std::fixed << std::setprecision(6) << "[" << binStart << ", " << binEnd << "): " << dist[i] << std::endl;

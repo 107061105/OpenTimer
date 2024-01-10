@@ -38,12 +38,13 @@ public:
     void shrink();
 
     // Query functions
-    inline float get_start_time() const { return _start * TIME_STEP; }
-    inline float get_end_time() const { return (_start + _pdf.size()) * TIME_STEP; }
-    inline int get_start_point() const { return _start; }
-    inline int get_end_point() const { return _start + static_cast<int>(_pdf.size()); }
-    inline int get_bin_num() const { return static_cast<int>(_pdf.size()); }
-    const std::vector<float>& get_pdf() const { return _pdf; }
+    inline Distribution_type get_type () const { return _type; }
+    inline float get_start_time       () const { return _start * TIME_STEP; }
+    inline float get_end_time         () const { return (_start + static_cast<int>(_pdf.size())) * TIME_STEP; }
+    inline int get_start_point        () const { return _start; }
+    inline int get_end_point          () const { return _start + static_cast<int>(_pdf.size()); }
+    inline int get_bin_num            () const { return static_cast<int>(_pdf.size()); }
+    const std::vector<float>& get_pdf () const { return _pdf; }
     float get_ith_pdf(int i) const;
     float get_3_sigma(Split);
 
