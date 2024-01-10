@@ -64,6 +64,9 @@ class Shell {
     void _cppr                   ();
     void _enable_cppr            ();
     void _disable_cppr           ();
+    void _ssta                   ();
+    void _enable_ssta            ();
+    void _disable_ssta           ();
 
     // action
     void _update_timing          ();
@@ -141,6 +144,10 @@ class Shell {
       {"cppr",                    &Shell::_cppr},
       {"enable_cppr",             &Shell::_enable_cppr},
       {"disable_cppr",            &Shell::_disable_cppr},
+      {"ssta",                    &Shell::_ssta},
+      {"enable_ssta",             &Shell::_enable_ssta},
+      {"disable_ssta",            &Shell::_disable_ssta},
+      
 
       // Action
       {"update_timing",           &Shell::_update_timing},

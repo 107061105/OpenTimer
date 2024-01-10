@@ -494,6 +494,39 @@ void Timer::_cppr(bool enable) {
   }
 }
 
+// Function: ssta
+Timer& Timer::ssta(bool flag) {
+  
+  std::scoped_lock lock(_mutex);
+
+  auto op = _taskflow.emplace([this, flag] () {
+    _ssta(flag);
+  });
+
+  _add_to_lineage(op);
+
+  return *this;
+}
+
+// Procedure: _ssta
+// Enable/Disable statisical static timing analysis (SSTA)
+void Timer::_ssta(bool enable) {
+  
+  // nothing to do.
+  if((enable && _statisical_sta) || (!enable && !_statisical_sta)) {
+    return;
+  }
+
+  if(enable) {
+    OT_LOGI("enable statisical sta");
+    _statisical_sta.emplace();
+  }
+  else {
+    OT_LOGI("disable statisical sta");
+    _statisical_sta.reset();
+  }
+}
+
 // Function: clock
 Timer& Timer::create_clock(std::string c, std::string s, float p) {
   

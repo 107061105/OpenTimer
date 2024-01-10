@@ -21,6 +21,8 @@
 
 namespace ot {
 
+// ----------------------------------------------------------------------------
+
 // Class: Timer
 class Timer {
 
@@ -56,6 +58,8 @@ class Timer {
     Timer& create_clock(std::string, float);
     Timer& create_clock(std::string, std::string, float);
     Timer& cppr(bool);
+    Timer& ssta(bool);
+
     Timer& set_time_unit(second_t);
     Timer& set_capacitance_unit(farad_t);
     Timer& set_resistance_unit(ohm_t);
@@ -140,6 +144,7 @@ class Timer {
 
     std::optional<tf::Task> _lineage;
     std::optional<CpprAnalysis> _cppr_analysis;
+    std::optional<SSTA> _statisical_sta;
     std::optional<second_t> _time_unit;
     std::optional<watt_t> _power_unit;
     std::optional<ohm_t> _resistance_unit;
@@ -243,6 +248,7 @@ class Timer {
     void _set_rat(PrimaryOutput&, Split, Tran, std::optional<float>);
     void _set_load(PrimaryOutput&, Split, Tran, std::optional<float>);
     void _cppr(bool);
+    void _ssta(bool);
     void _topologize(SfxtCache&, size_t, const PathGuide* = nullptr) const;
     void _spfa(SfxtCache&) const;
     void _spdp(SfxtCache&, const PathGuide* = nullptr) const;

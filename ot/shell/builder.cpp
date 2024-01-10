@@ -390,6 +390,33 @@ void Shell::_disable_cppr() {
   _timer.cppr(false);
 }
 
+// ------------------------------------------------------------------------------------------------
+
+// Procedure: ssta
+void Shell::_ssta() {
+
+  std::string token;
+
+  if(_is >> token; token == "-disable") {
+    _timer.ssta(false);
+  }
+  else if(token == "-enable") {
+    _timer.ssta(true);
+  }
+  else {
+    _es << "usage: ssta -disable|-enable\n";
+  }
+}
+
+// Procedure: _enable_cppr
+void Shell::_enable_ssta() {
+  _timer.ssta(true);
+}
+
+// Procedure: _disable_cppr
+void Shell::_disable_ssta() {
+  _timer.ssta(false);
+}
 
 };  // end of namespace ot. -----------------------------------------------------------------------
 
