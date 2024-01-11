@@ -34,6 +34,29 @@ Distribution::Distribution(const std::vector<float> &pdf, int st = 0)
 }
 
 /**
+ * This distribution type is to model the skewed distriubtions of academic 
+ * libraries, since there is only nldm data we can get, therefore, we use 
+ * the coeffcient of variation (CV) to get the approximated stdev and skew.
+ * 
+ * @brief Initialize with given micmic SN distribution mean
+ * 
+ * @param mean mean
+ * @param sta standard deviation
+ * @param skew skewness, which is 0 if Gaussian distribution
+ */
+Distribution::Distribution(Distribution_type type, ot::Tran rf, float mean)
+{
+    std::vector<float> samples;
+    float std = 0.0f, skew = 0.0f;
+
+    assert(type == Distribution_type::MicmicSN);
+    _type = type;
+    samples = generate_MicMic_SN_samples(SAMPLE_NUM, rf, mean);
+    _pdf = calculateProbabilityDensity(samples, &_start);
+}
+
+
+/**
  * @brief Initialize with given Gaussian/SN distribution moments
  * 
  * @param mean mean
@@ -188,7 +211,7 @@ float Distribution::get_ith_pdf(int i) const
  * @param type Max is 3 sigma (99.865%) while Min is -3 sigma (0.135%)
  * @return float
  */
-float Distribution::get_3_sigma(Split type)
+float Distribution::get_3_sigma(ot::Split type)
 {
     float total = 0.0f;
     float sum = 0.0f;
@@ -196,13 +219,13 @@ float Distribution::get_3_sigma(Split type)
     total = std::accumulate(_pdf.begin(), _pdf.end(),
                                 decltype(_pdf)::value_type(0));
 
-    if (type == Split::MAX) {
+    if (type == ot::Split::MAX) {
         for (int i = 0; i < get_bin_num(); i++)
         {
             sum += _pdf[i];
             if (sum / total >= 0.99865) return TIME_STEP * (i + _start);
         }
-    } else if (type == Split::MIN) {
+    } else if (type == ot::Split::MIN) {
         for (int i = get_bin_num() - 1; i >= 0; i--)
         {
             sum += _pdf[i];
@@ -221,7 +244,7 @@ void Distribution::print_status()
     std::cout << "***************************************************\n";
     std::cout << "Start time: " << get_start_time() << ", End time: " << get_end_time() << std:: endl;
     std::cout << "number of bins: " << get_bin_num() << std::endl;
-    std::cout << "3 sigma: " << get_3_sigma(Split::MAX) << std::endl;
+    std::cout << "3 sigma: " << get_3_sigma(ot::Split::MAX) << std::endl;
     std::cout << "***************************************************\n";
 }
 

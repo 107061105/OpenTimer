@@ -1,7 +1,7 @@
 #ifndef OT_LIBERTY_DELAY_HPP_
 #define OT_LIBERTY_DELAY_HPP_
 
-// #include <ot/headerdef.hpp>
+#include <ot/headerdef.hpp>
 #include <iostream>
 #include <vector>
 #include "stats_util.hpp"
@@ -18,6 +18,7 @@ public:
     // Constructor
     Distribution(float);
     Distribution(const std::vector<float>&, int);
+    Distribution(Distribution_type, ot::Tran, float);
     Distribution(Distribution_type, float, float, float);
     // Destructor
     ~Distribution() { _pdf.clear(); }
@@ -46,7 +47,7 @@ public:
     inline int get_bin_num            () const { return static_cast<int>(_pdf.size()); }
     const std::vector<float>& get_pdf () const { return _pdf; }
     float get_ith_pdf(int i) const;
-    float get_3_sigma(Split);
+    float get_3_sigma(ot::Split);
 
 private:
     // Type of distribution

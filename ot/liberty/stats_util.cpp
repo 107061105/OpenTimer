@@ -89,6 +89,75 @@ std::vector<float> generate_Gaussian_samples(int num_samples, float mean, float 
 }
 
 /**
+ * @brief Generate samples of micmic Skew Normal distribution
+ * 
+ * @param mean  location parameter 
+ * @return std::vector<float>, vector of samples
+ */
+std::vector<float> generate_MicMic_SN_samples(int num_samples, ot::Tran rf, float mean) 
+{
+    std::vector<float> samples;
+    samples.reserve(num_samples);
+    float stdev = 0.0f, skew = 0.0f;
+    if (VDD == 0.5) 
+    {
+        if (rf == ot::Tran::FALL) {
+            stdev = 0.1817071 * mean;
+            skew  = 1.02;
+        }
+        else {
+            stdev = 0.2469286 * mean;
+            skew  = 1.42; 
+        }
+    } 
+    else if (VDD == 0.4) 
+    {
+        if (rf == ot::Tran::FALL) {
+            stdev = 0.5110573 * mean;
+            skew  = 2.32;
+        } else {
+            stdev = 0.6690626 * mean;
+            skew  = 2.73;
+        }
+    }
+    else 
+    {
+        std::cerr << "Undefined VDD!!!\n";
+    }
+    std::cout << "Generate MicMic SN samples, mean/stdev/skew = ";
+    std::cout << mean << "/" << stdev << "/" << skew << std::endl;
+
+    // Convert mean, stdev, and skew to location, scale, and shape parameters
+    float location = mean;
+    float scale = stdev * std::sqrt(1 - (2.0 / M_PI) * (skew / std::sqrt(1 + skew * skew)));
+    float shape = skew;
+
+    // Setup generators
+    std::random_device rd;
+    std::default_random_engine noise_generator;
+
+    // Sample from a uniform distribution i.e., [0,1)
+    std::uniform_real_distribution<float> uniform_dist(0, 1.0);
+
+    auto skew_norm_dist = boost::math::skew_normal_distribution<float>(location, scale, shape);
+
+    // Use the probability from the uniform distribution with the percent point
+    // function of the skew_normal
+    int i = 0;
+    while (i < num_samples) {
+        noise_generator.seed(rd());
+        auto probability = uniform_dist(noise_generator);
+        float skew_normal_sample_point = boost::math::quantile(skew_norm_dist, probability);
+        if (skew_normal_sample_point != INFINITY && skew_normal_sample_point != -INFINITY) {
+            samples.push_back(skew_normal_sample_point);
+            i++;
+        }
+    }
+
+    return samples;
+}
+
+/**
  * @brief Calculate and return the probability density
  *
  * @param data vector that recording samples
