@@ -3,6 +3,7 @@
 
 #include <ot/traits.hpp>
 #include <ot/liberty/celllib.hpp>
+#include <ot/timer/statisical.hpp>
 
 namespace ot {
 

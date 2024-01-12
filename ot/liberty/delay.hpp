@@ -1,10 +1,10 @@
 #ifndef OT_LIBERTY_DELAY_HPP_
 #define OT_LIBERTY_DELAY_HPP_
 
+#include <ot/liberty/stats_util.hpp>
 #include <ot/headerdef.hpp>
 #include <iostream>
 #include <vector>
-#include "stats_util.hpp"
 
 typedef std::complex<float> Complex;
 

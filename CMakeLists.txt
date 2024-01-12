@@ -135,6 +135,8 @@ set(OT_CPP
   ot/timer/gate.cpp
   ot/timer/dump.cpp
   ot/timer/pin.cpp
+  ot/timer/pin.cpp
+  ot/timer/statisical.cpp
   ot/liberty/stats_util.cpp
   ot/liberty/delay.cpp
   ot/liberty/celllib.cpp
