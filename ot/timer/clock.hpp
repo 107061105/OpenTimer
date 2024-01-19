@@ -31,7 +31,7 @@ class Clock {
 
     std::array<float, MAX_TRAN> _waveform;
 
-    void _scale_time(float);
+//     void _scale_time(float);
 };
 
 // Function: name

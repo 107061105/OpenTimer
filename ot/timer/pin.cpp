@@ -10,14 +10,14 @@ PrimaryOutput::PrimaryOutput(Pin& pin) : _pin {pin} {
 }
 
 // Function: rat
-std::optional<float> PrimaryOutput::rat(Split el, Tran rf) const {
+std::optional<Dist> PrimaryOutput::rat(Split el, Tran rf) const {
   return _rat[el][rf];
 }
 
 // Function: slack
-std::optional<float> PrimaryOutput::slack(Split el, Tran rf) const {
+std::optional<Dist> PrimaryOutput::slack(Split el, Tran rf) const {
   if(_pin._at[el][rf] && _rat[el][rf]) {
-    return el == MIN ? *_pin._at[el][rf] - *_rat[el][rf] : *_rat[el][rf] - *_pin._at[el][rf];
+    return el == MIN ? Dist(*_pin._at[el][rf]) - Dist(*_rat[el][rf]) : Dist(*_rat[el][rf]) - Dist(*_pin._at[el][rf]);
   }
   else {
     return std::nullopt;
@@ -25,18 +25,18 @@ std::optional<float> PrimaryOutput::slack(Split el, Tran rf) const {
 }
 
 // Procedure: _scale_time
-void PrimaryOutput::_scale_time(float s) {
-  FOR_EACH_EL_RF_IF(el, rf, _rat[el][rf]) {
-    _rat[el][rf] = _rat[el][rf].value() * s;
-  }
-}
+// void PrimaryOutput::_scale_time(float s) {
+//   FOR_EACH_EL_RF_IF(el, rf, _rat[el][rf]) {
+//     _rat[el][rf] = _rat[el][rf].value() * s;
+//   }
+// }
 
 // Procedure: _scale_capacitance
-void PrimaryOutput::_scale_capacitance(float s) {
-  FOR_EACH_EL_RF_IF(el, rf, _load[el][rf]) {
-    _load[el][rf] *= s;
-  }
-}
+// void PrimaryOutput::_scale_capacitance(float s) {
+//   FOR_EACH_EL_RF_IF(el, rf, _load[el][rf]) {
+//     _load[el][rf] *= s;
+//   }
+// }
 
 // ------------------------------------------------------------------------------------------------
 
@@ -45,25 +45,25 @@ PrimaryInput::PrimaryInput(Pin& pin) : _pin {pin} {
 }
 
 // Procedure: _scale_time
-void PrimaryInput::_scale_time(float s) {
-  FOR_EACH_EL_RF(el, rf) {
-    if(_slew[el][rf]) {
-      _slew[el][rf] = _slew[el][rf].value() * s;
-    }
-    if(_at[el][rf]) {
-      _at[el][rf] = _at[el][rf].value() * s;
-    }
-  }
-}
+// void PrimaryInput::_scale_time(float s) {
+//   FOR_EACH_EL_RF(el, rf) {
+//     if(_slew[el][rf]) {
+//       _slew[el][rf] = _slew[el][rf].value() * s;
+//     }
+//     if(_at[el][rf]) {
+//       _at[el][rf] = _at[el][rf].value() * s;
+//     }
+//   }
+// }
 
 // ------------------------------------------------------------------------------------------------
 
 // Constructor
-Pin::At::At(Arc* a, Split el, Tran rf, float v) : 
-  pi_arc {a}, 
-  pi_el  {el}, 
-  pi_rf  {rf}, 
-  numeric  {v} {
+Pin::At::At(Arc* a, Split el, Tran rf, Dist d) : 
+  pi_arc  {a}, 
+  pi_el   {el}, 
+  pi_rf   {rf}, 
+  pi_dist {d} {
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -79,11 +79,11 @@ Pin::Slew::Slew(Arc* a, Split el, Tran rf, float v) :
 // ------------------------------------------------------------------------------------------------
 
 // Constructor
-Pin::Rat::Rat(Arc* a, Split el, Tran rf, float v) : 
+Pin::Rat::Rat(Arc* a, Split el, Tran rf, Dist d) : 
   pi_arc  {a}, 
   pi_el   {el}, 
   pi_rf   {rf}, 
-  numeric {v} {
+  pi_dist {d} {
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -232,33 +232,25 @@ Arc* Pin::_find_fanout(Pin& to) {
   return itr == _fanout.end() ? nullptr : *itr;
 }
 
-// Function: at
-std::optional<float> Pin::at(Split el, Tran rf) const {
-  return _at[el][rf];
-}
-
-// Function: rat
-std::optional<float> Pin::rat(Split el, Tran rf) const {
-  return _rat[el][rf];
-}
-
 // Function: slew
 std::optional<float> Pin::slew(Split el, Tran rf) const {
   return _slew[el][rf];
 }
 
-// Function: slack
-std::optional<float> Pin::slack(Split el, Tran rf) const {
-  if(_at[el][rf] && _rat[el][rf]) {
-    return el == MIN ? *_at[el][rf] - *_rat[el][rf] : *_rat[el][rf] - *_at[el][rf];
-  }
-  else return std::nullopt;
+// Function: at
+std::optional<Dist> Pin::at(Split el, Tran rf) const {
+  return _at[el][rf];
 }
 
-// Function: _delta_at
-std::optional<float> Pin::_delta_at(Split lel, Tran lrf, Split rel, Tran rrf) const {
-  if(_at[lel][lrf] && _at[rel][rrf]) {
-    return *_at[lel][lrf] - *_at[rel][rrf];
+// Function: rat
+std::optional<Dist> Pin::rat(Split el, Tran rf) const {
+  return _rat[el][rf];
+}
+
+// Function: slack
+std::optional<Dist> Pin::slack(Split el, Tran rf) const {
+  if(_at[el][rf] && _rat[el][rf]) {
+    return el == MIN ? Dist(*_at[el][rf]) - Dist(*_rat[el][rf]) : Dist(*_rat[el][rf]) - Dist(*_at[el][rf]);
   }
   else return std::nullopt;
 }
@@ -271,10 +263,18 @@ std::optional<float> Pin::_delta_slew(Split lel, Tran lrf, Split rel, Tran rrf) 
   else return std::nullopt;
 }
 
+// Function: _delta_at
+std::optional<Dist> Pin::_delta_at(Split lel, Tran lrf, Split rel, Tran rrf) const {
+  if(_at[lel][lrf] && _at[rel][rrf]) {
+    return Dist(*_at[lel][lrf]) - Dist(*_at[rel][rrf]);
+  }
+  else return std::nullopt;
+}
+
 // Function: _delta_rat
-std::optional<float> Pin::_delta_rat(Split lel, Tran lrf, Split rel, Tran rrf) const {
+std::optional<Dist> Pin::_delta_rat(Split lel, Tran lrf, Split rel, Tran rrf) const {
   if(_rat[lel][lrf] && _rat[rel][rrf]) {
-    return *_rat[lel][lrf] - *_rat[rel][rrf];
+    return Dist(*_rat[lel][lrf]) - Dist(*_rat[rel][rrf]);
   }
   else return std::nullopt;
 }
@@ -343,17 +343,17 @@ void Pin::_relax_slew(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, float 
 
 // Procedure: _relax_at
 // Update the arrival time of the node from a given fanin node.
-void Pin::_relax_at(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, float val) {
+void Pin::_relax_at(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, Dist dist) {
   
   switch (tel) {
     case MIN:
-      if(!_at[tel][trf] || val < *_at[tel][trf]) {
-        _at[tel][trf].emplace(arc, fel, frf, val);
+      if(!_at[tel][trf] || dist < Dist(*_at[tel][trf])) {
+        _at[tel][trf].emplace(arc, fel, frf, dist);
       }
     break;
     case MAX:
-      if(!_at[tel][trf] || val > *_at[tel][trf]) {
-        _at[tel][trf].emplace(arc, fel, frf, val);
+      if(!_at[tel][trf] || dist > *_at[tel][trf]) {
+        _at[tel][trf].emplace(arc, fel, frf, dist);
       }
     break;
   }
@@ -361,19 +361,19 @@ void Pin::_relax_at(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, float va
 
 // Procedure: _relax_rat
 // Update the arrival time of the node
-void Pin::_relax_rat(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, float val) {
+void Pin::_relax_rat(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, Dist dist) {
 
   switch(fel) {
 
     case MIN:
-      if(!_rat[fel][frf] || val > *_rat[fel][frf]) {
-        _rat[fel][frf].emplace(arc, tel, trf, val);
+      if(!_rat[fel][frf] || dist > *_rat[fel][frf]) {
+        _rat[fel][frf].emplace(arc, tel, trf, dist);
       }
     break;
 
     case MAX:
-      if(!_rat[fel][frf] || val < *_rat[fel][frf]) {
-        _rat[fel][frf].emplace(arc, tel, trf, val);
+      if(!_rat[fel][frf] || dist < *_rat[fel][frf]) {
+        _rat[fel][frf].emplace(arc, tel, trf, dist);
       }
     break;
   };

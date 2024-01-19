@@ -99,7 +99,7 @@ Distribution Distribution::operator+(float value)
  * @param rhs the distribution
  * @return Distribution
  */
-Distribution Distribution::operator+(Distribution &rhs) 
+Distribution Distribution::operator+(const Distribution &rhs) 
 {
     if (rhs.get_type() == Distribution_type::Constant) 
     {
@@ -137,11 +137,45 @@ Distribution Distribution::operator-(float value)
  * @param rhs the distribution
  * @return Distribution
  */
-Distribution Distribution::operator-(Distribution &rhs) 
+Distribution Distribution::operator-(const Distribution &rhs) 
 {
     Distribution temp = rhs;
     temp.negate();
     return *this + temp;
+}
+
+/**
+ * @brief Overload operator <, only for constant Distribution
+ *
+ * @param rhs the constant distribution
+ * @return bool
+ */
+bool Distribution::operator<(const Distribution &rhs) 
+{
+    if (is_constant() && rhs.is_constant()) {
+        return _start < rhs.get_start_point();
+    } else {
+        std::cerr << "Invalid comparison!!!, both of two ";
+        std::cerr << "distribution should be CONSTANT Distribution!!!\n";
+        return false;
+    }
+}
+
+/**
+ * @brief Overload operator >, only for constant Distribution
+ *
+ * @param rhs the constant distribution
+ * @return bool
+ */
+bool Distribution::operator>(const Distribution &rhs) 
+{
+    if (is_constant() && rhs.is_constant()) {
+        return _start > rhs.get_start_point();
+    } else {
+        std::cerr << "Invalid comparison!!!, both of two ";
+        std::cerr << "distribution should be CONSTANT Distribution!!!\n";
+        return false;
+    }
 }
 
 /**

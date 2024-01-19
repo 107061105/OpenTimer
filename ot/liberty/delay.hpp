@@ -25,10 +25,13 @@ public:
 
     // Summation operation of the distributions
     Distribution operator+(float);
-    Distribution operator+(Distribution &);
+    Distribution operator+(const Distribution &);
     // Subtraction operation of the distributions
     Distribution operator-(float);
-    Distribution operator-(Distribution &);
+    Distribution operator-(const Distribution &);
+    // Comparation operation of the CONSTANT distributions
+    bool operator<(const Distribution &);
+    bool operator>(const Distribution &);
 
     // Print the status
     void print_status();
@@ -42,9 +45,10 @@ public:
     inline Distribution_type get_type () const { return _type; }
     inline float get_start_time       () const { return _start * TIME_STEP; }
     inline float get_end_time         () const { return (_start + static_cast<int>(_pdf.size())) * TIME_STEP; }
-    inline int get_start_point        () const { return _start; }
-    inline int get_end_point          () const { return _start + static_cast<int>(_pdf.size()); }
-    inline int get_bin_num            () const { return static_cast<int>(_pdf.size()); }
+    inline int   get_start_point      () const { return _start; }
+    inline int   get_end_point        () const { return _start + static_cast<int>(_pdf.size()); }
+    inline int   get_bin_num          () const { return static_cast<int>(_pdf.size()); }
+    inline bool  is_constant          () const { return _type == Distribution_type::Constant; }
     const std::vector<float>& get_pdf () const { return _pdf; }
     float get_ith_pdf(int i) const;
     float get_3_sigma(ot::Split);

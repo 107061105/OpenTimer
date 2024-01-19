@@ -33,9 +33,9 @@ class PrimaryInput {
     Pin& _pin;
 
     TimingData<std::optional<float>, MAX_SPLIT, MAX_TRAN> _slew;
-    TimingData<std::optional<float>, MAX_SPLIT, MAX_TRAN> _at;
+    TimingData<std::optional<Dist >, MAX_SPLIT, MAX_TRAN> _at;
 
-    void _scale_time(float s);
+    // void _scale_time(float s);
     void _scale_capacitance(float s);
 };
 
@@ -51,17 +51,17 @@ class PrimaryOutput {
     
     PrimaryOutput(Pin&);
 
-    std::optional<float> rat(Split, Tran) const;
-    std::optional<float> slack(Split, Tran) const;
+    std::optional<Dist> rat(Split, Tran) const;
+    std::optional<Dist> slack(Split, Tran) const;
 
   private:
 
     Pin& _pin;
     
     TimingData<float, MAX_SPLIT, MAX_TRAN> _load {{{.0f, .0f}, {.0f, .0f}}};
-    TimingData<std::optional<float>, MAX_SPLIT, MAX_TRAN> _rat;
+    TimingData<std::optional<Dist>, MAX_SPLIT, MAX_TRAN> _rat;
 
-    void _scale_time(float);
+    // void _scale_time(float);
     void _scale_capacitance(float);
 };
 
@@ -75,9 +75,9 @@ class Pin {
     Arc*  pi_arc {nullptr}; 
     Split pi_el;
     Tran  pi_rf;
-    float numeric;
-    At(Arc*, Split, Tran, float);
-    inline operator float () const;
+    Dist  pi_dist;
+    At(Arc*, Split, Tran, Dist);
+    inline operator Dist () const;
     inline auto pi() const;
   };
   
@@ -97,9 +97,9 @@ class Pin {
     Arc*  pi_arc {nullptr};
     Split pi_el;
     Tran  pi_rf;
-    float numeric;
-    Rat(Arc*, Split, Tran, float);
-    inline operator float () const;
+    Dist  pi_dist;
+    Rat(Arc*, Split, Tran, Dist);
+    inline operator Dist () const;
     inline auto pi() const;
   };
 
@@ -140,9 +140,9 @@ class Pin {
     bool has_self_loop() const;
 
     std::optional<float> slew(Split, Tran) const;
-    std::optional<float> at(Split, Tran) const;
-    std::optional<float> rat(Split, Tran) const;
-    std::optional<float> slack(Split, Tran) const;
+    std::optional<Dist > at(Split, Tran) const;
+    std::optional<Dist > rat(Split, Tran) const;
+    std::optional<Dist > slack(Split, Tran) const;
 
     float cap(Split, Tran) const;
 
@@ -191,8 +191,8 @@ class Pin {
     void _reset_at();
     void _reset_rat();
     void _relax_slew(Arc*, Split, Tran, Split, Tran, float);
-    void _relax_at(Arc*, Split, Tran, Split, Tran, float);
-    void _relax_rat(Arc*, Split, Tran, Split, Tran, float);
+    void _relax_at(Arc*, Split, Tran, Split, Tran, Dist);
+    void _relax_rat(Arc*, Split, Tran, Split, Tran, Dist);
     void _insert_state(int);
     void _remove_state(int = 0);
     
@@ -202,16 +202,16 @@ class Pin {
     inline PrimaryOutput* _primary_output();
     inline PrimaryInput* _primary_input();
     
-    std::optional<float> _delta_at(Split, Tran, Split, Tran) const;
     std::optional<float> _delta_slew(Split, Tran, Split, Tran) const;
-    std::optional<float> _delta_rat(Split, Tran, Split, Tran) const;
+    std::optional<Dist > _delta_at(Split, Tran, Split, Tran) const;
+    std::optional<Dist > _delta_rat(Split, Tran, Split, Tran) const;
 }; 
 
 // ------------------------------------------------------------------------------------------------
 
 // Operator
-inline Pin::At::operator float () const { 
-  return numeric; 
+inline Pin::At::operator Dist () const { 
+  return pi_dist; 
 }
 
 // Function: pi
@@ -234,8 +234,8 @@ inline auto Pin::Slew::pi() const {
 // ------------------------------------------------------------------------------------------------
 
 // Operator
-inline Pin::Rat::operator float () const { 
-  return numeric; 
+inline Pin::Rat::operator Dist () const { 
+  return pi_dist; 
 }
 
 // Function: pi

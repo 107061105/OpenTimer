@@ -32,14 +32,14 @@ Clock::Clock(const std::string& name, Pin& source, float period) :
 //}
 
 // Procedure: _scale_time
-void Clock::_scale_time(float s) {
+// void Clock::_scale_time(float s) {
 
-  _period *= s; 
+//   _period *= s; 
 
-  FOR_EACH_RF(rf) {
-    _waveform[rf] *= s;
-  }
-}
+//   FOR_EACH_RF(rf) {
+//     _waveform[rf] *= s;
+//   }
+// }
 
 
 };  // end of namespace ot. -----------------------------------------------------------------------

@@ -60,7 +60,8 @@ class Arc {
     std::optional<std::list<Arc*>::iterator> _fanout_satellite;
     std::optional<std::list<Arc*>::iterator> _fanin_satellite;
     
-    TimingData<std::optional<float>, MAX_SPLIT, MAX_TRAN, MAX_TRAN> _delay;
+    // TimingData<std::optional<float>, MAX_SPLIT, MAX_TRAN, MAX_TRAN> _delay;
+    TimingData<std::optional<Dist>, MAX_SPLIT, MAX_TRAN, MAX_TRAN> _delay;
 
     void _remap_timing(Split, const Timing&);
     void _fprop_slew();

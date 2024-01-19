@@ -21,39 +21,39 @@ Timer& Timer::set_time_unit(second_t unit) {
 }
 
 // Procedure: _to_time_unit
-void Timer::_to_time_unit(const second_t& unit) {
+// void Timer::_to_time_unit(const second_t& unit) {
   
-  OT_LOGI("use time unit ", unit);
+//   OT_LOGI("use time unit ", unit);
 
-  float s = (_time_unit) ? (*_time_unit / unit).value() : 1.0f;
+//   float s = (_time_unit) ? (*_time_unit / unit).value() : 1.0f;
 
-  if(_time_unit = unit; std::fabs(s - 1.0f) < 1e-2f) {
-    return;
-  }
+//   if(_time_unit = unit; std::fabs(s - 1.0f) < 1e-2f) {
+//     return;
+//   }
 
-  // scale po time
-  for(auto& kvp : _pos) {
-    kvp.second._scale_time(s);
-  }
+//   // scale po time
+//   for(auto& kvp : _pos) {
+//     kvp.second._scale_time(s);
+//   }
   
-  // scale pi time
-  for(auto& kvp : _pis) {
-    kvp.second._scale_time(s);
-  }
+//   // scale pi time
+//   for(auto& kvp : _pis) {
+//     kvp.second._scale_time(s);
+//   }
 
-  // scale clock time
-  for(auto& kvp : _clocks) {
-    kvp.second._scale_time(s);
-  }
+//   // scale clock time
+//   for(auto& kvp : _clocks) {
+//     kvp.second._scale_time(s);
+//   }
 
-  // library time
-  FOR_EACH_EL_IF(el, _celllib[el]) {
-    _celllib[el]->scale_time(s);
-  }
+//   // library time
+//   FOR_EACH_EL_IF(el, _celllib[el]) {
+//     _celllib[el]->scale_time(s);
+//   }
   
-  // enable full timing update
-  _enable_full_timing_update();
-}
+//   // enable full timing update
+//   _enable_full_timing_update();
+// }
 
 
 // Function: set_capacitance_unit
