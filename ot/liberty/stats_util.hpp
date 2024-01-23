@@ -3,9 +3,10 @@
 
 #include <ot/headerdef.hpp>
 #include <iostream>
+#include <complex>
 #include <fstream>
 #include <vector>
-#include <complex>
+#include <string>
 
 typedef std::complex<float> Complex;
 
@@ -21,19 +22,43 @@ namespace Statisical {
 enum Distribution_type {
     Constant,
     Gaussian,
-	SkewNormal,
+	  SkewNormal,
     MicmicSN
 };
 
 // enum Tran {
-//     FALL,
-//     RISE
+    //     FALL,
+    //     RISE
 // };
 
 // enum Split {
 //     MIN,
 //     MAX
 // };
+
+inline auto to_string(Distribution_type t) {
+  switch(t) {
+    case Constant:
+      return "Constant";
+    break;
+
+    case Gaussian:
+      return "Gaussian";
+    break;
+
+    case SkewNormal:
+      return "SkewNormal";
+    break;
+
+    case MicmicSN:
+      return "MicmicSN";
+    break;
+
+    default:
+      return "unknown distribution type";
+    break;
+  };
+}
 
 std::vector<float> generate_SN_samples(int, float, float, float);
 std::vector<float> generate_Gaussian_samples(int, float, float);
