@@ -3,10 +3,10 @@
 namespace ot {
 
 // Constructor
-Point::Point(const Pin& p, Tran t, float v) :
+Point::Point(const Pin& p, Tran t, const Dist& d) :
   pin        {p},
   transition {t},
-  at         {v} {
+  at         {d.get_value()} {
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -98,7 +98,8 @@ void Path::dump_tau18(std::ostream& os) const{
   //os << "= Required Time " << '\n'; //TODO: ignore RAT for tau18 benchmark
   float rat = 0.0;
   if(endpoint->test() != nullptr){
-    rat = *(endpoint->test()->rat(el, rf));
+    auto rat_dist = *(endpoint->test()->rat(el, rf));
+    rat = rat_dist.get_value();
   }
   else{
     rat = *(endpoint->primary_output()->rat(el, rf));
@@ -245,8 +246,8 @@ void Path::dump(std::ostream& os) const {
       // related pin latency
       os << std::setw(w1) << "related pin";
       if(auto c = test->_related_at[split][tran]; c) {
-        sum += *c;
-        os << std::setw(w2) << *c << std::setw(w3) << sum;
+        sum += (*c).get_value();
+        os << std::setw(w2) << (*c).get_value() << std::setw(w3) << sum;
       }
       else {
         os << std::setw(w2+w3) << "n/a";
@@ -551,7 +552,7 @@ void Timer::_recover_datapath(Path& path, const SfxtCache& sfxt) const {
     u = *sfxt.__tree[u];
     std::tie(upin, urf) = _decode_pin(u);
     assert(path.back().transition == frf && urf == trf);
-    auto at = path.back().at + *arc->_delay[sfxt._el][frf][trf];
+    auto at = path.back().at + (*arc->_delay[sfxt._el][frf][trf]).get_value();
     path.emplace_back(*upin, urf, at);
   }
 }
@@ -579,7 +580,8 @@ void Timer::_recover_datapath(
   // internal deviation
   else {
     assert(!path.empty());
-    auto at = path.back().at + *node->arc->_delay[sfxt._el][path.back().transition][urf];
+    auto d = *node->arc->_delay[sfxt._el][path.back().transition][urf];
+    auto at = path.back().at + d.get_value();
     path.emplace_back(*upin, urf, at);
   }
 
@@ -589,7 +591,8 @@ void Timer::_recover_datapath(
     u = *sfxt.__tree[u];   
     std::tie(upin, urf) = _decode_pin(u);
     assert(path.back().transition == frf && urf == trf);
-    auto at = path.back().at + *arc->_delay[sfxt._el][frf][trf]; 
+    auto d = *arc->_delay[sfxt._el][frf][trf];
+    auto at = path.back().at + d.get_value(); 
     path.emplace_back(*upin, urf, at);
   }
 }

@@ -2,6 +2,7 @@
 #define OT_TIMER_TEST_HPP_
 
 #include <ot/liberty/celllib.hpp>
+#include <ot/timer/statisical.hpp>
 
 namespace ot {
 
@@ -23,7 +24,7 @@ class Test {
     
     Test(Arc&);
 
-    std::optional<float> rat(Split, Tran) const;
+    std::optional<Dist > rat(Split, Tran) const;
     std::optional<float> constraint(Split, Tran) const;
     std::optional<float> slack(Split, Tran) const;
     std::optional<float> raw_slack(Split, Tran) const;
@@ -40,10 +41,10 @@ class Test {
     std::optional<std::list<Test>::iterator> _satellite;
     std::optional<std::list<Test*>::iterator> _pin_satellite;
     
-    TimingData<std::optional<float>, MAX_SPLIT, MAX_TRAN> _rat;
+    TimingData<std::optional<Dist >, MAX_SPLIT, MAX_TRAN> _rat;
+    TimingData<std::optional<Dist >, MAX_SPLIT, MAX_TRAN> _related_at;
     TimingData<std::optional<float>, MAX_SPLIT, MAX_TRAN> _cppr_credit;
     TimingData<std::optional<float>, MAX_SPLIT, MAX_TRAN> _constraint;
-    TimingData<std::optional<float>, MAX_SPLIT, MAX_TRAN> _related_at;
 
     void _reset();
     // PathGuide

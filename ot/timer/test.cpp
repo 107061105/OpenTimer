@@ -11,7 +11,7 @@ Test::Test(Arc& arc) : _arc {arc} {
 }
 
 // Function: rat
-std::optional<float> Test::rat(Split el, Tran rf) const {
+std::optional<Dist> Test::rat(Split el, Tran rf) const {
   return _rat[el][rf];
 }
 
@@ -29,8 +29,8 @@ std::optional<float> Test::cppr_credit(Split el, Tran rf) const {
 std::optional<float> Test::slack(Split el, Tran rf) const {
   if(_arc._to._at[el][rf] && _rat[el][rf]) {
     return (
-      el == MIN ? *_arc._to._at[el][rf] - *_rat[el][rf] : 
-                  *_rat[el][rf] - *_arc._to._at[el][rf]
+      el == MIN ? (*_arc._to._at[el][rf]).get_value() - (*_rat[el][rf]).get_value() : 
+                  (*_rat[el][rf]).get_value() - (*_arc._to._at[el][rf]).get_value()
     ) + (
       _cppr_credit[el][rf] ? *_cppr_credit[el][rf] : 0.0f
     );
@@ -42,8 +42,8 @@ std::optional<float> Test::slack(Split el, Tran rf) const {
 std::optional<float> Test::raw_slack(Split el, Tran rf) const {
   if(_arc._to._at[el][rf] && _rat[el][rf]) {
     return (
-      el == MIN ? *_arc._to._at[el][rf] - *_rat[el][rf] : 
-                  *_rat[el][rf] - *_arc._to._at[el][rf]
+      el == MIN ? (*_arc._to._at[el][rf]).get_value() - (*_rat[el][rf]).get_value() : 
+                  (*_rat[el][rf]).get_value() - (*_arc._to._at[el][rf]).get_value()
     );
   }
   else return std::nullopt;
@@ -115,16 +115,16 @@ void Test::_fprop_rat(float period, bool ideal_clock) {
         _related_at[el][rf] = *_arc._from._at[fel][frf];
       }
       else {
-        _related_at[el][rf] = 0;
+        _related_at[el][rf] = Dist(0);
       }
     }
     else {
       // PathGuide
       if(!ideal_clock) {
-        _related_at[el][rf] = *_arc._from._at[fel][frf] + period;
+        _related_at[el][rf] = Dist(*_arc._from._at[fel][frf]) + Dist(period);
       }
       else {
-        _related_at[el][rf] = period;
+        _related_at[el][rf] = Dist(period);
       }
     }
 
@@ -137,10 +137,10 @@ void Test::_fprop_rat(float period, bool ideal_clock) {
     
     if(_constraint[el][rf] && _related_at[el][rf]) {
       if(el == MIN) {
-        _rat[el][rf] = *_constraint[el][rf] + *_related_at[el][rf];
+        _rat[el][rf] = *_related_at[el][rf] + Dist(*_constraint[el][rf]);
       }
       else {
-        _rat[el][rf] = *_related_at[el][rf] - *_constraint[el][rf];
+        _rat[el][rf] = *_related_at[el][rf] - Dist(*_constraint[el][rf]);
       }
     }
   }

@@ -790,7 +790,8 @@ void Timer::_fprop_at(Pin& pin) {
   // PI
   if(auto pi = pin.primary_input(); pi) {
     FOR_EACH_EL_RF_IF(el, rf, pi->_at[el][rf]) {
-      pin._relax_at(nullptr, el, rf, el, rf, *(pi->_at[el][rf]));
+      auto temp = Dist(*(pi->_at[el][rf]));
+      pin._relax_at(nullptr, el, rf, el, rf, temp);
     }
   }
 
@@ -835,7 +836,8 @@ void Timer::_bprop_rat(Pin& pin) {
   // PO
   if(auto po = pin.primary_output(); po) {
     FOR_EACH_EL_RF_IF(el, rf, po->_rat[el][rf]) {
-      pin._relax_rat(nullptr, el, rf, el, rf, *(po->_rat[el][rf]));
+      auto temp = Dist(*(po->_rat[el][rf]));
+      pin._relax_rat(nullptr, el, rf, el, rf, temp);
     }
   }
 
@@ -843,12 +845,14 @@ void Timer::_bprop_rat(Pin& pin) {
   for(auto test : pin._tests) {
     FOR_EACH_EL_RF_IF(el, rf, test->_rat[el][rf]) {
       if(test->_cppr_credit[el][rf]) {
+        auto temp = *test->_rat[el][rf] + Dist(*test->_cppr_credit[el][rf]);
         pin._relax_rat(
-          &test->_arc, el, rf, el, rf, *test->_rat[el][rf] + *test->_cppr_credit[el][rf]
+          &test->_arc, el, rf, el, rf, temp
         );
       }
       else {
-        pin._relax_rat(&test->_arc, el, rf, el, rf, *test->_rat[el][rf]);
+        auto temp = *test->_rat[el][rf];
+        pin._relax_rat(&test->_arc, el, rf, el, rf, temp);
       }
     }
   }
@@ -1371,7 +1375,7 @@ std::optional<float> Timer::report_at(const std::string& name, Split m, Tran t) 
 std::optional<float> Timer::_report_at(const std::string& name, Split m, Tran t) {
   _update_timing();
   if(auto itr = _pins.find(name); itr != _pins.end() && itr->second._at[m][t]) {
-    return itr->second._at[m][t]->numeric;
+    return itr->second._at[m][t]->get_value();
   }
   else return std::nullopt;
 }
@@ -1387,7 +1391,7 @@ std::optional<float> Timer::report_rat(const std::string& name, Split m, Tran t)
 std::optional<float> Timer::_report_rat(const std::string& name, Split m, Tran t) {
   _update_timing();
   if(auto itr = _pins.find(name); itr != _pins.end() && itr->second._at[m][t]) {
-    return itr->second._rat[m][t];
+    return itr->second._rat[m][t]->get_value();
   }
   else return std::nullopt;
 }
@@ -1418,7 +1422,7 @@ std::optional<float> Timer::report_slack(const std::string& pin, Split m, Tran t
 std::optional<float> Timer::_report_slack(const std::string& pin, Split m, Tran t) {
   _update_timing();
   if(auto itr = _pins.find(pin); itr != _pins.end()) {
-    return itr->second.slack(m, t);
+    return itr->second.slack(m, t)->get_value();
   }
   else return std::nullopt;
 }

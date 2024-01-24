@@ -2,6 +2,7 @@
 #include <cmath>
 #include <numeric>
 #include <algorithm>
+#include <ot/static/logger.hpp>
 #include <boost/math/distributions/skew_normal.hpp>
 #include "delay.hpp"
 
@@ -96,7 +97,7 @@ Distribution::Distribution(Distribution_type type, ot::Tran rf, float mean)
  */
 Distribution Distribution::operator+(float value) 
 {
-    assert(0); // test for operator +
+    OT_LOGD("Use constant operator +");
     int offset = static_cast<int>(value / TIME_STEP);
     std::vector<float> copy = _pdf;
     return Distribution(_pdf, get_value() + value, get_start_point() + offset);
@@ -151,7 +152,7 @@ Distribution Distribution::operator+(const Distribution &rhs)
  */
 Distribution Distribution::operator-(float value) 
 {
-    assert(0); // test for operator +
+    OT_LOGD("Use constant operator -");
     int offset = static_cast<int>(value / TIME_STEP);
     std::vector<float> copy = _pdf;
     return Distribution(_pdf, get_value() - value, get_start_point() - offset);
@@ -287,13 +288,13 @@ float Distribution::get_3_sigma(ot::Split type)
     total = std::accumulate(_pdf.begin(), _pdf.end(),
                             decltype(_pdf)::value_type(0));
 
-    if (type == Split::MAX) {
+    if (type == ot::Split::MAX) {
         for (int i = 0; i < get_bin_num(); i++)
         {
             sum += _pdf[i];
             if (sum / total >= 0.99865) return TIME_STEP * (i + *_start);
         }
-    } else if (type == Split::MIN) {
+    } else if (type == ot::Split::MIN) {
         for (int i = get_bin_num() - 1; i >= 0; i--)
         {
             sum += _pdf[i];
@@ -316,7 +317,7 @@ void Distribution::print_status()
     if (!is_constant()) {
         std::cout << "Start time: " << get_start_time() << ", End time: " << get_end_time() << std:: endl;
         std::cout << "number of bins: " << get_bin_num() << std::endl;
-        std::cout << "3 sigma: " << get_3_sigma(Split::MAX) << std::endl;
+        std::cout << "3 sigma: " << get_3_sigma(ot::Split::MAX) << std::endl;
     }
     std::cout << "***************************************************\n";
 }

@@ -2,6 +2,7 @@
 #define OT_TIMER_PATH_HPP_
 
 #include <ot/headerdef.hpp>
+#include <ot/timer/statisical.hpp>
 
 namespace ot {
 
@@ -17,7 +18,7 @@ struct Point {
   Tran  transition;   // rise/fall
   float at;           // arrival
 
-  Point(const Pin&, Tran, float);
+  Point(const Pin&, Tran, const Dist&);
 };
 
 // ------------------------------------------------------------------------------------------------

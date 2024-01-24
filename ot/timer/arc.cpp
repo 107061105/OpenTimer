@@ -121,7 +121,8 @@ void Arc::_fprop_delay() {
     [this] (Net* net) {
       FOR_EACH_EL_RF(el, rf) {
         if (auto d = net->_delay(el, rf, _to); d) {
-          _delay[el][rf][rf] = Dist(*d);
+          auto temp = Dist(*d);
+          _delay[el][rf][rf] = std::move(temp);
         }
       }
     },
@@ -136,7 +137,8 @@ void Arc::_fprop_delay() {
           }
         }
         if (auto d = tv[el]->delay(frf, trf, si, lc); d) {
-          _delay[el][frf][trf] = Dist(*d);
+          auto temp = Dist(*d);
+          _delay[el][frf][trf] = std::move(temp);
         }
       }
     }
@@ -151,7 +153,8 @@ void Arc::_fprop_at() {
   }
 
   FOR_EACH_EL_RF_RF_IF(el, frf, trf, _from._at[el][frf] && _delay[el][frf][trf]) {
-    _to._relax_at(this, el, frf, el, trf, *_delay[el][frf][trf] + Dist(*_from._at[el][frf]));
+    auto temp = *_delay[el][frf][trf] + Dist(*_from._at[el][frf]);
+    _to._relax_at(this, el, frf, el, trf, temp);
   }
 }
 
@@ -166,7 +169,8 @@ void Arc::_bprop_rat() {
     // Case 1: Net arc
     [this] (Net* net) {
       FOR_EACH_EL_RF_IF(el, rf, _to._rat[el][rf] && _delay[el][rf][rf]) {
-        _from._relax_rat(this, el, rf, el, rf, Dist(*_to._rat[el][rf]) - *_delay[el][rf][rf]);
+        auto temp = Dist(*_to._rat[el][rf]) - *_delay[el][rf][rf];
+        _from._relax_rat(this, el, rf, el, rf, temp);
       }
     },
     // Case 2: Cell arc
@@ -179,7 +183,8 @@ void Arc::_bprop_rat() {
           if(!_to._rat[el][trf] || !_delay[el][frf][trf]) {
             continue;
           }
-          _from._relax_rat(this, el, frf, el, trf, Dist(*_to._rat[el][trf]) - *_delay[el][frf][trf]);
+          auto temp = Dist(*_to._rat[el][trf]) - *_delay[el][frf][trf];
+          _from._relax_rat(this, el, frf, el, trf, temp);
         }
         // constraint arc
         else {
@@ -192,14 +197,16 @@ void Arc::_bprop_rat() {
             auto at = _from._at[MAX][frf];
             auto slack = _to.slack(MIN, trf);
             if(at && slack) {
-              _from._relax_rat(this, MAX, frf, MIN, trf, Dist(*at) + *slack);
+              auto temp = Dist(*at) + *slack;
+              _from._relax_rat(this, MAX, frf, MIN, trf, temp);
             }
           }
           else {
             auto at = _from._at[MIN][frf];
             auto slack = _to.slack(MAX, trf);
             if(at && slack) {
-              _from._relax_rat(this, MIN, frf, MAX, trf, Dist(*at) - *slack);
+              auto temp = Dist(*at) - *slack;
+              _from._relax_rat(this, MIN, frf, MAX, trf, temp);
             }
           }
         }
