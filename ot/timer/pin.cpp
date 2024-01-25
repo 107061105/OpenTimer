@@ -348,13 +348,19 @@ void Pin::_relax_at(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, Dist& di
   
   switch (tel) {
     case MIN:
-      if(!_at[tel][trf] || dist < Dist(*_at[tel][trf])) {
+      if (!_at[tel][trf]) {
         _at[tel][trf].emplace(arc, fel, frf, dist);
+      } else {
+        auto temp = Statisical::min(dist, Dist(*_at[tel][trf]));
+        _at[tel][trf].emplace(arc, fel, frf, temp);
       }
     break;
     case MAX:
-      if(!_at[tel][trf] || dist > *_at[tel][trf]) {
+      if (!_at[tel][trf]) {
         _at[tel][trf].emplace(arc, fel, frf, dist);
+      } else {
+        auto temp = Statisical::max(dist, Dist(*_at[tel][trf]));
+        _at[tel][trf].emplace(arc, fel, frf, temp);
       }
     break;
   }
@@ -367,14 +373,20 @@ void Pin::_relax_rat(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, Dist& d
   switch(fel) {
 
     case MIN:
-      if(!_rat[fel][frf] || dist > *_rat[fel][frf]) {
-        _rat[fel][frf].emplace(arc, tel, trf, dist);
+      if (!_rat[fel][frf]) {
+        _rat[fel][frf].emplace(arc, fel, frf, dist);
+      } else {
+        auto temp = Statisical::max(dist, Dist(*_rat[fel][frf]));
+        _rat[fel][frf].emplace(arc, fel, frf, temp);
       }
     break;
 
     case MAX:
-      if(!_rat[fel][frf] || dist < *_rat[fel][frf]) {
-        _rat[fel][frf].emplace(arc, tel, trf, dist);
+      if (!_rat[fel][frf]) {
+        _rat[fel][frf].emplace(arc, fel, frf, dist);
+      } else {
+        auto temp = Statisical::min(dist, Dist(*_rat[fel][frf]));
+        _rat[fel][frf].emplace(arc, fel, frf, temp);
       }
     break;
   };

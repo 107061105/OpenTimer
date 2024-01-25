@@ -97,7 +97,7 @@ Distribution::Distribution(Distribution_type type, ot::Tran rf, float mean)
  */
 Distribution Distribution::operator+(float value) 
 {
-    OT_LOGD("Use constant operator +");
+    OT_LOGE("Use constant operator +");
     int offset = static_cast<int>(value / TIME_STEP);
     std::vector<float> copy = _pdf;
     return Distribution(_pdf, get_value() + value, get_start_point() + offset);
@@ -112,23 +112,25 @@ Distribution Distribution::operator+(float value)
 Distribution Distribution::operator+(const Distribution &rhs) 
 {
     if (is_constant()) {
-        std::cout << "njkfhglk\n";
-
         if (rhs.is_constant()) {
+            // OT_LOGD("constant/constant add");
             return Distribution(get_value() + rhs.get_value());
         }
         else {
+            // OT_LOGD("constant/non add");
             Distribution temp = rhs;
             return temp + *this;
         }
     }
     else if (rhs.is_constant()) {
         assert(!is_constant());
+        // OT_LOGD("non/constant add");
         int offset = static_cast<int>(rhs.get_value() / TIME_STEP);
         std::vector<float> copy = _pdf;
         return Distribution(copy, get_value() + rhs.get_value(), get_start_point() + offset);
     } 
     else {
+        // OT_LOGD("non/non add");
         std::vector<float> result;
         int start_time = 0;
 
@@ -152,7 +154,7 @@ Distribution Distribution::operator+(const Distribution &rhs)
  */
 Distribution Distribution::operator-(float value) 
 {
-    OT_LOGD("Use constant operator -");
+    OT_LOGE("Use constant operator -");
     int offset = static_cast<int>(value / TIME_STEP);
     std::vector<float> copy = _pdf;
     return Distribution(_pdf, get_value() - value, get_start_point() - offset);
@@ -184,6 +186,7 @@ bool Distribution::operator<(const Distribution &rhs)
         std::cerr << "lhs is " << to_string(get_type()) << ", and ";
         std::cerr << "rhs is " << to_string(rhs.get_type()) << std::endl;
     }
+    OT_LOGD("constant distribution comparator <");
     return get_value() < rhs.get_value();
 }
 
@@ -200,6 +203,7 @@ bool Distribution::operator>(const Distribution &rhs)
         std::cerr << "lhs is " << to_string(get_type()) << ", and ";
         std::cerr << "rhs is " << to_string(rhs.get_type()) << std::endl;
     }
+    OT_LOGD("constant distribution comparator >");
     return get_value() > rhs.get_value();
 }
 
@@ -335,6 +339,7 @@ Distribution max(const Distribution &dist1, const Distribution &dist2)
     float value = (dist1.get_value() > dist2.get_value()) ? dist1.get_value() : dist2.get_value();
 
     if (dist1.is_constant()) {
+        // OT_LOGD("Max operation of two constant dists");
         return Distribution(value);
     } 
     else {
@@ -387,6 +392,7 @@ Distribution min(const Distribution &dist1, const Distribution &dist2)
     float value = (dist1.get_value() < dist2.get_value()) ? dist1.get_value() : dist2.get_value();
 
     if (dist1.is_constant()) {
+        // OT_LOGD("Min operation of two constant dists");
         return Distribution(value);
     } 
     else {
