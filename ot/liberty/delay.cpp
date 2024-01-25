@@ -315,15 +315,15 @@ float Distribution::get_3_sigma(ot::Split type)
  */
 void Distribution::print_status()
 {
-    std::cout << "***************************************************\n";
-    std::cout << "Distribution type: " << to_string(get_type()) << std::endl;
-    std::cout << "mean value: " << get_value() << std::endl;
+    OT_LOGD("***************************************************");
+    OT_LOGD("Distribution type: ", to_string(get_type()));
+    OT_LOGD("mean value: ", get_value());
     if (!is_constant()) {
-        std::cout << "Start time: " << get_start_time() << ", End time: " << get_end_time() << std:: endl;
-        std::cout << "number of bins: " << get_bin_num() << std::endl;
-        std::cout << "3 sigma: " << get_3_sigma(ot::Split::MAX) << std::endl;
+        OT_LOGD("Start time: ", get_start_time(), ", End time: ", get_end_time());
+        OT_LOGD("number of bins: ", get_bin_num());
+        OT_LOGD("3 sigma: ", get_3_sigma(ot::Split::MAX));
     }
-    std::cout << "***************************************************\n";
+    OT_LOGD("***************************************************");
 }
 
 /**to_string(get_type())
