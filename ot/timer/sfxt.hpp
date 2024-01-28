@@ -3,6 +3,7 @@
 
 #include <ot/headerdef.hpp>
 #include <ot/static/logger.hpp>
+#include <ot/timer/statisical.hpp>
 
 namespace ot {
 
@@ -24,7 +25,7 @@ class SfxtCache {
     SfxtCache& operator = (const SfxtCache&) = delete;
     SfxtCache& operator = (SfxtCache&&) = delete;
 
-    inline std::optional<float> slack() const;
+    inline std::optional<Dist> slack() const;
     inline Split split() const;
     inline size_t root() const;
 
@@ -36,15 +37,15 @@ class SfxtCache {
 
     std::vector<size_t> _pins;
     
-    std::unordered_map<size_t, std::optional<float>> _srcs;
+    std::unordered_map<size_t, std::optional<Dist>> _srcs;
     
     inline thread_local static std::vector<size_t> __pins;
-    inline thread_local static std::vector<std::optional<float>>  __dist;
+    inline thread_local static std::vector<std::optional<Dist>>   __dist;
     inline thread_local static std::vector<std::optional<size_t>> __tree;
     inline thread_local static std::vector<std::optional<size_t>> __link;
     inline thread_local static std::vector<std::optional<bool>>   __spfa;
 
-    inline bool _relax(size_t, size_t, std::optional<size_t>, float);
+    inline bool _relax(size_t, size_t, std::optional<size_t>, const Dist&);
 };
 
 // Function: root
@@ -53,7 +54,7 @@ inline size_t SfxtCache::root() const {
 }
 
 // Function: slack
-inline std::optional<float> SfxtCache::slack() const {
+inline std::optional<Dist> SfxtCache::slack() const {
   return __dist[_S];
 }
 
@@ -63,9 +64,10 @@ inline Split SfxtCache::split() const {
 }
 
 // Function: _relax        
-inline bool SfxtCache::_relax(size_t u, size_t v, std::optional<size_t> e, float d) {
-  if(!__dist[u] || *__dist[v] + d < *__dist[u]) {
-    __dist[u] = *__dist[v] + d;
+inline bool SfxtCache::_relax(size_t u, size_t v, std::optional<size_t> e, const Dist& d) {
+  auto temp = *__dist[v] + d;
+  if(!__dist[u] || temp.get_value() < (*__dist[u]).get_value()) {
+    __dist[u] = temp;
     __tree[u] = v;
     __link[u] = e;
     return true;

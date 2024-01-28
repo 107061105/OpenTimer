@@ -1,6 +1,7 @@
 #ifndef OT_TIMER_ENDPOINT_HPP_
 #define OT_TIMER_ENDPOINT_HPP_
 
+#include <ot/timer/statisical.hpp>
 #include <ot/headerdef.hpp>
 #include <ot/traits.hpp>
 
@@ -27,7 +28,7 @@ class Endpoint {
     Endpoint(Split, Tran, Test&);
 	  Endpoint(Split, Tran, PrimaryOutput&);	
 
-    float slack() const;
+    Dist slack() const;
 
     inline Split split() const;
     inline Tran transition() const;
@@ -75,17 +76,17 @@ inline const PrimaryOutput* Endpoint::primary_output() const {
 
 // Operator <
 inline bool Endpoint::operator < (const Endpoint& rhs) const {
-  return slack() < rhs.slack();
+  return slack().get_value() < rhs.slack().get_value();
 }
 
 // Operator >
 inline bool Endpoint::operator > (const Endpoint& rhs) const {
-  return slack() > rhs.slack();
+  return slack().get_value() > rhs.slack().get_value();
 }
 
 // Operator ==
 inline bool Endpoint::operator == (const Endpoint& rhs) const {
-  return slack() == rhs.slack();
+  return slack().get_value() == rhs.slack().get_value();
 }
 
 };  // end of namespace ot. -----------------------------------------------------------------------

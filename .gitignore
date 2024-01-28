@@ -34,3 +34,4 @@ example/
 unittest/
 *test*
 *.txt
+benchmark/

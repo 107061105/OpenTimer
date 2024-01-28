@@ -15,10 +15,10 @@ std::optional<float> PrimaryOutput::rat(Split el, Tran rf) const {
 }
 
 // Function: slack
-std::optional<float> PrimaryOutput::slack(Split el, Tran rf) const {
+std::optional<Dist> PrimaryOutput::slack(Split el, Tran rf) const {
   if(_pin._at[el][rf] && _rat[el][rf]) {
-    return el == MIN ? (*_pin._at[el][rf]).get_value() - *_rat[el][rf] : 
-                        *_rat[el][rf] - (*_pin._at[el][rf]).get_value();
+    return el == MIN ? Dist(*_pin._at[el][rf]) - Dist(*_rat[el][rf]) : 
+                       Dist(*_rat[el][rf]) - Dist(*_pin._at[el][rf]);
   }
   else {
     return std::nullopt;

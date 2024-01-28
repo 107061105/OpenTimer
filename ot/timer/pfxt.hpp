@@ -1,6 +1,7 @@
 #ifndef OT_TIMER_PFXT_HPP_
 #define OT_TIMER_PFXT_HPP_
 
+#include <ot/timer/statisical.hpp>
 #include <ot/headerdef.hpp>
 
 namespace ot {
@@ -14,14 +15,14 @@ class Arc;
 // Class: PfxtNode
 struct PfxtNode {
   
-  float slack;
+  Dist slack;
   size_t from;
   size_t to;
 
   const Arc* arc {nullptr};
   const PfxtNode* parent {nullptr};
 
-  PfxtNode(float, size_t, size_t, const Arc*, const PfxtNode*);
+  PfxtNode(const Dist&, size_t, size_t, const Arc*, const PfxtNode*);
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -34,7 +35,7 @@ class PfxtCache {
   // Min-heap comparator
   struct PfxtNodeComparator {
     bool operator () (std::unique_ptr<PfxtNode>& a, std::unique_ptr<PfxtNode>& b) const {
-      return a->slack > b->slack;
+      return a->slack.get_value() > b->slack.get_value();
     }
   };
 
@@ -59,7 +60,7 @@ class PfxtCache {
     std::vector<std::unique_ptr<PfxtNode>> _paths;
     std::vector<std::unique_ptr<PfxtNode>> _nodes;
 
-    void _push(float, size_t, size_t, const Arc*, const PfxtNode*);
+    void _push(Dist&, size_t, size_t, const Arc*, const PfxtNode*);
 
     PfxtNode* _pop();
     PfxtNode* _top() const;

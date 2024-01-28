@@ -13,6 +13,7 @@
 #include <ot/timer/pfxt.hpp>
 #include <ot/timer/cppr.hpp>
 #include <ot/timer/scc.hpp>
+#include <ot/timer/statisical.hpp>
 #include <ot/static/logger.hpp>
 #include <ot/spef/spef.hpp>
 #include <ot/verilog/verilog.hpp>
@@ -302,7 +303,7 @@ class Timer {
     std::optional<float> _cppr_credit(const Test&, Split, Tran) const;
     std::optional<float> _cppr_credit(const CpprCache&, Pin&, Split, Tran) const;
     std::optional<float> _cppr_offset(const CpprCache&, Pin&, Split, Tran) const;
-    std::optional<float> _sfxt_offset(const SfxtCache&, size_t) const;
+    std::optional<Dist > _sfxt_offset(const SfxtCache&, size_t) const;
     
     size_t _max_pin_name_size() const;
     size_t _max_net_name_size() const;

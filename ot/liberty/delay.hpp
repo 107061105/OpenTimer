@@ -26,14 +26,14 @@ public:
     ~Distribution() { _pdf.clear(); _start.reset(); }
 
     // Summation operation of the distributions
-    Distribution operator+(float);
+    // Distribution operator+(float);
     Distribution operator+(const Distribution &);
     // Subtraction operation of the distributions
-    Distribution operator-(float);
+    // Distribution operator-(float);
     Distribution operator-(const Distribution &);
     // Comparation operation of the CONSTANT distributions
-    bool operator<(const Distribution &);
-    bool operator>(const Distribution &);
+    // bool operator<(const Distribution &);
+    // bool operator>(const Distribution &);
 
     // Print the status
     void print_status();
@@ -54,7 +54,7 @@ public:
     inline bool  is_constant          () const;
     inline const std::vector<float>& get_pdf () const;
     float get_ith_pdf(int i) const;
-    float get_3_sigma(ot::Split);
+    float get_3_sigma(ot::Split) const;
 
 private:
     // Type of distribution

@@ -15,6 +15,30 @@ std::optional<Dist> Test::rat(Split el, Tran rf) const {
   return _rat[el][rf];
 }
 
+// Function: raw_slack
+std::optional<Dist> Test::raw_slack(Split el, Tran rf) const {
+  if(_arc._to._at[el][rf] && _rat[el][rf]) {
+    return (
+      el == MIN ? Dist(*_arc._to._at[el][rf]) - Dist(*_rat[el][rf]) : 
+                  Dist(*_rat[el][rf]) - Dist(*_arc._to._at[el][rf])
+    );
+  }
+  else return std::nullopt;
+}
+
+// Function: slack
+std::optional<Dist> Test::slack(Split el, Tran rf) const {
+  if(_arc._to._at[el][rf] && _rat[el][rf]) {
+    return (
+      el == MIN ? Dist(*_arc._to._at[el][rf]) - Dist(*_rat[el][rf]) : 
+                  Dist(*_rat[el][rf]) - Dist(*_arc._to._at[el][rf])
+    ) + (
+      _cppr_credit[el][rf] ? Dist(*_cppr_credit[el][rf]) : Dist(0.0f)
+    );
+  }
+  else return std::nullopt;
+}
+
 // Function: constraint
 std::optional<float> Test::constraint(Split el, Tran rf) const {
   return _constraint[el][rf];
@@ -23,30 +47,6 @@ std::optional<float> Test::constraint(Split el, Tran rf) const {
 // Function: cppr_credit
 std::optional<float> Test::cppr_credit(Split el, Tran rf) const {
   return _cppr_credit[el][rf];
-}
-
-// Function: slack
-std::optional<float> Test::slack(Split el, Tran rf) const {
-  if(_arc._to._at[el][rf] && _rat[el][rf]) {
-    return (
-      el == MIN ? (*_arc._to._at[el][rf]).get_value() - (*_rat[el][rf]).get_value() : 
-                  (*_rat[el][rf]).get_value() - (*_arc._to._at[el][rf]).get_value()
-    ) + (
-      _cppr_credit[el][rf] ? *_cppr_credit[el][rf] : 0.0f
-    );
-  }
-  else return std::nullopt;
-}
-
-// Function: raw_slack
-std::optional<float> Test::raw_slack(Split el, Tran rf) const {
-  if(_arc._to._at[el][rf] && _rat[el][rf]) {
-    return (
-      el == MIN ? (*_arc._to._at[el][rf]).get_value() - (*_rat[el][rf]).get_value() : 
-                  (*_rat[el][rf]).get_value() - (*_arc._to._at[el][rf]).get_value()
-    );
-  }
-  else return std::nullopt;
 }
 
 // Function: arc

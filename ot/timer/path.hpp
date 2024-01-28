@@ -14,9 +14,9 @@ class Endpoint;
 // Struct: Point
 struct Point {
 
-  const Pin& pin;     // pin reference
-  Tran  transition;   // rise/fall
-  float at;           // arrival
+  const Pin& pin;   // pin reference
+  Dist at;          // arrival time
+  Tran transition;  // rise/fall
 
   Point(const Pin&, Tran, const Dist&);
 };
@@ -26,7 +26,7 @@ struct Point {
 // Struct: Path
 struct Path : std::list<Point> {
 
-  Path(float, const Endpoint*);
+  Path(const Dist&, const Endpoint*);
   Path(const Path&) = delete;
   Path(Path&&) = default; 
 
@@ -34,10 +34,9 @@ struct Path : std::list<Point> {
   Path& operator = (Path&&) = default;
   
   void dump(std::ostream&) const;
-  void dump_tau18(std::ostream&) const;
+  // void dump_tau18(std::ostream&) const;
 
-  float slack {std::numeric_limits<float>::quiet_NaN()};
-  
+  const Dist slack;
   const Endpoint* endpoint {nullptr};
 };
 
@@ -55,7 +54,7 @@ class PathHeap {
   // max heap
   struct PathComparator {
     bool operator () (const std::unique_ptr<Path>& a, const std::unique_ptr<Path>& b) const {
-      return a->slack < b->slack;
+      return a->slack.get_value() < b->slack.get_value();
     }
   };
   

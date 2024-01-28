@@ -85,9 +85,9 @@ int main(int argc, char* argv[]) {
       constraint.split(ot::MAX);
       auto path_sets = timer.report_timing(constraint);
 
-      for(auto &p: path_sets.paths) {
-        p.dump_tau18(ofs);
-      }
+      // for(auto &p: path_sets.paths) {
+      //   p.dump_tau18(ofs);
+      // }
     }
     else {
       throw std::runtime_error("unexpected operation "s + line);

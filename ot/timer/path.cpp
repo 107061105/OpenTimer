@@ -6,13 +6,13 @@ namespace ot {
 Point::Point(const Pin& p, Tran t, const Dist& d) :
   pin        {p},
   transition {t},
-  at         {d.get_value()} {
+  at         {std::move(d)} {
 }
 
 // ------------------------------------------------------------------------------------------------
 
 // Constructor
-Path::Path(float slk, const Endpoint* ept) :
+Path::Path(const Dist& slk, const Endpoint* ept) :
   slack    {slk},
   endpoint {ept} {
 }
@@ -85,52 +85,52 @@ void Path::dump_tau18(std::ostream& os) const{
 
 
 
-void Path::dump_tau18(std::ostream& os) const{
+// void Path::dump_tau18(std::ostream& os) const{
 
-  std::regex replace(":");
+//   std::regex replace(":");
 
-  auto el = endpoint->split();
-  auto rf = endpoint->transition();
+//   auto el = endpoint->split();
+//   auto rf = endpoint->transition();
 
 
-  os << "Endpoint: " << std::regex_replace(back().pin.name(), replace, "/")  << '\n';
-  os << "Beginpoint: " << std::regex_replace(front().pin.name(), replace, "/") << '\n';
-  //os << "= Required Time " << '\n'; //TODO: ignore RAT for tau18 benchmark
-  float rat = 0.0;
-  if(endpoint->test() != nullptr){
-    auto rat_dist = *(endpoint->test()->rat(el, rf));
-    rat = rat_dist.get_value();
-  }
-  else{
-    rat = *(endpoint->primary_output()->rat(el, rf));
-  }
-  auto beg_at = front().at;
-  auto end_at = back().at;
-  auto path_slack = el == MIN ? ((end_at - beg_at) - rat) : (rat - (end_at - beg_at));
-  os << "= Required Time " << rat << '\n';
-  //Arrival Time is the total delay
-  os << "- Arrival Time " << end_at - beg_at << '\n';
-  //os << "- Arrival Time " << back().at << '\n';  
-  os << "= Slack Time " << path_slack << '\n';
+//   os << "Endpoint: " << std::regex_replace(back().pin.name(), replace, "/")  << '\n';
+//   os << "Beginpoint: " << std::regex_replace(front().pin.name(), replace, "/") << '\n';
+//   //os << "= Required Time " << '\n'; //TODO: ignore RAT for tau18 benchmark
+//   float rat = 0.0;
+//   if(endpoint->test() != nullptr){
+//     auto rat_dist = *(endpoint->test()->rat(el, rf));
+//     rat = rat_dist.get_value();
+//   }
+//   else{
+//     rat = *(endpoint->primary_output()->rat(el, rf));
+//   }
+//   auto beg_at = front().at;
+//   auto end_at = back().at;
+//   auto path_slack = el == MIN ? ((end_at - beg_at) - rat) : (rat - (end_at - beg_at));
+//   os << "= Required Time " << rat << '\n';
+//   //Arrival Time is the total delay
+//   os << "- Arrival Time " << end_at - beg_at << '\n';
+//   //os << "- Arrival Time " << back().at << '\n';  
+//   os << "= Slack Time " << path_slack << '\n';
 
-  float at_offset = front().at;
-  std::optional<float> pi_at;
+//   float at_offset = front().at;
+//   std::optional<float> pi_at;
 
-  for(const auto& p : *this) {
+//   for(const auto& p : *this) {
 
-    if(!pi_at){ os << "- "; }
-    else{ os << p.at-*pi_at << " "; }
-    os << p.at-at_offset << " ";
+//     if(!pi_at){ os << "- "; }
+//     else{ os << p.at-*pi_at << " "; }
+//     os << p.at-at_offset << " ";
 
-    if(p.transition == RISE){ os << "^ "; }
-    else{ os << "v "; }
+//     if(p.transition == RISE){ os << "^ "; }
+//     else{ os << "v "; }
 
-    os << std::regex_replace(p.pin.name(), replace, "/") << '\n';
-    pi_at = p.at;
-  }
-  os << '\n';
+//     os << std::regex_replace(p.pin.name(), replace, "/") << '\n';
+//     pi_at = p.at;
+//   }
+//   os << '\n';
 
-}
+// }
 
 
 // Procedure: dump
@@ -194,7 +194,9 @@ void Path::dump(std::ostream& os) const {
   
   // trace
   os << std::fixed << std::setprecision(3);
-  std::optional<float> pi_at;
+
+  // record path arrival time
+  std::optional<Dist> pi_at;
 
   for(const auto& p : *this) {
 
@@ -208,11 +210,16 @@ void Path::dump(std::ostream& os) const {
 
     // delay
     os << std::setw(w2);
-    if(pi_at) os << p.at - *pi_at;
-    else os << p.at;
+    if(pi_at) {
+      auto arc_delay = Dist(p.at) - *pi_at;
+      os << arc_delay.get_value(); // Neko
+    }
+    else {
+      os << p.at.get_value(); // Neko
+    }
     
     // arrival time
-    os << std::setw(w3) << p.at;
+    os << std::setw(w3) << p.at.get_value(); // Neko
 
     // transition
     os << std::setw(w4) << to_string(p.transition);
@@ -229,7 +236,7 @@ void Path::dump(std::ostream& os) const {
   }
 
   os << std::setw(w1) << "arrival" 
-     << std::setw(w2+w3) << at;
+     << std::setw(w2+w3) << at.get_value();
   std::fill_n(std::ostream_iterator<char>(os), w4 + 2, ' ');
   os << "data arrival time" << '\n'; 
 
@@ -241,13 +248,13 @@ void Path::dump(std::ostream& os) const {
     [&] (Test* test) {
         
       auto tv  = (test->_arc.timing_view())[split];
-      auto sum = 0.0f;
+      auto sum = Dist(0.0f);
 
       // related pin latency
       os << std::setw(w1) << "related pin";
       if(auto c = test->_related_at[split][tran]; c) {
-        sum += (*c).get_value();
-        os << std::setw(w2) << (*c).get_value() << std::setw(w3) << sum;
+        sum = sum + *c; // Neko
+        os << std::setw(w2) << (*c).get_value() << std::setw(w3) << sum.get_value();
       }
       else {
         os << std::setw(w2+w3) << "n/a";
@@ -275,13 +282,13 @@ void Path::dump(std::ostream& os) const {
 
         switch(split) {
           case MIN: 
-            sum += *c;
-            os << std::setw(w2) << c.value() << std::setw(w3) << sum;
+            sum = sum + Dist(*c);
+            os << std::setw(w2) << c.value() << std::setw(w3) << sum.get_value(); // Neko
           break;
 
           case MAX:
-            sum -= *c;
-            os << std::setw(w2) << -c.value() << std::setw(w3) << sum;
+            sum = sum - Dist(*c);
+            os << std::setw(w2) << -c.value() << std::setw(w3) << sum.get_value();
           break;
         }
         
@@ -301,13 +308,13 @@ void Path::dump(std::ostream& os) const {
       // cppr credit
       if(auto c = test->_cppr_credit[split][tran]; c) {
         os << std::setw(w1) << "cppr credit";
-        sum += *c;
-        os << std::setw(w2) << *c << std::setw(w3) << sum << '\n';
+        sum = sum + Dist(*c);
+        os << std::setw(w2) << *c << std::setw(w3) << sum.get_value() << '\n';
       }
 
       OT_LOGW_IF(
-        std::fabs(sum - rat) > 1.0f, 
-        "unstable numerics in PBA and GBA rats: ", sum, " vs ", rat
+        auto temp = sum - rat; std::fabs(temp.get_value()) > 1.0f, 
+        "unstable numerics in PBA and GBA rats: ", sum.get_value(), " vs ", rat.get_value()
       );
     },
     [&] (PrimaryOutput* po) {
@@ -323,15 +330,15 @@ void Path::dump(std::ostream& os) const {
     }
   }, endpoint->_handle);
   
-  os << std::setw(w1) << "required" << std::setw(w2+w3) << rat;
+  os << std::setw(w1) << "required" << std::setw(w2+w3) << rat.get_value(); // Neko
   std::fill_n(std::ostream_iterator<char>(os), w4+2, ' ');
   os << "data required time" << '\n';
 
   // slack
   std::fill_n(std::ostream_iterator<char>(os), W, '-');
-  os << '\n' << std::setw(w1) << "slack" << std::setw(w2+w3) << slack;
+  os << '\n' << std::setw(w1) << "slack" << std::setw(w2+w3) << slack.get_value(); // Neko
   std::fill_n(std::ostream_iterator<char>(os), w4+2, ' ');
-  os << (slack < 0.0f ? "VIOLATED" : "MET") << '\n';
+  os << (slack.get_value() < 0.0f ? "VIOLATED" : "MET") << '\n';
   
   // restore the format
   os.flags(fmt);
@@ -422,7 +429,7 @@ std::string PathHeap::dump() const {
   std::ostringstream oss;
   oss << "# Paths: " << _paths.size() << '\n';
   for(size_t i=0; i<_paths.size(); ++i) {
-    oss << "slack[" << i << "]: " << _paths[i]->slack << '\n'; 
+    oss << "slack[" << i << "]: " << _paths[i]->slack.get_value() << '\n'; 
   }
   return oss.str();
 }
@@ -552,7 +559,7 @@ void Timer::_recover_datapath(Path& path, const SfxtCache& sfxt) const {
     u = *sfxt.__tree[u];
     std::tie(upin, urf) = _decode_pin(u);
     assert(path.back().transition == frf && urf == trf);
-    auto at = path.back().at + (*arc->_delay[sfxt._el][frf][trf]).get_value();
+    auto at = Dist(path.back().at) + *arc->_delay[sfxt._el][frf][trf];
     path.emplace_back(*upin, urf, at);
   }
 }
@@ -580,8 +587,7 @@ void Timer::_recover_datapath(
   // internal deviation
   else {
     assert(!path.empty());
-    auto d = *node->arc->_delay[sfxt._el][path.back().transition][urf];
-    auto at = path.back().at + d.get_value();
+    auto at = Dist(path.back().at) + *node->arc->_delay[sfxt._el][path.back().transition][urf];
     path.emplace_back(*upin, urf, at);
   }
 
@@ -591,8 +597,7 @@ void Timer::_recover_datapath(
     u = *sfxt.__tree[u];   
     std::tie(upin, urf) = _decode_pin(u);
     assert(path.back().transition == frf && urf == trf);
-    auto d = *arc->_delay[sfxt._el][frf][trf];
-    auto at = path.back().at + d.get_value(); 
+    auto at = Dist(path.back().at) + *arc->_delay[sfxt._el][frf][trf]; 
     path.emplace_back(*upin, urf, at);
   }
 }

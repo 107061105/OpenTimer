@@ -1154,7 +1154,7 @@ void Timer::_update_endpoints() {
 
       // update the worst negative slack (wns)
       if(!_endpoints[el][rf].empty()) {
-        _wns[el][rf] = _endpoints[el][rf].front().slack();
+        _wns[el][rf] = _endpoints[el][rf].front().slack().get_value();
       }
       else {
         _wns[el][rf] = std::nullopt;
@@ -1165,8 +1165,8 @@ void Timer::_update_endpoints() {
         _tns[el][rf] = 0.0f;
         _fep[el][rf] = 0;
         for(const auto& ept : _endpoints[el][rf]) {
-          if(auto slack = ept.slack(); slack < 0.0f) {
-            _tns[el][rf] = *_tns[el][rf] + slack;
+          if(auto slack = ept.slack(); slack.get_value() < 0.0f) {
+            _tns[el][rf] = *_tns[el][rf] + slack.get_value();
             _fep[el][rf] = *_fep[el][rf] + 1; 
           }
         }

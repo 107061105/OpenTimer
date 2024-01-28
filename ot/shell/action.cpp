@@ -297,12 +297,7 @@ void Shell::_report_timing() {
     for(auto &paths: pathsets) {
       for(size_t i=0; i<paths.size(); ++i) {
         if(i) _os << '\n';
-        if(batch) {
-          paths[i].dump_tau18(_os);
-        }
-        else {
-          _os << paths[i];
-        }
+        _os << paths[i];
       }
     }
   }

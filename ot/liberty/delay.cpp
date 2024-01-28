@@ -95,13 +95,13 @@ Distribution::Distribution(Distribution_type type, ot::Tran rf, float mean)
  * @param value the constant value
  * @return Distribution
  */
-Distribution Distribution::operator+(float value) 
-{
-    OT_LOGE("Use constant operator +");
-    int offset = static_cast<int>(value / TIME_STEP);
-    std::vector<float> copy = _pdf;
-    return Distribution(_pdf, get_value() + value, get_start_point() + offset);
-}
+// Distribution Distribution::operator+(float value) 
+// {
+//     OT_LOGE("Use constant operator +");
+//     int offset = static_cast<int>(value / TIME_STEP);
+//     std::vector<float> copy = _pdf;
+//     return Distribution(_pdf, get_value() + value, get_start_point() + offset);
+// }
 
 /**
  * @brief Overload operator + for Distribution
@@ -152,13 +152,13 @@ Distribution Distribution::operator+(const Distribution &rhs)
  * @param value the constant value
  * @return Distribution
  */
-Distribution Distribution::operator-(float value) 
-{
-    OT_LOGE("Use constant operator -");
-    int offset = static_cast<int>(value / TIME_STEP);
-    std::vector<float> copy = _pdf;
-    return Distribution(_pdf, get_value() - value, get_start_point() - offset);
-}
+// Distribution Distribution::operator-(float value) 
+// {
+//     OT_LOGE("Use constant operator -");
+//     int offset = static_cast<int>(value / TIME_STEP);
+//     std::vector<float> copy = _pdf;
+//     return Distribution(_pdf, get_value() - value, get_start_point() - offset);
+// }
 
 /**
  * @brief Overload operator - for Distribution
@@ -179,16 +179,16 @@ Distribution Distribution::operator-(const Distribution &rhs)
  * @param rhs the constant distribution
  * @return bool
  */
-bool Distribution::operator<(const Distribution &rhs) 
-{
-    if (get_type() != rhs.get_type()) {
-        std::cerr << "Invalid comparison for operator < !!\n";
-        std::cerr << "lhs is " << to_string(get_type()) << ", and ";
-        std::cerr << "rhs is " << to_string(rhs.get_type()) << std::endl;
-    }
-    OT_LOGD("constant distribution comparator <");
-    return get_value() < rhs.get_value();
-}
+// bool Distribution::operator<(const Distribution &rhs) 
+// {
+//     if (get_type() != rhs.get_type()) {
+//         std::cerr << "Invalid comparison for operator < !!\n";
+//         std::cerr << "lhs is " << to_string(get_type()) << ", and ";
+//         std::cerr << "rhs is " << to_string(rhs.get_type()) << std::endl;
+//     }
+//     OT_LOGD("constant distribution comparator <");
+//     return get_value() < rhs.get_value();
+// }
 
 /**
  * @brief Overload operator >, only for constant Distribution
@@ -196,16 +196,16 @@ bool Distribution::operator<(const Distribution &rhs)
  * @param rhs the constant distribution
  * @return bool
  */
-bool Distribution::operator>(const Distribution &rhs) 
-{
-    if (get_type() != rhs.get_type()) {
-        std::cerr << "Invalid comparison for operator > !!\n";
-        std::cerr << "lhs is " << to_string(get_type()) << ", and ";
-        std::cerr << "rhs is " << to_string(rhs.get_type()) << std::endl;
-    }
-    OT_LOGD("constant distribution comparator >");
-    return get_value() > rhs.get_value();
-}
+// bool Distribution::operator>(const Distribution &rhs) 
+// {
+//     if (get_type() != rhs.get_type()) {
+//         std::cerr << "Invalid comparison for operator > !!\n";
+//         std::cerr << "lhs is " << to_string(get_type()) << ", and ";
+//         std::cerr << "rhs is " << to_string(rhs.get_type()) << std::endl;
+//     }
+//     OT_LOGD("constant distribution comparator >");
+//     return get_value() > rhs.get_value();
+// }
 
 /**
  * @brief Normalize the pdf
@@ -283,7 +283,7 @@ float Distribution::get_ith_pdf(int i) const
  * @param type Max is 3 sigma (99.865%) while Min is -3 sigma (0.135%)
  * @return float
  */
-float Distribution::get_3_sigma(ot::Split type)
+float Distribution::get_3_sigma(ot::Split type) const
 {
     float total = 0.0f;
     float sum = 0.0f;

@@ -52,7 +52,7 @@ class PrimaryOutput {
     PrimaryOutput(Pin&);
 
     std::optional<float> rat(Split, Tran) const;
-    std::optional<float> slack(Split, Tran) const;
+    std::optional<Dist > slack(Split, Tran) const;
 
   private:
 

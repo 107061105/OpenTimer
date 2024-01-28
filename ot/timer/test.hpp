@@ -25,9 +25,9 @@ class Test {
     Test(Arc&);
 
     std::optional<Dist > rat(Split, Tran) const;
+    std::optional<Dist > slack(Split, Tran) const;
+    std::optional<Dist > raw_slack(Split, Tran) const;
     std::optional<float> constraint(Split, Tran) const;
-    std::optional<float> slack(Split, Tran) const;
-    std::optional<float> raw_slack(Split, Tran) const;
     std::optional<float> cppr_credit(Split, Tran) const;
 
     const Pin& constrained_pin() const;
