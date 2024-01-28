@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <random>
+#include <ot/static/logger.hpp>
 #include <boost/math/distributions/skew_normal.hpp>
 #include "stats_util.hpp"
 
@@ -124,8 +125,7 @@ std::vector<float> generate_MicMic_SN_samples(int num_samples, ot::Tran rf, floa
     {
         std::cerr << "Undefined VDD!!!\n";
     }
-    std::cout << "Generate MicMic SN samples, mean/stdev/skew = ";
-    std::cout << mean << "/" << stdev << "/" << skew << std::endl;
+    // OT_LOGD("Generate MicMic SN samples, mean/stdev/skew = ", mean, "/", stdev, "/", skew);
 
     // Convert mean, stdev, and skew to location, scale, and shape parameters
     float location = mean;

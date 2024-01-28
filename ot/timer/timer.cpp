@@ -777,7 +777,10 @@ void Timer::_fprop_delay(Pin& pin) {
 
   // Compute the delay from its fanin.
   for(auto arc : pin._fanin) {
-    arc->_fprop_delay();
+    if (_statisical_sta)
+      arc->_fprop_delay_ssta();
+    else
+      arc->_fprop_delay();
   }
 }
 

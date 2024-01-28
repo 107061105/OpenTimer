@@ -145,6 +145,45 @@ void Arc::_fprop_delay() {
   }, _handle);
 }
 
+// Procedure: _fprop_delay_ssta
+void Arc::_fprop_delay_ssta() {
+  
+  if(_has_state(LOOP_BREAKER)) {
+    return;
+  }
+
+  std::visit(Functors{
+    // Case 1: Net arc
+    [this] (Net* net) {
+      FOR_EACH_EL_RF(el, rf) {
+        if (auto d = net->_delay(el, rf, _to); d) {
+          auto temp = Dist(*d);
+          _delay[el][rf][rf] = std::move(temp);
+        }
+      }
+    },
+    // Case 2: Cell arc
+    [this] (TimingView tv) {
+      FOR_EACH_EL_RF_RF_IF(el, frf, trf, (tv[el] && _from._slew[el][frf])) {
+        auto lc = 0.0f;
+        auto si = *_from._slew[el][frf];
+        if (_to._net) {
+          if (!(_to._net->_is_self_loop)) {
+            lc = _to._net->_load(el, trf);
+          }
+        }
+        if (auto d = tv[el]->delay(frf, trf, si, lc); d) {
+          auto temp = Dist(Statisical::Distribution_type::MicmicSN, trf, *d);
+          // OT_LOGD("Cell arc: ", name(), " create statisical delay.");
+          // temp.print_status();
+          _delay[el][frf][trf] = std::move(temp);
+        }
+      }
+    }
+  }, _handle);
+}
+
+
 // Procedure: _fprop_at
 void Arc::_fprop_at() {
   

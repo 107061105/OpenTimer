@@ -121,7 +121,6 @@ class Timer {
     inline auto current_unit() const;
     inline auto voltage_unit() const;
     inline auto capacitance_unit() const;
-    inline bool is_ssta() const; // check if it is in ssta mode
     
     inline const auto& primary_inputs() const;
     inline const auto& primary_outputs() const;
@@ -423,12 +422,6 @@ inline auto Timer::voltage_unit() const {
 // Function: capacitance_unit
 inline auto Timer::capacitance_unit() const {
   return _capacitance_unit;
-}
-
-// Function: is_ssta
-inline bool Timer::is_ssta() const {
-  if (_statisical_sta) return true;
-  else return false;
 }
 
 // Function: primary_inputs

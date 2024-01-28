@@ -351,6 +351,7 @@ void Pin::_relax_at(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, Dist& di
       if (!_at[tel][trf]) {
         _at[tel][trf].emplace(arc, fel, frf, dist);
       } else {
+        assert(dist.get_type() == Dist(*_at[tel][trf]).get_type());
         auto temp = Statisical::min(dist, Dist(*_at[tel][trf]));
         _at[tel][trf].emplace(arc, fel, frf, temp);
       }
@@ -359,6 +360,7 @@ void Pin::_relax_at(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, Dist& di
       if (!_at[tel][trf]) {
         _at[tel][trf].emplace(arc, fel, frf, dist);
       } else {
+        assert(dist.get_type() == Dist(*_at[tel][trf]).get_type());
         auto temp = Statisical::max(dist, Dist(*_at[tel][trf]));
         _at[tel][trf].emplace(arc, fel, frf, temp);
       }
@@ -375,7 +377,10 @@ void Pin::_relax_rat(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, Dist& d
     case MIN:
       if (!_rat[fel][frf]) {
         _rat[fel][frf].emplace(arc, fel, frf, dist);
+      } else if (Dist(*_rat[tel][trf]).get_type() == Statisical::Distribution_type::Constant) {
+        _rat[fel][frf].emplace(arc, fel, frf, dist);
       } else {
+        assert(dist.get_type() == Dist(*_rat[tel][trf]).get_type());
         auto temp = Statisical::max(dist, Dist(*_rat[fel][frf]));
         _rat[fel][frf].emplace(arc, fel, frf, temp);
       }
@@ -384,7 +389,10 @@ void Pin::_relax_rat(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, Dist& d
     case MAX:
       if (!_rat[fel][frf]) {
         _rat[fel][frf].emplace(arc, fel, frf, dist);
+      } else if (Dist(*_rat[tel][trf]).get_type() == Statisical::Distribution_type::Constant) {
+        _rat[fel][frf].emplace(arc, fel, frf, dist);
       } else {
+        assert(dist.get_type() == Dist(*_rat[tel][trf]).get_type());
         auto temp = Statisical::min(dist, Dist(*_rat[fel][frf]));
         _rat[fel][frf].emplace(arc, fel, frf, temp);
       }

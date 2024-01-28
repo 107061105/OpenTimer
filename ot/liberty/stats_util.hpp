@@ -15,7 +15,7 @@ typedef std::complex<float> Complex;
 namespace Statisical {
 
 #define VDD 0.5
-#define TIME_STEP 0.1
+#define TIME_STEP 0.01
 #define SAMPLE_NUM 100000
 #define SHRINK_THRESHOLD 1e-6
 
