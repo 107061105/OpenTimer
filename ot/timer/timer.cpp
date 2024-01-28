@@ -1154,7 +1154,7 @@ void Timer::_update_endpoints() {
 
       // update the worst negative slack (wns)
       if(!_endpoints[el][rf].empty()) {
-        _wns[el][rf] = _endpoints[el][rf].front().slack().get_value();
+        _wns[el][rf] = _endpoints[el][rf].front().slack().get_value(Split::MAX);
       }
       else {
         _wns[el][rf] = std::nullopt;
@@ -1165,8 +1165,8 @@ void Timer::_update_endpoints() {
         _tns[el][rf] = 0.0f;
         _fep[el][rf] = 0;
         for(const auto& ept : _endpoints[el][rf]) {
-          if(auto slack = ept.slack(); slack.get_value() < 0.0f) {
-            _tns[el][rf] = *_tns[el][rf] + slack.get_value();
+          if(auto slack = ept.slack(); slack.get_value(Split::MAX) < 0.0f) {
+            _tns[el][rf] = *_tns[el][rf] + slack.get_value(Split::MAX);
             _fep[el][rf] = *_fep[el][rf] + 1; 
           }
         }
@@ -1375,7 +1375,7 @@ std::optional<float> Timer::report_at(const std::string& name, Split m, Tran t) 
 std::optional<float> Timer::_report_at(const std::string& name, Split m, Tran t) {
   _update_timing();
   if(auto itr = _pins.find(name); itr != _pins.end() && itr->second._at[m][t]) {
-    return itr->second._at[m][t]->get_value();
+    return itr->second._at[m][t]->get_value(Split::MAX);
   }
   else return std::nullopt;
 }
@@ -1391,7 +1391,7 @@ std::optional<float> Timer::report_rat(const std::string& name, Split m, Tran t)
 std::optional<float> Timer::_report_rat(const std::string& name, Split m, Tran t) {
   _update_timing();
   if(auto itr = _pins.find(name); itr != _pins.end() && itr->second._at[m][t]) {
-    return itr->second._rat[m][t]->get_value();
+    return itr->second._rat[m][t]->get_value(Split::MAX);
   }
   else return std::nullopt;
 }
@@ -1422,7 +1422,7 @@ std::optional<float> Timer::report_slack(const std::string& pin, Split m, Tran t
 std::optional<float> Timer::_report_slack(const std::string& pin, Split m, Tran t) {
   _update_timing();
   if(auto itr = _pins.find(pin); itr != _pins.end()) {
-    return itr->second.slack(m, t)->get_value();
+    return itr->second.slack(m, t)->get_value(Split::MAX);
   }
   else return std::nullopt;
 }

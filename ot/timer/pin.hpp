@@ -78,7 +78,8 @@ class Pin {
     Dist  pi_dist;
     At(Arc*, Split, Tran, Dist&);
     inline operator Dist () const;
-    inline auto get_value() const;
+    inline auto get_constant() const;
+    inline auto get_value(Split el) const;
     inline auto pi() const;
   };
   
@@ -101,7 +102,8 @@ class Pin {
     Dist  pi_dist;
     Rat(Arc*, Split, Tran, Dist&);
     inline operator Dist () const;
-    inline auto get_value() const;
+    inline auto get_constant() const;
+    inline auto get_value(Split el) const;
     inline auto pi() const;
   };
 
@@ -216,9 +218,14 @@ inline Pin::At::operator Dist () const {
   return pi_dist; 
 }
 
+// Function: get_constant
+inline auto Pin::At::get_constant() const {
+  return pi_dist.get_constant();
+}
+
 // Function: get_value
-inline auto Pin::At::get_value() const {
-  return pi_dist.get_value();
+inline auto Pin::At::get_value(Split el) const {
+  return pi_dist.get_value(el);
 }
 
 // Function: pi
@@ -245,9 +252,14 @@ inline Pin::Rat::operator Dist () const {
   return pi_dist; 
 }
 
+// Function: get_constant
+inline auto Pin::Rat::get_constant() const {
+  return pi_dist.get_constant();
+}
+
 // Function: get_value
-inline auto Pin::Rat::get_value() const {
-  return pi_dist.get_value();
+inline auto Pin::Rat::get_value(Split el) const {
+  return pi_dist.get_value(el);
 }
 
 // Function: pi

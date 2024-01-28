@@ -74,19 +74,20 @@ inline const PrimaryOutput* Endpoint::primary_output() const {
   else return nullptr;
 }
 
+// Neko
 // Operator <
 inline bool Endpoint::operator < (const Endpoint& rhs) const {
-  return slack().get_value() < rhs.slack().get_value();
+  return slack().get_value(Split::MAX) < rhs.slack().get_value(Split::MAX);
 }
 
 // Operator >
 inline bool Endpoint::operator > (const Endpoint& rhs) const {
-  return slack().get_value() > rhs.slack().get_value();
+  return slack().get_value(Split::MAX) > rhs.slack().get_value(Split::MAX);
 }
 
 // Operator ==
 inline bool Endpoint::operator == (const Endpoint& rhs) const {
-  return slack().get_value() == rhs.slack().get_value();
+  return slack().get_value(Split::MAX) == rhs.slack().get_value(Split::MAX);
 }
 
 };  // end of namespace ot. -----------------------------------------------------------------------

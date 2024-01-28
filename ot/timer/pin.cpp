@@ -267,7 +267,7 @@ std::optional<float> Pin::_delta_slew(Split lel, Tran lrf, Split rel, Tran rrf) 
 // Function: _delta_at
 std::optional<float> Pin::_delta_at(Split lel, Tran lrf, Split rel, Tran rrf) const {
   if(_at[lel][lrf] && _at[rel][rrf]) {
-    return (*_at[lel][lrf]).get_value() - (*_at[rel][rrf]).get_value();
+    return (*_at[lel][lrf]).get_constant() - (*_at[rel][rrf]).get_constant();
   }
   else return std::nullopt;
 }
@@ -275,7 +275,7 @@ std::optional<float> Pin::_delta_at(Split lel, Tran lrf, Split rel, Tran rrf) co
 // Function: _delta_rat
 std::optional<float> Pin::_delta_rat(Split lel, Tran lrf, Split rel, Tran rrf) const {
   if(_rat[lel][lrf] && _rat[rel][rrf]) {
-    return (*_rat[lel][lrf]).get_value() - (*_rat[rel][rrf]).get_value();
+    return (*_rat[lel][lrf]).get_constant() - (*_rat[rel][rrf]).get_constant();
   }
   else return std::nullopt;
 }

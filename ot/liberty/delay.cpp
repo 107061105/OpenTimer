@@ -114,7 +114,7 @@ Distribution Distribution::operator+(const Distribution &rhs)
     if (is_constant()) {
         if (rhs.is_constant()) {
             // OT_LOGD("constant/constant add");
-            return Distribution(get_value() + rhs.get_value());
+            return Distribution(get_constant() + rhs.get_constant());
         }
         else {
             // OT_LOGD("constant/non add");
@@ -125,9 +125,9 @@ Distribution Distribution::operator+(const Distribution &rhs)
     else if (rhs.is_constant()) {
         assert(!is_constant());
         // OT_LOGD("non/constant add");
-        int offset = static_cast<int>(rhs.get_value() / TIME_STEP);
+        int offset = static_cast<int>(rhs.get_constant() / TIME_STEP);
         std::vector<float> copy = _pdf;
-        return Distribution(copy, get_value() + rhs.get_value(), get_start_point() + offset);
+        return Distribution(copy, get_constant() + rhs.get_constant(), get_start_point() + offset);
     } 
     else {
         // OT_LOGD("non/non add");
@@ -139,7 +139,7 @@ Distribution Distribution::operator+(const Distribution &rhs)
         fft_convolve(_pdf, rhs.get_pdf(), result);
 
         // create resulting distribution
-        Distribution temp(result, get_value() + rhs.get_value(), start_time);
+        Distribution temp(result, get_constant() + rhs.get_constant(), start_time);
         temp.shrink();
 
         return temp;
@@ -278,12 +278,12 @@ float Distribution::get_ith_pdf(int i) const
 }
 
 /**
- * @brief Get the ±3-sigma of the pdf
+ * @brief Get the ±3 sigma of the pdf
  *
  * @param type Max is 3 sigma (99.865%) while Min is -3 sigma (0.135%)
  * @return float
  */
-float Distribution::get_3_sigma(ot::Split type) const
+float Distribution::get_3_sigma(ot::Split el) const
 {
     float total = 0.0f;
     float sum = 0.0f;
@@ -292,13 +292,13 @@ float Distribution::get_3_sigma(ot::Split type) const
     total = std::accumulate(_pdf.begin(), _pdf.end(),
                             decltype(_pdf)::value_type(0));
 
-    if (type == ot::Split::MAX) {
+    if (el == ot::Split::MAX) {
         for (int i = 0; i < get_bin_num(); i++)
         {
             sum += _pdf[i];
             if (sum / total >= 0.99865) return TIME_STEP * (i + *_start);
         }
-    } else if (type == ot::Split::MIN) {
+    } else if (el == ot::Split::MIN) {
         for (int i = get_bin_num() - 1; i >= 0; i--)
         {
             sum += _pdf[i];
@@ -311,13 +311,29 @@ float Distribution::get_3_sigma(ot::Split type) const
 }
 
 /**
+ * @brief Get the estimasted value of the pdf, return _value if the 
+ *        distribution is constant, ±3 sigma if others
+ *
+ * @param type Max is 3 sigma (99.865%) while Min is -3 sigma (0.135%)
+ * @return float
+ */
+float Distribution::get_value(ot::Split el) const 
+{
+    if (is_constant()) {
+        return _value;
+    } else {
+        return get_3_sigma(el);
+    }
+}
+
+/**
  * @brief Print the status of the pdf
  */
 void Distribution::print_status()
 {
     OT_LOGD("***************************************************");
     OT_LOGD("Distribution type: ", to_string(get_type()));
-    OT_LOGD("mean value: ", get_value());
+    OT_LOGD("Constant value: ", get_constant());
     if (!is_constant()) {
         OT_LOGD("Start time: ", get_start_time(), ", End time: ", get_end_time());
         OT_LOGD("number of bins: ", get_bin_num());
@@ -336,7 +352,8 @@ void Distribution::print_status()
 Distribution max(const Distribution &dist1, const Distribution &dist2) 
 {
     assert(dist1.get_type() == dist2.get_type());   // max operation need same type
-    float value = (dist1.get_value() > dist2.get_value()) ? dist1.get_value() : dist2.get_value();
+    float value = (dist1.get_constant() > dist2.get_constant()) ? dist1.get_constant() : dist2.get_constant();
+    
 
     if (dist1.is_constant()) {
         // OT_LOGD("Max operation of two constant dists");
@@ -389,7 +406,7 @@ Distribution max(const Distribution &dist1, const Distribution &dist2)
 Distribution min(const Distribution &dist1, const Distribution &dist2) 
 {
     assert(dist1.get_type() == dist2.get_type());   // max operation need same type
-    float value = (dist1.get_value() < dist2.get_value()) ? dist1.get_value() : dist2.get_value();
+    float value = (dist1.get_constant() < dist2.get_constant()) ? dist1.get_constant() : dist2.get_constant();
 
     if (dist1.is_constant()) {
         // OT_LOGD("Min operation of two constant dists");

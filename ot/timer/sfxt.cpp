@@ -212,8 +212,7 @@ SfxtCache Timer::_sfxt_cache(const Test& test, Split el, Tran rf, const PathGuid
 
   // Start at the D pin and perform SPFA all the way to the sources of data paths.
   assert(!sfxt.__dist[v]);
-  auto val = (*test._rat[el][rf]).get_value();
-  sfxt.__dist[v] = (el == MIN) ? -(val) : val;
+  sfxt.__dist[v] = (el == MIN) ? Dist(0) - *test._rat[el][rf] : Dist(0) + *test._rat[el][rf];
   
   // shortest path dynamic programming
   _spdp(sfxt, pg);

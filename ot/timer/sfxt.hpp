@@ -66,7 +66,7 @@ inline Split SfxtCache::split() const {
 // Function: _relax        
 inline bool SfxtCache::_relax(size_t u, size_t v, std::optional<size_t> e, const Dist& d) {
   auto temp = *__dist[v] + d;
-  if(!__dist[u] || temp.get_value() < (*__dist[u]).get_value()) {
+  if(!__dist[u] || temp.get_value(Split::MAX) < (*__dist[u]).get_value(Split::MAX)) { // Neko
     __dist[u] = temp;
     __tree[u] = v;
     __link[u] = e;

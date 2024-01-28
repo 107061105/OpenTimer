@@ -47,14 +47,15 @@ public:
     inline Distribution_type get_type () const;
     inline float get_start_time       () const;
     inline float get_end_time         () const;
-    inline float get_value            () const;
+    inline float get_constant         () const;
     inline int   get_start_point      () const;
     inline int   get_end_point        () const;
     inline int   get_bin_num          () const;
     inline bool  is_constant          () const;
     inline const std::vector<float>& get_pdf () const;
-    float get_ith_pdf(int i) const;
-    float get_3_sigma(ot::Split) const;
+    float get_ith_pdf (int i)     const;
+    float get_3_sigma (ot::Split) const;
+    float get_value   (ot::Split) const;
 
 private:
     // Type of distribution
@@ -87,7 +88,7 @@ inline float Distribution::get_end_time() const {
 }
 
 // Function: get_value
-inline float Distribution::get_value() const { 
+inline float Distribution::get_constant() const { 
     return _value;
 }
 

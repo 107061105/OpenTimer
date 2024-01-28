@@ -35,7 +35,7 @@ class PfxtCache {
   // Min-heap comparator
   struct PfxtNodeComparator {
     bool operator () (std::unique_ptr<PfxtNode>& a, std::unique_ptr<PfxtNode>& b) const {
-      return a->slack.get_value() > b->slack.get_value();
+      return a->slack.get_value(Split::MAX) > b->slack.get_value(Split::MAX); // Neko
     }
   };
 

@@ -168,6 +168,9 @@ void Path::dump(std::ostream& os) const {
   auto tran  = endpoint->transition();
   auto at    = back().at;
   auto rat   = (split == MIN ? at - slack : at + slack);
+  auto is_ssta = !slack.is_constant();
+
+  OT_LOGD_IF(is_ssta, "Path dump: it is SSTA now.");
   
   // Print the head
   os << "Startpoint    : " << front().pin.name() << '\n';
@@ -182,11 +185,21 @@ void Path::dump(std::ostream& os) const {
   size_t W = w1 + w2 + w3 + w4 + w5;
 
   std::fill_n(std::ostream_iterator<char>(os), W, '-');
-  os << '\n'
-     << std::setw(w1) << "Type"
-     << std::setw(w2) << "Delay"
-     << std::setw(w3) << "Time"
-     << std::setw(w4) << "Dir";
+  if (!is_ssta) {
+    os << '\n'
+       << std::setw(w1) << "Type"
+       << std::setw(w2) << "Delay"
+       << std::setw(w3) << "Time"
+       << std::setw(w4) << "Dir";
+  } else {
+    os << '\n'
+       << std::setw(w1) << "Type"
+       << std::setw(w2) << "Mean"
+       << std::setw(w2) << "Sigma"
+       << std::setw(w3) << "Time"
+       << std::setw(w4) << "Dir";
+  }
+
   std::fill_n(std::ostream_iterator<char>(os), 2, ' ');
   os << "Description" << '\n';
   std::fill_n(std::ostream_iterator<char>(os), W, '-');
@@ -209,17 +222,31 @@ void Path::dump(std::ostream& os) const {
     }
 
     // delay
-    os << std::setw(w2);
     if(pi_at) {
       auto arc_delay = Dist(p.at) - *pi_at;
-      os << arc_delay.get_value(); // Neko
+      // mean value
+      os << std::setw(w2) << arc_delay.get_constant();
+      // sigma value
+      if (is_ssta) {
+        os << std::setw(w2) << arc_delay.get_value(Split::MAX); // Neko
+      }
     }
     else {
-      os << p.at.get_value(); // Neko
+      // mean value
+      os << std::setw(w2) << p.at.get_constant();
+      // sigma value
+      if (is_ssta) {
+        os << std::setw(w2) << p.at.get_value(Split::MAX); // Neko
+      }
     }
     
+    
     // arrival time
-    os << std::setw(w3) << p.at.get_value(); // Neko
+    if (!is_ssta) {
+      os << std::setw(w3) << p.at.get_constant();
+    } else {
+      os << std::setw(w3) << p.at.get_value(Split::MAX); // Neko
+    }
 
     // transition
     os << std::setw(w4) << to_string(p.transition);
@@ -234,9 +261,14 @@ void Path::dump(std::ostream& os) const {
     // cursor
     pi_at = p.at;
   }
-
-  os << std::setw(w1) << "arrival" 
-     << std::setw(w2+w3) << at.get_value();
+  if (!is_ssta) {
+    os << std::setw(w1) << "arrival" 
+       << std::setw(w2+w3) << at.get_constant();
+  } else {
+    os << std::setw(w1) << "arrival" 
+       << std::setw(w2+w3) << at.get_value(Split::MAX);
+  }
+  
   std::fill_n(std::ostream_iterator<char>(os), w4 + 2, ' ');
   os << "data arrival time" << '\n'; 
 
@@ -254,7 +286,7 @@ void Path::dump(std::ostream& os) const {
       os << std::setw(w1) << "related pin";
       if(auto c = test->_related_at[split][tran]; c) {
         sum = sum + *c; // Neko
-        os << std::setw(w2) << (*c).get_value() << std::setw(w3) << sum.get_value();
+        os << std::setw(w2) << (*c).get_constant() << std::setw(w3) << sum.get_constant();
       }
       else {
         os << std::setw(w2+w3) << "n/a";
@@ -283,12 +315,12 @@ void Path::dump(std::ostream& os) const {
         switch(split) {
           case MIN: 
             sum = sum + Dist(*c);
-            os << std::setw(w2) << c.value() << std::setw(w3) << sum.get_value(); // Neko
+            os << std::setw(w2) << c.value() << std::setw(w3) << sum.get_constant(); // Neko
           break;
 
           case MAX:
             sum = sum - Dist(*c);
-            os << std::setw(w2) << -c.value() << std::setw(w3) << sum.get_value();
+            os << std::setw(w2) << -c.value() << std::setw(w3) << sum.get_constant();
           break;
         }
         
@@ -309,12 +341,12 @@ void Path::dump(std::ostream& os) const {
       if(auto c = test->_cppr_credit[split][tran]; c) {
         os << std::setw(w1) << "cppr credit";
         sum = sum + Dist(*c);
-        os << std::setw(w2) << *c << std::setw(w3) << sum.get_value() << '\n';
+        os << std::setw(w2) << *c << std::setw(w3) << sum.get_constant() << '\n';
       }
 
       OT_LOGW_IF(
-        auto temp = sum - rat; std::fabs(temp.get_value()) > 1.0f, 
-        "unstable numerics in PBA and GBA rats: ", sum.get_value(), " vs ", rat.get_value()
+        auto temp = sum - rat; std::fabs(temp.get_constant()) > 1.0f, 
+        "unstable numerics in PBA and GBA rats: ", sum.get_constant(), " vs ", rat.get_constant()
       );
     },
     [&] (PrimaryOutput* po) {
@@ -330,15 +362,15 @@ void Path::dump(std::ostream& os) const {
     }
   }, endpoint->_handle);
   
-  os << std::setw(w1) << "required" << std::setw(w2+w3) << rat.get_value(); // Neko
+  os << std::setw(w1) << "required" << std::setw(w2+w3) << rat.get_constant(); // Neko
   std::fill_n(std::ostream_iterator<char>(os), w4+2, ' ');
   os << "data required time" << '\n';
 
   // slack
   std::fill_n(std::ostream_iterator<char>(os), W, '-');
-  os << '\n' << std::setw(w1) << "slack" << std::setw(w2+w3) << slack.get_value(); // Neko
+  os << '\n' << std::setw(w1) << "slack" << std::setw(w2+w3) << slack.get_constant(); // Neko
   std::fill_n(std::ostream_iterator<char>(os), w4+2, ' ');
-  os << (slack.get_value() < 0.0f ? "VIOLATED" : "MET") << '\n';
+  os << (slack.get_constant() < 0.0f ? "VIOLATED" : "MET") << '\n';
   
   // restore the format
   os.flags(fmt);
@@ -429,7 +461,7 @@ std::string PathHeap::dump() const {
   std::ostringstream oss;
   oss << "# Paths: " << _paths.size() << '\n';
   for(size_t i=0; i<_paths.size(); ++i) {
-    oss << "slack[" << i << "]: " << _paths[i]->slack.get_value() << '\n'; 
+    oss << "slack[" << i << "]: " << _paths[i]->slack.get_constant() << '\n'; 
   }
   return oss.str();
 }

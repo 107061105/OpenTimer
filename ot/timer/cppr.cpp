@@ -84,8 +84,9 @@ std::optional<float> Timer::_cppr_credit(const Test& test, Split el, Tran rf) co
   // compute the cppr credit
   if(sfxt.slack()) {
     auto tat = *test._arc._to._at[el][rf];
-    auto rat = (el == MIN) ? tat.get_value() - (*sfxt.slack()).get_value() : (*sfxt.slack()).get_value() + tat.get_value();
-    return rat - (*test._rat[el][rf]).get_value();
+    auto rat = (el == MIN) ? tat.get_constant() - (*sfxt.slack()).get_constant() : 
+                             (*sfxt.slack()).get_constant() + tat.get_constant();
+    return rat - (*test._rat[el][rf]).get_constant();
   }
   else {
     return std::nullopt;
@@ -156,7 +157,7 @@ std::optional<float> Timer::_cppr_offset(const CpprCache& cppr, Pin& pin, Split 
     return std::nullopt;
   }
   else {
-    float val = (*at).get_value();
+    float val = (*at).get_constant();
     if(auto credit = _cppr_credit(cppr, pin, el, rf); credit) {
       return (el == MIN) ? val + *credit : -(val) + *credit; 
     }

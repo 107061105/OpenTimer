@@ -54,7 +54,8 @@ class PathHeap {
   // max heap
   struct PathComparator {
     bool operator () (const std::unique_ptr<Path>& a, const std::unique_ptr<Path>& b) const {
-      return a->slack.get_value() < b->slack.get_value();
+      // Neko
+      return a->slack.get_value(Split::MAX) < b->slack.get_value(Split::MAX);
     }
   };
   
