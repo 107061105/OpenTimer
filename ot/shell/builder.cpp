@@ -137,6 +137,42 @@ void Shell::_read_sdc() {
 
 // ------------------------------------------------------------------------------------------------
 
+// Procedure: set_mc_analysis
+void Shell::_set_mc_analysis() {
+
+  std::string token;
+  std::string pin;
+  std::optional<Split> el;
+  std::optional<Tran > rf;
+
+  while(_is >> token) {
+    if(token == "-pin") _is >> pin;
+    else if(token == "-early" || token == "-min") el = MIN;
+    else if(token == "-late" || token == "-max" ) el = MAX;
+    else if(token == "-rise" ) rf = RISE;
+    else if(token == "-fall" ) rf = FALL;
+    else {
+      _es << "failed to parse " << std::quoted(token) << '\n';
+      return;
+    }
+  }
+
+  if(pin.empty()) {
+    _es << "-pin <name> not given\n";
+    return;
+  } else if (!el) {
+    _es << "Split <el> not given\n";
+    return;
+  } else if (!rf) {
+    _es << "Tran <rf> not given\n";
+    return;
+  }
+
+  _timer.set_mc_analysis(std::move(pin), *el, *rf);
+}
+
+// ------------------------------------------------------------------------------------------------
+
 // Procedure: set_at
 void Shell::_set_at() {
 
@@ -416,6 +452,34 @@ void Shell::_enable_ssta() {
 // Procedure: _disable_cppr
 void Shell::_disable_ssta() {
   _timer.ssta(false);
+}
+
+// ------------------------------------------------------------------------------------------------
+
+// Procedure: mc_analysis
+void Shell::_mc_analysis() {
+
+  std::string token;
+
+  if(_is >> token; token == "-disable") {
+    _timer.mc_analysis(false);
+  }
+  else if(token == "-enable") {
+    _timer.mc_analysis(true);
+  }
+  else {
+    _es << "usage: mc_analysis -disable|-enable\n";
+  }
+}
+
+// Procedure: _enable_cppr
+void Shell::_enable_mc_analysis() {
+  _timer.mc_analysis(true);
+}
+
+// Procedure: _disable_cppr
+void Shell::_disable_mc_analysis() {
+  _timer.mc_analysis(false);
 }
 
 };  // end of namespace ot. -----------------------------------------------------------------------

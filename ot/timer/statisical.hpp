@@ -7,6 +7,8 @@ namespace ot {
 
 using Dist = Statisical::Distribution;
 
+float findQuantile(const std::vector<float>&);
+
 };  // end of namespace ot. -----------------------------------------------------------------------
 
 #endif

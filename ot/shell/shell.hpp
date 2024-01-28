@@ -50,6 +50,7 @@ class Shell {
     void _read_celllib           ();
     void _read_sdc               ();
     void _read_timing            ();
+    void _set_mc_analysis        (); 
     void _set_at                 (); 
     void _set_slew               ();
     void _set_load               ();
@@ -67,6 +68,9 @@ class Shell {
     void _ssta                   ();
     void _enable_ssta            ();
     void _disable_ssta           ();
+    void _mc_analysis            ();
+    void _enable_mc_analysis     ();
+    void _disable_mc_analysis    ();
 
     // action
     void _update_timing          ();
@@ -130,6 +134,7 @@ class Shell {
       {"read_celllib",            &Shell::_read_celllib},
       {"read_sdc",                &Shell::_read_sdc},
       {"read_timing",             &Shell::_read_timing},
+      {"set_mc_analysis",         &Shell::_set_mc_analysis},
       {"set_at",                  &Shell::_set_at},
       {"set_slew",                &Shell::_set_slew},
       {"set_load",                &Shell::_set_load},
@@ -147,6 +152,9 @@ class Shell {
       {"ssta",                    &Shell::_ssta},
       {"enable_ssta",             &Shell::_enable_ssta},
       {"disable_ssta",            &Shell::_disable_ssta},
+      {"mc_analysis",             &Shell::_mc_analysis},
+      {"enable_mc_analysis",      &Shell::_enable_mc_analysis},
+      {"disable_mc_analysis",     &Shell::_disable_mc_analysis},
       
 
       // Action

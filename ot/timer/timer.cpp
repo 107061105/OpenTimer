@@ -527,6 +527,39 @@ void Timer::_ssta(bool enable) {
   }
 }
 
+// Function: mc_analysis
+Timer& Timer::mc_analysis(bool flag) {
+  
+  std::scoped_lock lock(_mutex);
+
+  auto op = _taskflow.emplace([this, flag] () {
+    _mc_analysis(flag);
+  });
+
+  _add_to_lineage(op);
+
+  return *this;
+}
+
+// Procedure: _mc_analysis
+// Enable/Disable Monte Carlo analysis mode
+void Timer::_mc_analysis(bool enable) {
+  
+  // nothing to do.
+  if((enable && _monte_carlo) || (!enable && !_monte_carlo)) {
+    return;
+  }
+
+  if(enable) {
+    OT_LOGI("enable Monte Carlo analysis");
+    _monte_carlo.emplace();
+  }
+  else {
+    OT_LOGI("disable Monte Carlo analysis");
+    _monte_carlo.reset();
+  }
+}
+
 // Function: clock
 Timer& Timer::create_clock(std::string c, std::string s, float p) {
   
@@ -767,6 +800,34 @@ void Timer::_fprop_slew(Pin& pin) {
   }
 }
 
+// Procedure: _fprop_slew_MC
+void Timer::_fprop_slew_MC(Pin& pin) {
+  
+  // clear slew  
+  pin._reset_slew();
+
+  // PI
+  if(auto pi = pin.primary_input(); pi) {
+    FOR_EACH_EL_RF_IF(el, rf, pi->_slew[el][rf]) {
+      pin._relax_slew(nullptr, el, rf, el, rf, *(pi->_slew[el][rf]));
+    }
+  }
+  
+  FOR_EACH_EL_RF_IF(el, rf, pin._mc[el][rf]) {
+    // Relax the slew from its fanin.
+    for(auto arc : pin._fanin) {
+      auto from = arc->from();
+      // OT_LOGE("hi");
+      FOR_EACH_EL_RF_IF(fel, frf, from._mc[fel][frf]) {
+        // OT_LOGD("Slew: from ", from.name(), " to ", pin.name());
+        arc->_fprop_slew();
+      }
+      // OT_LOGE("fuck");
+    }
+  }
+
+}
+
 // Procedure: _fprop_delay
 void Timer::_fprop_delay(Pin& pin) {
 
@@ -781,6 +842,20 @@ void Timer::_fprop_delay(Pin& pin) {
       arc->_fprop_delay_ssta();
     else
       arc->_fprop_delay();
+  }
+}
+
+// Procedure: _fprop_delay_MC
+void Timer::_fprop_delay_MC(Pin& pin) {
+
+  FOR_EACH_EL_RF_IF(el, rf, pin._mc[el][rf]) {
+    // Relax the delay from its fanin.
+    for(auto arc : pin._fanin) {
+      auto from = arc->from();
+      FOR_EACH_EL_RF_IF(el, rf, from._mc[el][rf]) {
+        arc->_fprop_delay_MC();
+      }
+    }
   }
 }
 
@@ -801,6 +876,38 @@ void Timer::_fprop_at(Pin& pin) {
   // Relax the at from its fanin.
   for(auto arc : pin._fanin) {
     arc->_fprop_at();
+  }
+}
+
+// Procedure: _fprop_at_MC
+void Timer::_fprop_at_MC(Pin& pin) {
+  
+  // clear at
+  pin._mc_at.clear();
+
+  // PI
+  if(auto pi = pin.primary_input(); pi) {
+    FOR_EACH_EL_RF_IF(el, rf, pi->_at[el][rf] && pin._mc[el][rf]) {
+      int num = 100000;
+      std::vector<float> temp(num, *(pi->_at[el][rf]));
+      pin._relax_mc_at(temp);
+    }
+  }
+
+  // Relax the at from its fanin.
+  if (pin._is_mc()) {
+    for(auto arc : pin._fanin) {
+      if (arc->_from._is_mc() && !arc->samples.empty()) {
+        OT_LOGD("Arc ", arc->name(), " prop at ", arc->_from._mc_at.size(), " ", arc->samples.size());
+        int num = 100000;
+        std::vector<float> temp(num, 0.0f);
+
+        for (int i = 0; i < num; i++) {
+          temp[i] = arc->_from._mc_at[i] + arc->samples[i];
+        }
+        arc->_to._relax_mc_at(temp);
+      }
+    }
   }
 }
 
@@ -1009,6 +1116,70 @@ void Timer::_build_prop_tasks() {
 
 }
 
+// Procedure: _build_prop_tasks
+void Timer::_build_prop_tasks_MC() {
+  
+  // explore propagation candidates
+  _build_prop_cands();
+
+  // Emplace the fprop task
+  // (1) propagate the rc timing
+  // (2) propagate the slew 
+  // (3) propagate the delay
+  // (4) propagate the arrival time.
+  for(auto pin : _fprop_cands) {
+    assert(!pin->_ftask);
+    pin->_ftask = _taskflow.emplace([this, pin] () {
+      _fprop_rc_timing(*pin);
+      _fprop_slew_MC(*pin);
+      _fprop_delay_MC(*pin);
+      _fprop_at_MC(*pin);
+      _fprop_test(*pin);
+    });
+  }
+  
+  // Build the dependency
+  for(auto to : _fprop_cands) {
+    for(auto arc : to->_fanin) {
+      if(arc->_has_state(Arc::LOOP_BREAKER)) {
+        continue;
+      }
+      if(auto& from = arc->_from; from._has_state(Pin::FPROP_CAND)) {
+        from._ftask->precede(to->_ftask.value());
+      }
+    }
+  }
+
+  // Emplace the bprop task
+  // (1) propagate the required arrival time
+  for(auto pin : _bprop_cands) {
+    assert(!pin->_btask);
+    pin->_btask = _taskflow.emplace([this, pin] () {
+      _bprop_rat(*pin);
+    });
+  }
+
+  // Build the task dependencies.
+  for(auto to : _bprop_cands) {
+    for(auto arc : to->_fanin) {
+      if(arc->_has_state(Arc::LOOP_BREAKER)) {
+        continue;
+      }
+      if(auto& from = arc->_from; from._has_state(Pin::BPROP_CAND)) {
+        to->_btask->precede(from._btask.value());
+      }
+    } 
+  }
+
+  // Connect with ftasks
+  for(auto pin : _bprop_cands) {
+    if(pin->_btask->num_dependents() == 0 && pin->_ftask) {
+      pin->_ftask->precede(pin->_btask.value()); 
+    }
+  }
+
+}
+
 // Procedure: _clear_prop_tasks
 void Timer::_clear_prop_tasks() {
   
@@ -1045,6 +1216,7 @@ void Timer::_update_timing() {
   _taskflow.wait_for_all();
   _lineage.reset();
   
+  
   // Check if full update is required
   if(_has_state(FULL_TIMING)) {
     _insert_full_timing_frontiers();
@@ -1068,6 +1240,60 @@ void Timer::_update_timing() {
   // clear the state
   _remove_state();
 
+
+}
+
+// Function: update_mc_result
+// Perform Monte Carlo timing update
+void Timer::update_mc_result() {
+  std::scoped_lock lock(_mutex);
+  _update_mc_result();
+}
+
+// Function: _update_timing
+void Timer::_update_mc_result() {
+
+  // Timing is update-to-date
+  if(!_lineage) {
+    assert(_frontiers.size() == 0);
+    return;
+  }
+
+  // materialize the lineage
+  _taskflow.wait_for_all();
+  _lineage.reset();
+  
+  
+  // Check if full update is required
+  if(_has_state(FULL_TIMING)) {
+    _insert_full_timing_frontiers();
+  }
+
+  // build propagation tasks
+  _build_prop_tasks_MC();
+
+  // debug the graph
+  //_taskflow.dump(std::cout);
+
+  // Execute the task
+  _taskflow.wait_for_all();
+
+  for (auto p: _pos) {
+    auto po = p.second;
+    FOR_EACH_EL_RF_IF(el, rf, po._pin._mc[el][rf]) {
+      OT_LOGE("PO ", p.first, " ", to_string(el), " ", to_string(rf));
+      OT_LOGE(findQuantile(po._pin._mc_at));
+    }
+  }
+  
+  // Clear the propagation tasks.
+  _clear_prop_tasks();
+
+  // Clear frontiers
+  _clear_frontiers();
+
+  // clear the state
+  _remove_state();
 
 }
 
@@ -1469,6 +1695,35 @@ Timer& Timer::set_at(std::string name, Split m, Tran t, std::optional<float> v) 
 void Timer::_set_at(PrimaryInput& pi, Split m, Tran t, std::optional<float> v) {
   pi._at[m][t] = v;
   _insert_frontier(pi._pin);
+}
+
+
+// Function: set_mc_analysis
+Timer& Timer::set_mc_analysis(std::string name, Split m, Tran t) {
+
+  std::scoped_lock lock(_mutex);
+
+  // assert(_monte_carlo);
+
+  auto task = _taskflow.emplace([this, name=std::move(name), m, t] () {
+    if(auto itr = _pins.find(name); itr != _pins.end()) {
+      _set_mc_analysis(itr->second, m, t);
+    }
+    else {
+      OT_LOGE("can't set MC analysis mode (Pin ", name, " not found)");
+    }
+  });
+
+  _add_to_lineage(task);
+
+  return *this;
+}
+
+// Procedure: _set_mc_analysis
+void Timer::_set_mc_analysis(Pin& p, Split m, Tran t) {
+  p._mc[m][t] = true;
+  OT_LOGD("set MC analysis, Pin ", p.name(), " ", to_string(m), " ", to_string(t));
+  // _insert_frontier(p);
 }
 
 // Function: set_rat

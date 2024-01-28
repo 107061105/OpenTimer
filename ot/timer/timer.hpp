@@ -52,6 +52,8 @@ class Timer {
     Timer& connect_pin(std::string, std::string);
     Timer& insert_primary_input(std::string);
     Timer& insert_primary_output(std::string);
+
+    Timer& set_mc_analysis(std::string, Split, Tran);
     Timer& set_at(std::string, Split, Tran, std::optional<float>);
     Timer& set_rat(std::string, Split, Tran, std::optional<float>);
     Timer& set_slew(std::string, Split, Tran, std::optional<float>);
@@ -60,6 +62,7 @@ class Timer {
     Timer& create_clock(std::string, std::string, float);
     Timer& cppr(bool);
     Timer& ssta(bool);
+    Timer& mc_analysis(bool);
 
     Timer& set_time_unit(second_t);
     Timer& set_capacitance_unit(farad_t);
@@ -70,6 +73,7 @@ class Timer {
 
     // Action.
     void update_timing();
+    void update_mc_result();
 
     std::optional<float> report_at(const std::string&, Split, Tran);
     std::optional<float> report_rat(const std::string&, Split, Tran);
@@ -146,6 +150,7 @@ class Timer {
     std::optional<tf::Task> _lineage;
     std::optional<CpprAnalysis> _cppr_analysis;
     std::optional<SSTA> _statisical_sta;
+    std::optional<MCAnalysis> _monte_carlo;
     std::optional<second_t> _time_unit;
     std::optional<watt_t> _power_unit;
     std::optional<ohm_t> _resistance_unit;
@@ -204,19 +209,24 @@ class Timer {
     void _rebase_unit(Celllib&);
     void _rebase_unit(spef::Spef&);
     void _update_timing();
+    void _update_mc_result();
     void _update_endpoints();
     void _update_area();
     void _update_power();
     void _fprop_rc_timing(Pin&);
     void _fprop_slew(Pin&);
+    void _fprop_slew_MC(Pin&);
     void _fprop_delay(Pin&);
+    void _fprop_delay_MC(Pin&);
     void _fprop_at(Pin&);
+    void _fprop_at_MC(Pin&);
     void _fprop_test(Pin&);
     void _bprop_rat(Pin&);
     void _build_prop_cands();
     void _build_fprop_cands(Pin&);
     void _build_bprop_cands(Pin&);
     void _build_prop_tasks();
+    void _build_prop_tasks_MC();
     void _clear_prop_tasks();
     void _read_spef(spef::Spef&);;
     void _verilog(vlog::Module&);
@@ -245,11 +255,13 @@ class Timer {
     void _remove_arc(Arc&);
     void _remove_test(Test&);
     void _set_at(PrimaryInput&, Split, Tran, std::optional<float>);
+    void _set_mc_analysis(Pin&, Split, Tran);
     void _set_slew(PrimaryInput&, Split, Tran, std::optional<float>);
     void _set_rat(PrimaryOutput&, Split, Tran, std::optional<float>);
     void _set_load(PrimaryOutput&, Split, Tran, std::optional<float>);
     void _cppr(bool);
     void _ssta(bool);
+    void _mc_analysis(bool);
     void _topologize(SfxtCache&, size_t, const PathGuide* = nullptr) const;
     void _spfa(SfxtCache&) const;
     void _spdp(SfxtCache&, const PathGuide* = nullptr) const;

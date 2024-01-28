@@ -145,6 +145,44 @@ void Arc::_fprop_delay() {
   }, _handle);
 }
 
+// Procedure: _fprop_delay_MC
+void Arc::_fprop_delay_MC() {
+  
+  if(_has_state(LOOP_BREAKER)) {
+    return;
+  }
+
+  std::visit(Functors{
+    // Case 1: Net arc
+    [this] (Net* net) {
+      FOR_EACH_EL_RF_IF(el, rf, _from._mc[el][rf] && _to._mc[el][rf]) {
+        if (auto d = net->_delay(el, rf, _to); d) {
+          std::vector<float> s(100000, *d);
+          samples = std::move(s);
+          // OT_LOGD("Net ", name(), " generate samples");
+        }
+      }
+    },
+    // Case 2: Cell arc
+    [this] (TimingView tv) {
+      FOR_EACH_EL_RF_RF_IF(el, frf, trf, (tv[el] && _from._slew[el][frf] && _from._mc[el][frf] && _to._mc[el][trf])) {
+        auto lc = 0.0f;
+        auto si = *_from._slew[el][frf];
+        if (_to._net) {
+          if (!(_to._net->_is_self_loop)) {
+            lc = _to._net->_load(el, trf);
+          }
+        }
+        if (auto d = tv[el]->delay(frf, trf, si, lc); d) {
+          auto s = Statisical::generate_MicMic_SN_samples(100000, trf, *d);
+          samples = std::move(s);
+          // OT_LOGD("Arc ", name(), " generate samples");
+        }
+      }
+    }
+  }, _handle);
+}
+
 // Procedure: _fprop_delay_ssta
 void Arc::_fprop_delay_ssta() {
   
@@ -182,7 +220,6 @@ void Arc::_fprop_delay_ssta() {
     }
   }, _handle);
 }
-
 
 // Procedure: _fprop_at
 void Arc::_fprop_at() {

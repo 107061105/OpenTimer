@@ -54,6 +54,9 @@ class Arc {
 
     int _state {0};
 
+    // for mc sample_delay
+    std::vector<float> samples;
+
     std::variant<Net*, TimingView> _handle;
 
     std::optional<std::list<Arc>::iterator> _satellite;
@@ -68,6 +71,7 @@ class Arc {
     void _fprop_at();
     void _reset_delay();
     void _fprop_delay();
+    void _fprop_delay_MC();
     void _fprop_delay_ssta();
     void _bprop_rat();
     void _insert_state(int);

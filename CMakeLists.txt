@@ -206,6 +206,21 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c17)
 add_executable(c17 example/c17/c17.cpp)
 target_link_libraries(c17 ${OT_LINK_FLAGS})
 
+# c1355
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c1355)
+add_executable(c1355 example/c1355/c1355.cpp)
+target_link_libraries(c1355 ${OT_LINK_FLAGS})
+
+# s349
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/s349)
+add_executable(s349 example/s349/s349.cpp)
+target_link_libraries(s349 ${OT_LINK_FLAGS})
+
+# s1196
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/s1196)
+add_executable(s1196 example/s1196/s1196.cpp)
+target_link_libraries(s1196 ${OT_LINK_FLAGS})
+
 # simple
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/simple)
 add_executable(simple example/simple/simple.cpp)

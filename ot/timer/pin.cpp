@@ -342,6 +342,16 @@ void Pin::_relax_slew(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, float 
   };
 }
 
+// Procedure: _relax_mc_at
+// Update the arrival time of all samples, for mc analysis mode.
+void Pin::_relax_mc_at(std::vector<float>& v) {
+
+  if (!_mc_at.empty()) return;
+  // OT_LOGD("Pin ", name(), " relax at, size = ", _mc_at.size(), " ", v.size());
+  _mc_at = std::move(v);
+
+}
+
 // Procedure: _relax_at
 // Update the arrival time of the node from a given fanin node.
 void Pin::_relax_at(Arc* arc, Split fel, Tran frf, Split tel, Tran trf, Dist& dist) {

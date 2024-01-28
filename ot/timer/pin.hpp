@@ -177,6 +177,10 @@ class Pin {
     TimingData<std::optional<Rat >, MAX_SPLIT, MAX_TRAN> _rat;
     TimingData<std::optional<At  >, MAX_SPLIT, MAX_TRAN> _at;
 
+    // for Monte Carlo analysis mode, true if it is select to do mc analysis
+    TimingData<std::optional<bool>, MAX_SPLIT, MAX_TRAN> _mc;
+    std::vector<float> _mc_at;
+
     int _state {0};
 
     std::optional<tf::Task> _ftask;
@@ -184,6 +188,9 @@ class Pin {
     
     bool _has_state(int) const;
     bool _has_no_state(int) const;
+
+    // for checking if it is mc analysis
+    inline bool _is_mc() const;
     
     void _insert_fanout(Arc&);
     void _insert_fanin(Arc&);
@@ -195,6 +202,7 @@ class Pin {
     void _reset_at();
     void _reset_rat();
     void _relax_slew(Arc*, Split, Tran, Split, Tran, float);
+    void _relax_mc_at(std::vector<float>&);
     void _relax_at(Arc*, Split, Tran, Split, Tran, Dist&);
     void _relax_rat(Arc*, Split, Tran, Split, Tran, Dist&);
     void _insert_state(int);
@@ -335,6 +343,13 @@ inline size_t Pin::num_fanins() const {
 
 inline size_t Pin::num_fanouts() const {
   return _fanout.size();
+}
+
+inline bool Pin::_is_mc() const {
+  FOR_EACH_EL_RF_IF(el, rf, _mc[el][rf]) {
+    return true;
+  }
+  return false;
 }
 
 };  // end of namespace ot. -----------------------------------------------------------------------
