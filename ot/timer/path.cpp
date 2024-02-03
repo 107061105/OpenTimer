@@ -352,7 +352,11 @@ void Path::dump(std::ostream& os) const {
     [&] (PrimaryOutput* po) {
       os << std::setw(w1) << "port";
       if(auto v = po->rat(split, tran); v) {
-        os << std::setw(w2) << *v << std::setw(w2) << 0.0f << std::setw(w3) << *v;
+        if (!is_ssta) {
+          os << std::setw(w2) << *v << std::setw(w3) << *v;
+        } else {
+          os << std::setw(w2) << *v << std::setw(w2) << 0.0f << std::setw(w3) << *v;
+        }
         std::fill_n(std::ostream_iterator<char>(os), w4+2, ' ');
         os << "output port delay" << '\n';
       }
@@ -362,16 +366,26 @@ void Path::dump(std::ostream& os) const {
     }
   }, endpoint->_handle);
   
-  os << std::setw(w1) << "required" << std::setw(w2+w2+w3) << rat.get_constant(); // Neko
+  if (!is_ssta) {
+    os << std::setw(w1) << "required" << std::setw(w2+w3) << rat.get_constant(); // Neko
+  } else {
+    os << std::setw(w1) << "required" << std::setw(w2+w2+w3) << rat.get_value(MAX); // Neko
+  }
   std::fill_n(std::ostream_iterator<char>(os), w4+2, ' ');
   os << "data required time" << '\n';
 
   // slack
   std::fill_n(std::ostream_iterator<char>(os), W, '-');
-  os << '\n' << std::setw(w1) << "slack" << std::setw(w2+w2+w3) << slack.get_value(Split::MAX); // Neko
-  std::fill_n(std::ostream_iterator<char>(os), w4+2, ' ');
-  os << (slack.get_constant() < 0.0f ? "VIOLATED" : "MET") << '\n';
-  
+  if (!is_ssta) {
+    os << '\n' << std::setw(w1) << "slack" << std::setw(w2+w3) << slack.get_constant(); // Neko
+    std::fill_n(std::ostream_iterator<char>(os), w4+2, ' ');
+    os << (slack.get_constant() < 0.0f ? "VIOLATED" : "MET") << '\n';
+  } else {
+    os << '\n' << std::setw(w1) << "slack" << std::setw(w2+w2+w3) << slack.get_value(MAX); // Neko
+    std::fill_n(std::ostream_iterator<char>(os), w4+2, ' ');
+    os << (slack.get_value(MAX) < 0.0f ? "VIOLATED" : "MET") << '\n';
+  }
+
   // restore the format
   os.flags(fmt);
 }
