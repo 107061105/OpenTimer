@@ -14,8 +14,8 @@ typedef std::complex<float> Complex;
 // used on statisical static analysis
 namespace Statisical {
 
-#define VDD 0.5
-#define TIME_STEP 0.01
+#define VDD 0.4
+#define TIME_STEP 1
 #define SAMPLE_NUM 100000
 #define SHRINK_THRESHOLD 1e-6
 
@@ -65,6 +65,10 @@ std::vector<float> generate_Gaussian_samples(int, float, float);
 std::vector<float> generate_MicMic_SN_samples(int, ot::Tran, float);
 
 std::vector<float> calculateProbabilityDensity(const std::vector<float>&, int*);
+
+float get_SN_cdf(float, float, float, float);
+float get_SN_pdf(float, float, float, float);
+std::vector<float> generate_MicMic_SN_pdf(ot::Tran, float, int*);
 
 void saveSamplesToFile(const std::vector<float>&, const std::string&);
 void saveProbabilityDensityToFile(const std::vector<float>&, const std::string&, int);

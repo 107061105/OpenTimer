@@ -50,9 +50,7 @@ Distribution::Distribution(Distribution_type type, ot::Tran rf, float mean)
     int start_time = 0;
 
     assert(type == Distribution_type::MicmicSN);
-    samples = generate_MicMic_SN_samples(SAMPLE_NUM, rf, mean);
-    pdf     = calculateProbabilityDensity(samples, &start_time);
-    samples.clear();
+    pdf     = generate_MicMic_SN_pdf(rf, mean, &start_time);
 
     _type  = type;
     _value = mean;
@@ -113,24 +111,20 @@ Distribution Distribution::operator+(const Distribution &rhs)
 {
     if (is_constant()) {
         if (rhs.is_constant()) {
-            // OT_LOGD("constant/constant add");
             return Distribution(get_constant() + rhs.get_constant());
         }
         else {
-            // OT_LOGD("constant/non add");
             Distribution temp = rhs;
             return temp + *this;
         }
     }
     else if (rhs.is_constant()) {
         assert(!is_constant());
-        // OT_LOGD("non/constant add");
         int offset = static_cast<int>(rhs.get_constant() / TIME_STEP);
         std::vector<float> copy = _pdf;
         return Distribution(copy, get_constant() + rhs.get_constant(), get_start_point() + offset);
     } 
     else {
-        // OT_LOGD("non/non add");
         std::vector<float> result;
         int start_time = 0;
 

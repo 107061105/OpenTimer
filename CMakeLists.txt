@@ -206,10 +206,128 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c17)
 add_executable(c17 example/c17/c17.cpp)
 target_link_libraries(c17 ${OT_LINK_FLAGS})
 
+# c17_path_1
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c17)
+add_executable(c17_path_1 example/c17/c17_path_1.cpp)
+target_link_libraries(c17_path_1 ${OT_LINK_FLAGS})
+
+# c17_path_2
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c17)
+add_executable(c17_path_2 example/c17/c17_path_2.cpp)
+target_link_libraries(c17_path_2 ${OT_LINK_FLAGS})
+
+# c17_path_3
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c17)
+add_executable(c17_path_3 example/c17/c17_path_3.cpp)
+target_link_libraries(c17_path_3 ${OT_LINK_FLAGS})
+
+# c17_path_4
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c17)
+add_executable(c17_path_4 example/c17/c17_path_4.cpp)
+target_link_libraries(c17_path_4 ${OT_LINK_FLAGS})
+
+# c17_path_5
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c17)
+add_executable(c17_path_5 example/c17/c17_path_5.cpp)
+target_link_libraries(c17_path_5 ${OT_LINK_FLAGS})
+
+###########################################################
+
 # c1355
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c1355)
 add_executable(c1355 example/c1355/c1355.cpp)
 target_link_libraries(c1355 ${OT_LINK_FLAGS})
+
+# c1355_path_1
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c1355)
+add_executable(c1355_path_1 example/c1355/c1355_path_1.cpp)
+target_link_libraries(c1355_path_1 ${OT_LINK_FLAGS})
+
+# c1355_path_2
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c1355)
+add_executable(c1355_path_2 example/c1355/c1355_path_2.cpp)
+target_link_libraries(c1355_path_2 ${OT_LINK_FLAGS})
+
+# c1355_path_3
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c1355)
+add_executable(c1355_path_3 example/c1355/c1355_path_3.cpp)
+target_link_libraries(c1355_path_3 ${OT_LINK_FLAGS})
+
+# c1355_path_4
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c1355)
+add_executable(c1355_path_4 example/c1355/c1355_path_4.cpp)
+target_link_libraries(c1355_path_4 ${OT_LINK_FLAGS})
+
+# c1355_path_5
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c1355)
+add_executable(c1355_path_5 example/c1355/c1355_path_5.cpp)
+target_link_libraries(c1355_path_5 ${OT_LINK_FLAGS})
+
+###########################################################
+
+# c3540
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c3540)
+add_executable(c3540 example/c3540/c3540.cpp)
+target_link_libraries(c3540 ${OT_LINK_FLAGS})
+
+# c3540_path_1
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c3540)
+add_executable(c3540_path_1 example/c3540/c3540_path_1.cpp)
+target_link_libraries(c3540_path_1 ${OT_LINK_FLAGS})
+
+# c3540_path_2
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c3540)
+add_executable(c3540_path_2 example/c3540/c3540_path_2.cpp)
+target_link_libraries(c3540_path_2 ${OT_LINK_FLAGS})
+
+# c3540_path_3
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c3540)
+add_executable(c3540_path_3 example/c3540/c3540_path_3.cpp)
+target_link_libraries(c3540_path_3 ${OT_LINK_FLAGS})
+
+# c3540_path_4
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c3540)
+add_executable(c3540_path_4 example/c3540/c3540_path_4.cpp)
+target_link_libraries(c3540_path_4 ${OT_LINK_FLAGS})
+
+# c3540_path_5
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c3540)
+add_executable(c3540_path_5 example/c3540/c3540_path_5.cpp)
+target_link_libraries(c3540_path_5 ${OT_LINK_FLAGS})
+
+###########################################################
+
+# c7552
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c7552)
+add_executable(c7552 example/c7552/c7552.cpp)
+target_link_libraries(c7552 ${OT_LINK_FLAGS})
+
+# c7552_path_1
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c7552)
+add_executable(c7552_path_1 example/c7552/c7552_path_1.cpp)
+target_link_libraries(c7552_path_1 ${OT_LINK_FLAGS})
+
+# c7552_path_2
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c7552)
+add_executable(c7552_path_2 example/c7552/c7552_path_2.cpp)
+target_link_libraries(c7552_path_2 ${OT_LINK_FLAGS})
+
+# c7552_path_3
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c7552)
+add_executable(c7552_path_3 example/c7552/c7552_path_3.cpp)
+target_link_libraries(c7552_path_3 ${OT_LINK_FLAGS})
+
+# c7552_path_4
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c7552)
+add_executable(c7552_path_4 example/c7552/c7552_path_4.cpp)
+target_link_libraries(c7552_path_4 ${OT_LINK_FLAGS})
+
+# c7552_path_5
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/c7552)
+add_executable(c7552_path_5 example/c7552/c7552_path_5.cpp)
+target_link_libraries(c7552_path_5 ${OT_LINK_FLAGS})
+
+###########################################################
 
 # s27
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/s27)

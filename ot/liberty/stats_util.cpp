@@ -92,7 +92,7 @@ std::vector<float> generate_Gaussian_samples(int num_samples, float mean, float 
 /**
  * @brief Generate samples of micmic Skew Normal distribution
  * 
- * @param mean  location parameter 
+ * @param mean  location parameter
  * @return std::vector<float>, vector of samples
  */
 std::vector<float> generate_MicMic_SN_samples(int num_samples, ot::Tran rf, float mean) 
@@ -194,6 +194,106 @@ std::vector<float> calculateProbabilityDensity(const std::vector<float>& data, i
     }
 
     return probabilityDensity;
+}
+
+/**
+ * @brief Get the cumulative distribution by at point x
+ *
+ * @param x
+ * @param location  location parameter
+ * @param scale     scale parameter
+ * @param shape     shape parameter
+ * @return float
+ */
+float get_SN_cdf(float x, float location, float scale, float shape) 
+{
+    boost::math::skew_normal_distribution<float> dist(location, scale, shape);
+    return boost::math::cdf(dist, x);
+}
+
+/**
+ * @brief Get the probability density by at point x
+ *
+ * @param x
+ * @param location  location parameter
+ * @param scale     scale parameter
+ * @param shape     shape parameter
+ * @return float
+ */
+float get_SN_pdf(float x, float location, float scale, float shape) 
+{
+    boost::math::skew_normal_distribution<float> dist(location, scale, shape);
+    return boost::math::pdf(dist, x);
+}
+
+/**
+ * @brief Generate pdf of micmic Skew Normal distribution
+ * 
+ * @param mean  location parameter 
+ * @param start record the starting point
+ * @return std::vector<float>, vector of samples
+ */
+std::vector<float> generate_MicMic_SN_pdf(ot::Tran rf, float mean, int* start) 
+{
+    float stdev = 0.0f, skew = 0.0f;
+    float th = 1e-6;    // threshold
+    std::vector<float> pdf;
+
+    if (VDD == 0.5) 
+    {
+        if (rf == ot::Tran::FALL) {
+            stdev = 0.1817071 * mean;
+            skew  = 1.02;
+        }
+        else {
+            stdev = 0.2469286 * mean;
+            skew  = 1.42; 
+        }
+    } 
+    else if (VDD == 0.4) 
+    {
+        if (rf == ot::Tran::FALL) {
+            stdev = 0.5110573 * mean;
+            skew  = 2.32;
+        } else {
+            stdev = 0.6690626 * mean;
+            skew  = 2.73;
+        }
+    }
+    else 
+    {
+        std::cerr << "Undefined VDD!!!\n";
+    }
+    // std::cout << "Generate MicMic SN pdf, mean/stdev/skew = ";
+    // std::cout << mean << "/" << stdev << "/" << skew << std::endl;
+
+    // Convert mean, stdev, and skew to location, scale, and shape parameters
+    float location = mean;
+    float scale = stdev * std::sqrt(1 - (2.0 / M_PI) * (skew / std::sqrt(1 + skew * skew)));
+    float shape = skew;
+
+    // Iterate until CDF is smaller than the threshold
+    int init = floor(mean / TIME_STEP);
+
+    while (get_SN_cdf(init * TIME_STEP, location, scale, shape) > th) {
+        // Subtract the time step from x
+        init--;
+    }
+    // record the starting point
+    *start = init;
+    // std::cout << "PDF Starting point: " << init << ", cdf: " << get_SN_cdf(init * TIME_STEP, location, scale, shape) << std::endl;
+
+    // get the probability density function
+    float x = init * TIME_STEP;
+
+    while (get_SN_cdf(x, location, scale, shape) <= (1.0f - th)) 
+    {
+        float val = get_SN_pdf(x, location, scale, shape);
+        pdf.push_back(val);
+        x += TIME_STEP;
+    }
+
+    return pdf;
 }
 
 /**
