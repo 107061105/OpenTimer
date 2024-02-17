@@ -74,6 +74,7 @@ class Shell {
 
     // action
     void _update_timing          ();
+    void _update_mc_result       ();
     void _report_timing          ();
     void _report_path            ();
     void _report_at              ();
@@ -159,6 +160,7 @@ class Shell {
 
       // Action
       {"update_timing",           &Shell::_update_timing},
+      {"update_mc_result",        &Shell::_update_mc_result},
       {"report_timing",           &Shell::_report_timing},
       {"report_path",             &Shell::_report_path},
       {"report_at",               &Shell::_report_at},

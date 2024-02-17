@@ -197,6 +197,95 @@ std::vector<float> calculateProbabilityDensity(const std::vector<float>& data, i
 }
 
 /**
+ * @brief Get the cumulative distribution at point x for a Gaussian distribution
+ *
+ * @param x
+ * @param mean      Mean parameter
+ * @param stdev     Standard deviation parameter
+ * @return float
+ */
+float get_Gaussian_cdf(float x, float mean, float stdev) 
+{
+    boost::math::normal_distribution<float> dist(mean, stdev);
+    return boost::math::cdf(dist, x);
+}
+
+/**
+ * @brief Get the probability density at point x for a Gaussian distribution
+ *
+ * @param x
+ * @param mean      Mean parameter
+ * @param stdev     Standard deviation parameter
+ * @return float
+ */
+float get_Gaussian_pdf(float x, float mean, float stdev) 
+{
+    boost::math::normal_distribution<float> dist(mean, stdev);
+    return boost::math::pdf(dist, x);
+}
+
+/**
+ * @brief Generate pdf of Gaussian distribution
+ * 
+ * @param mean      Mean parameter 
+ * @param start     Record the starting point
+ * @return std::vector<float>, vector of samples
+ */
+std::vector<float> generate_Gaussian_pdf(ot::Tran rf, float mean, int* start) 
+{
+    float stdev = 0.0f;
+    float th = 1e-6;    // threshold
+    std::vector<float> pdf;
+
+    if (VDD == 0.5) 
+    {
+        if (rf == ot::Tran::FALL) {
+            stdev = 0.1817071 * mean;
+        }
+        else {
+            stdev = 0.2469286 * mean;
+        }
+    } 
+    else if (VDD == 0.4) 
+    {
+        if (rf == ot::Tran::FALL) {
+            stdev = 0.5110573 * mean;
+        } else {
+            stdev = 0.6690626 * mean;
+        }
+    }
+    else 
+    {
+        std::cerr << "Undefined VDD!!!\n";
+    }
+    // std::cout << "Generate Gaussian pdf, mean/stdev = ";
+    // std::cout << mean << "/" << stdev << std::endl;
+
+    // Iterate until CDF is smaller than the threshold
+    int init = floor(mean / TIME_STEP);
+
+    while (get_Gaussian_cdf(init * TIME_STEP, mean, stdev) > th) {
+        // Subtract the time step from x
+        init--;
+    }
+    // record the starting point
+    *start = init;
+    // std::cout << "PDF Starting point: " << init << ", cdf: " << get_Gaussian_cdf(init * TIME_STEP, mean, stdev) << std::endl;
+
+    // get the probability density function
+    float x = init * TIME_STEP;
+
+    while (get_Gaussian_cdf(x, mean, stdev) <= (1.0f - th)) 
+    {
+        float val = get_Gaussian_pdf(x, mean, stdev);
+        pdf.push_back(val);
+        x += TIME_STEP;
+    }
+
+    return pdf;
+}
+
+/**
  * @brief Get the cumulative distribution by at point x
  *
  * @param x

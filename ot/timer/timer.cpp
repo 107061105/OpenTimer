@@ -898,7 +898,7 @@ void Timer::_fprop_at_MC(Pin& pin) {
   if (pin._is_mc()) {
     for(auto arc : pin._fanin) {
       if (arc->_from._is_mc() && !arc->samples.empty()) {
-        OT_LOGD("Arc ", arc->name(), " prop at ", arc->_from._mc_at.size(), " ", arc->samples.size());
+        // OT_LOGD("Arc ", arc->name(), " prop at ", arc->_from._mc_at.size(), " ", arc->samples.size());
         int num = 100000;
         std::vector<float> temp(num, 0.0f);
 
@@ -1281,8 +1281,9 @@ void Timer::_update_mc_result() {
   for (auto p: _pos) {
     auto po = p.second;
     FOR_EACH_EL_RF_IF(el, rf, po._pin._mc[el][rf]) {
-      OT_LOGE("PO ", p.first, " ", to_string(el), " ", to_string(rf));
-      OT_LOGE(findQuantile(po._pin._mc_at));
+      // OT_LOGD("PO ", p.first, " ", to_string(el), " ", to_string(rf));
+      // OT_LOGE(findQuantile(po._pin._mc_at));
+      std::cout << findQuantile(po._pin._mc_at) << std::endl;
     }
   }
   
@@ -1722,7 +1723,7 @@ Timer& Timer::set_mc_analysis(std::string name, Split m, Tran t) {
 // Procedure: _set_mc_analysis
 void Timer::_set_mc_analysis(Pin& p, Split m, Tran t) {
   p._mc[m][t] = true;
-  OT_LOGD("set MC analysis, Pin ", p.name(), " ", to_string(m), " ", to_string(t));
+  // OT_LOGD("set MC analysis, Pin ", p.name(), " ", to_string(m), " ", to_string(t));
   // _insert_frontier(p);
 }
 

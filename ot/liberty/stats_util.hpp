@@ -66,6 +66,11 @@ std::vector<float> generate_MicMic_SN_samples(int, ot::Tran, float);
 
 std::vector<float> calculateProbabilityDensity(const std::vector<float>&, int*);
 
+// Skew normal distribution
+float get_Gaussian_cdf(float, float, float);
+float get_Gaussian_pdf(float, float, float);
+std::vector<float> generate_Gaussian_pdf(ot::Tran, float, int*);
+// Gaussian distribution
 float get_SN_cdf(float, float, float, float);
 float get_SN_pdf(float, float, float, float);
 std::vector<float> generate_MicMic_SN_pdf(ot::Tran, float, int*);

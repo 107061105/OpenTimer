@@ -9,6 +9,13 @@ void Shell::_update_timing() {
 
 // ------------------------------------------------------------------------------------------------
 
+// Procedure: _update_mc_result
+void Shell::_update_mc_result() {
+  _timer.update_mc_result();
+}
+
+// ------------------------------------------------------------------------------------------------
+
 // Procedure: report_at
 void Shell::_report_at() {
 
