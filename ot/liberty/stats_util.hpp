@@ -82,6 +82,7 @@ void fft(std::vector<Complex>&, bool);
 void fft(std::vector<Complex>&);
 void ifft(std::vector<Complex>&);
 void fft_convolve(const std::vector<float>&, const std::vector<float>&, std::vector<float>&);
+void convolution(const std::vector<float>&, const std::vector<float>&, std::vector<float>&);
 
 }
 

@@ -534,4 +534,24 @@ void fft_convolve(const std::vector<float>& dist1, const std::vector<float>& dis
     }
 }
 
+
+void convolution(const std::vector<float>& dist1, const std::vector<float>& dist2, std::vector<float>& result) {
+    int len1 = dist1.size();
+    int len2 = dist2.size();
+    int resultSize = len1 + len2 - 1;
+
+    result.resize(resultSize, 0.0);
+
+    for (int i = 0; i < len1; ++i) {
+        for (int j = 0; j < len2; ++j) {
+            result[i + j] += dist1[i] * dist2[j];
+        }
+    }
+
+    for (auto &x: result) {
+        x *= TIME_STEP;
+    }
+}
+
+
 }

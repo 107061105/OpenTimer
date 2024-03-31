@@ -50,6 +50,7 @@ Distribution::Distribution(Distribution_type type, ot::Tran rf, float mean)
     int start_time = 0;
 
     assert(type == Distribution_type::MicmicSN);
+    // pdf     = generate_Gaussian_pdf(rf, mean, &start_time);
     pdf     = generate_MicMic_SN_pdf(rf, mean, &start_time);
 
     _type  = type;
@@ -130,7 +131,8 @@ Distribution Distribution::operator+(const Distribution &rhs)
 
         // get the sum of two distribution by convolution
         start_time = get_start_point() + rhs.get_start_point();
-        fft_convolve(_pdf, rhs.get_pdf(), result);
+        // fft_convolve(_pdf, rhs.get_pdf(), result);
+        convolution(_pdf, rhs.get_pdf(), result);
 
         // create resulting distribution
         Distribution temp(result, get_constant() + rhs.get_constant(), start_time);

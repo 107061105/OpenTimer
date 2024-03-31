@@ -1206,6 +1206,7 @@ void Timer::update_timing() {
 // Function: _update_timing
 void Timer::_update_timing() {
   
+  OT_LOGD("Start update timing....");
   // Timing is update-to-date
   if(!_lineage) {
     assert(_frontiers.size() == 0);
@@ -1253,6 +1254,7 @@ void Timer::update_mc_result() {
 // Function: _update_timing
 void Timer::_update_mc_result() {
 
+  OT_LOGD("Start mc....");
   // Timing is update-to-date
   if(!_lineage) {
     assert(_frontiers.size() == 0);
@@ -1295,6 +1297,8 @@ void Timer::_update_mc_result() {
 
   // clear the state
   _remove_state();
+
+  OT_LOGD("End mc....");
 
 }
 
