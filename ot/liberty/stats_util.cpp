@@ -6,9 +6,11 @@
 #include <algorithm>
 #include <iomanip>
 #include <random>
+#include <gsl/gsl_multifit.h>
 #include <ot/static/logger.hpp>
 #include <boost/math/distributions/skew_normal.hpp>
 #include "stats_util.hpp"
+
 
 const float PI = 3.141592653589793238462643383279502884;
 

@@ -131,8 +131,8 @@ Distribution Distribution::operator+(const Distribution &rhs)
 
         // get the sum of two distribution by convolution
         start_time = get_start_point() + rhs.get_start_point();
-        // fft_convolve(_pdf, rhs.get_pdf(), result);
-        convolution(_pdf, rhs.get_pdf(), result);
+        fft_convolve(_pdf, rhs.get_pdf(), result);
+        // convolution(_pdf, rhs.get_pdf(), result);
 
         // create resulting distribution
         Distribution temp(result, get_constant() + rhs.get_constant(), start_time);
